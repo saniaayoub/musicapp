@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {NativeBaseProvider} from 'native-base';
+import SignIn from './src/screens/signIn';
 
 const App = () => {
    const [userToken, setUserToken] = useState(null);
@@ -23,9 +24,7 @@ const App = () => {
         <KeyboardAvoidingView
           style={{flex: 1}}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-          <View>
-            <Text>App</Text>
-          </View>
+          <SignIn />
         </KeyboardAvoidingView>
       </SafeAreaProvider>
     </NativeBaseProvider>
