@@ -16,13 +16,23 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const SignIn = ({navigation}) => {
+const ForgetPassword = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
         <View style={[s.container, {width: width, height: height}]}>
+          <View style={s.backbutton}>
+            <Button
+              size="sm"
+              onPress={() => console.log('hi')}
+              variant={'link'}
+            >
+              {/* <Image source={backicon} resizeMode="contain" /> */}
+              <Icon name={'arrow-circle-left'} color={'#fff'} size={25} />
+            </Button>
+          </View>
           <View style={s.heading}>
-            <Text style={s.headingText}>Sign In</Text>
+            <Text style={s.headingText}>Forget Password</Text>
           </View>
           <View style={s.input}>
             <Input
@@ -33,7 +43,7 @@ const SignIn = ({navigation}) => {
               variant="underlined"
               InputLeftElement={
                 <View style={s.iconCircle}>
-                  <Icon name={'envelope'} color="#fff" size={20} />
+                  <Icon name={'envelope'} color="#fff" size={15} />
                 </View>
               }
               placeholder="Email"
@@ -41,30 +51,11 @@ const SignIn = ({navigation}) => {
               fontSize={moderateScale(13, 0.1)}
             />
           </View>
-          <View style={s.input}>
-            <Input
-              w={{
-                base: '75%',
-                md: '25%',
-              }}
-              variant="underlined"
-              InputLeftElement={
-                <View style={s.iconCircle}>
-                  <Lock
-                    width={moderateScale(20, 0.1)}
-                    height={moderateScale(20, 0.1)}
-                  />
-                </View>
-              }
-              placeholder="Password"
-              placeholderTextColor={'#fff'}
-              fontSize={moderateScale(13, 0.1)}
-            />
-          </View>
+
           <View style={s.button}>
             <Button
               size="sm"
-              onPress={() => navigation.navigate('Subscribe')}
+              // onPress={() => register()}
               variant={'solid'}
               _text={{
                 color: '#6627EC',
@@ -76,22 +67,14 @@ const SignIn = ({navigation}) => {
               alignItems={'center'}
               style={s.shadow}
             >
-              <Text style={s.btnText}>Login</Text>
+              <Text style={s.btnText}>Send</Text>
             </Button>
           </View>
-          <View>
-            <Button
-              size="sm"
-              onPress={() => navigation.navigate('ForgetPassword')}
-              variant={'link'}
-            >
-              <Text style={s.forgetPass}> Forget Password</Text>
-            </Button>
-          </View>
+
           <View style={s.bottomLink}>
             <Button
               size="sm"
-              onPress={() => navigation.navigate('SignUp')}
+              // onPress={() => navigation.navigate('SignUp')}
               variant={'link'}
               _text={{
                 color: '#fff',
@@ -114,4 +97,4 @@ const SignIn = ({navigation}) => {
   );
 };
 
-export default SignIn;
+export default ForgetPassword;

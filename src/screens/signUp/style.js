@@ -11,8 +11,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(110, 46, 149, 0.375)',
   },
   heading: {
-    marginTop: moderateScale(-80, 0.1),
-    marginBottom: moderateScale(60, 0.1),
+    marginTop: moderateScale(-50, 0.1),
+    marginBottom: moderateScale(30, 0.1),
   },
   headingText: {
     fontFamily: InterBold,
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(5, 0.1),
   },
   input: {
-    marginVertical: moderateScale(20, 0.1),
+    marginVertical: moderateScale(10, 0.1),
   },
   button: {
     marginTop: moderateScale(15, 0.1),

@@ -11,8 +11,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(110, 46, 149, 0.375)',
   },
   heading: {
-    marginTop: moderateScale(-80, 0.1),
+    marginTop: moderateScale(-90, 0.1),
     marginBottom: moderateScale(60, 0.1),
+  },
+  backbutton: {
+    position: 'absolute',
+    left: 20,
+    top: 25,
   },
   headingText: {
     fontFamily: InterBold,
@@ -21,14 +26,15 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(30, 0.1),
   },
   iconCircle: {
-    borderRadius: moderateScale(20, 0.1),
-    borderWidth: moderateScale(1, 0.1),
-    borderColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: moderateScale(7, 0.1),
     marginRight: moderateScale(10, 0.1),
     marginBottom: moderateScale(5, 0.1),
   },
   input: {
+    justifyContent: 'center',
+    alignItems: 'center',
     marginVertical: moderateScale(20, 0.1),
   },
   button: {

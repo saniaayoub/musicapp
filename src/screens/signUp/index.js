@@ -16,13 +16,13 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const SignIn = ({navigation}) => {
+const SignUp = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
         <View style={[s.container, {width: width, height: height}]}>
           <View style={s.heading}>
-            <Text style={s.headingText}>Sign In</Text>
+            <Text style={s.headingText}>Create Your Account</Text>
           </View>
           <View style={s.input}>
             <Input
@@ -31,11 +31,18 @@ const SignIn = ({navigation}) => {
                 md: '25%',
               }}
               variant="underlined"
-              InputLeftElement={
-                <View style={s.iconCircle}>
-                  <Icon name={'envelope'} color="#fff" size={20} />
-                </View>
-              }
+              placeholder="Full Name"
+              placeholderTextColor={'#fff'}
+              fontSize={moderateScale(13, 0.1)}
+            />
+          </View>
+          <View style={s.input}>
+            <Input
+              w={{
+                base: '75%',
+                md: '25%',
+              }}
+              variant="underlined"
               placeholder="Email"
               placeholderTextColor={'#fff'}
               fontSize={moderateScale(13, 0.1)}
@@ -48,15 +55,31 @@ const SignIn = ({navigation}) => {
                 md: '25%',
               }}
               variant="underlined"
-              InputLeftElement={
-                <View style={s.iconCircle}>
-                  <Lock
-                    width={moderateScale(20, 0.1)}
-                    height={moderateScale(20, 0.1)}
-                  />
-                </View>
-              }
-              placeholder="Password"
+              placeholder="Contact No."
+              placeholderTextColor={'#fff'}
+              fontSize={moderateScale(13, 0.1)}
+            />
+          </View>
+          <View style={s.input}>
+            <Input
+              w={{
+                base: '75%',
+                md: '25%',
+              }}
+              variant="underlined"
+              placeholder="Create Password"
+              placeholderTextColor={'#fff'}
+              fontSize={moderateScale(13, 0.1)}
+            />
+          </View>
+          <View style={s.input}>
+            <Input
+              w={{
+                base: '75%',
+                md: '25%',
+              }}
+              variant="underlined"
+              placeholder="Confirm Password"
               placeholderTextColor={'#fff'}
               fontSize={moderateScale(13, 0.1)}
             />
@@ -76,34 +99,26 @@ const SignIn = ({navigation}) => {
               alignItems={'center'}
               style={s.shadow}
             >
-              <Text style={s.btnText}>Login</Text>
+              <Text style={s.btnText}>Register</Text>
             </Button>
           </View>
-          <View>
-            <Button
-              size="sm"
-              onPress={() => navigation.navigate('ForgetPassword')}
-              variant={'link'}
-            >
-              <Text style={s.forgetPass}> Forget Password</Text>
-            </Button>
-          </View>
+
           <View style={s.bottomLink}>
             <Button
               size="sm"
-              onPress={() => navigation.navigate('SignUp')}
+              // onPress={() => navigation.navigate('SignUp')}
               variant={'link'}
               _text={{
                 color: '#fff',
               }}
             >
               <View style={{flexDirection: 'row'}}>
-                <Text style={s.forgetPass}>Don’t Have an Account?</Text>
+                <Text style={s.forgetPass}>Already Have An Account?</Text>
                 <Text
                   style={[s.forgetPass, {fontWeight: '700', color: '#4B79F1'}]}
                 >
                   {' '}
-                  Sign up Now!
+                  Sign in Now!
                 </Text>
               </View>
             </Button>
@@ -114,4 +129,4 @@ const SignIn = ({navigation}) => {
   );
 };
 
-export default SignIn;
+export default SignUp;
