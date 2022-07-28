@@ -7,16 +7,21 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import s from './style';
 import spiralback from '../../assets/images/spiralback.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-
+import AppContext from '../../Providers/AppContext';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+
 const Subscribe = () => {
+  const context = useContext(AppContext);
+  const subscribe = () => {
+    context.setUserToken('1');
+  };
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={spiralback} blurRadius={5} resizeMode={'cover'}>
@@ -45,7 +50,7 @@ const Subscribe = () => {
             <View style={s.button}>
               <Button
                 size="sm"
-                // onPress={() => register()}
+                onPress={() => subscribe()}
                 variant={'solid'}
                 _text={{
                   color: '#6627EC',

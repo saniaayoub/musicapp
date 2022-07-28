@@ -16,7 +16,7 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const ForgetPassword = () => {
+const ForgetPassword = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
@@ -24,7 +24,7 @@ const ForgetPassword = () => {
           <View style={s.backbutton}>
             <Button
               size="sm"
-              onPress={() => console.log('hi')}
+              onPress={() => navigation.goBack()}
               variant={'link'}
             >
               {/* <Image source={backicon} resizeMode="contain" /> */}
@@ -55,7 +55,7 @@ const ForgetPassword = () => {
           <View style={s.button}>
             <Button
               size="sm"
-              // onPress={() => register()}
+              onPress={() => navigation.goBack()}
               variant={'solid'}
               _text={{
                 color: '#6627EC',
