@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
+import backarrow from '../../assets/images/backarrow.png';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 const ForgetPassword = ({navigation}) => {
@@ -26,9 +27,12 @@ const ForgetPassword = ({navigation}) => {
               size="sm"
               onPress={() => navigation.goBack()}
               variant={'link'}
+              backgroundColor={'#fff'}
+              borderRadius={moderateScale(14, 0.1)}
+              padding={moderateScale(7, 0.1)}
             >
-              {/* <Image source={backicon} resizeMode="contain" /> */}
-              <Icon name={'arrow-circle-left'} color={'#fff'} size={25} />
+              <Image source={backarrow} resizeMode="contain" />
+              {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
             </Button>
           </View>
           <View style={s.heading}>

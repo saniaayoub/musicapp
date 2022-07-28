@@ -11,6 +11,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
   },
+  backbutton: {
+    position: 'absolute',
+    left: 20,
+    top: 25,
+  },
   heading: {
     height: moderateScale(139, 0.1),
     width: '100%',

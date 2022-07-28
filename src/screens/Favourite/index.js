@@ -18,6 +18,7 @@ import {Input, Button, ScrollView} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import homeback from '../../assets/images/homeback.png';
 import healing1 from '../../assets/images/healing1.png';
+import backarrow from '../../assets/images/backarrow.png';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -36,6 +37,19 @@ const Favorite = ({navigation}) => {
           }}
         >
           <View style={s.container}>
+            <View style={s.backbutton}>
+              <Button
+                size="sm"
+                onPress={() => navigation.goBack()}
+                variant={'link'}
+                backgroundColor={'#fff'}
+                borderRadius={moderateScale(14, 0.1)}
+                padding={moderateScale(7, 0.1)}
+              >
+                <Image source={backarrow} resizeMode="contain" />
+                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
+              </Button>
+            </View>
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>
