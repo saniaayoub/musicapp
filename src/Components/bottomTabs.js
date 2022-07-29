@@ -16,6 +16,7 @@ import ForgetPassword from '../screens//ForgetPass';
 import GetStarted from '../screens//GetStarted';
 import UserHome from '../screens/Home';
 import Favorite from '../screens/Favourite';
+import Playlist from '../screens/Playlist';
 const Tab = createBottomTabNavigator();
 
 const bottomTabs = () => {
@@ -63,8 +64,8 @@ const bottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name="ForgetPassword"
-        component={ForgetPassword}
+        name="Playlist"
+        component={Playlist}
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>

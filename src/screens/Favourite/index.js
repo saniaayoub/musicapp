@@ -16,27 +16,83 @@ import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button, ScrollView} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-import homeback from '../../assets/images/homeback.png';
+import Slider from 'react-native-slider';
 import healing1 from '../../assets/images/healing1.png';
+import play from '../../assets/images/play.png';
+import Playbutton from '../../assets/images/playbutton.svg';
 import backarrow from '../../assets/images/backarrow.png';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
+const Collection2 = [
+  {
+    id: 1,
+    image: require('../../assets/images/healing1.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+  {
+    id: 2,
+    image: require('../../assets/images/healing2.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+  {
+    id: 3,
+    image: require('../../assets/images/healing3.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+  {
+    id: 4,
+    image: require('../../assets/images/healing2.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+  {
+    id: 5,
+    image: require('../../assets/images/healing3.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+  {
+    id: 6,
+    image: require('../../assets/images/healing2.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+  {
+    id: 7,
+    image: require('../../assets/images/healing3.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+  {
+    id: 8,
+    image: require('../../assets/images/healing2.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+  {
+    id: 9,
+    image: require('../../assets/images/healing3.png'),
+    text: 'Wait for a minute',
+    description: 'Julie Watson And John Smith ',
+  },
+];
 const Favorite = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ScrollView style={{width: '100%'}}>
-        <Box
-          height={height}
-          bg={{
-            linearGradient: {
-              colors: ['#000000', '#B462E5'],
-              start: [0, 0],
-              end: [0, 1],
-            },
-          }}
-        >
-          <View style={s.container}>
+      <Box
+        bg={{
+          linearGradient: {
+            colors: ['#000000', '#B462E5'],
+            start: [0, 0],
+            end: [0, 1],
+          },
+        }}
+      >
+        <View style={s.container}>
+          <View style={s.fixed}>
             <View style={s.backbutton}>
               <Button
                 size="sm"
@@ -53,12 +109,62 @@ const Favorite = ({navigation}) => {
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>
-                <Text style={s.headingText}>Categories</Text>
+                <Text style={s.headingText}>Favourite Music</Text>
               </View>
             </View>
           </View>
-        </Box>
-      </ScrollView>
+          <ScrollView>
+            <View style={s.collection}>
+              {Collection2.map(item => {
+                return (
+                  <>
+                    <View style={s.item} key={item.id}>
+                      <TouchableOpacity style={s.image}>
+                        <ImageBackground
+                          source={item.image}
+                          resizeMode={'cover'}
+                          width={undefined}
+                          height={undefined}
+                        >
+                          <View style={s.innerView}>
+                            <Image
+                              source={play}
+                              width={undefined}
+                              height={undefined}
+                              resizeMode={'cover'}
+                            />
+                          </View>
+                        </ImageBackground>
+                      </TouchableOpacity>
+                      <View style={s.centerView}>
+                        <View style={s.row}>
+                          <View style={s.descriptionView}>
+                            <Text style={s.text1}>{item.text}</Text>
+                            <Text style={s.text2}>{item.description}</Text>
+                          </View>
+                          <TouchableOpacity style={s.playbutton}>
+                            <Playbutton
+                              width={moderateScale(25, 0.1)}
+                              height={moderateScale(24, 0.1)}
+                              resizeMode={'contain'}
+                            />
+                          </TouchableOpacity>
+                        </View>
+
+                        <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                        <View style={s.timer}>
+                          <Text style={s.text2}>00.00</Text>
+                          <Text style={s.text2}>03.20</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </>
+                );
+              })}
+            </View>
+          </ScrollView>
+        </View>
+      </Box>
     </SafeAreaView>
   );
 };
