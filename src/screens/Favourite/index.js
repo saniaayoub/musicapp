@@ -89,8 +89,7 @@ const Favorite = ({navigation}) => {
             start: [0, 0],
             end: [0, 1],
           },
-        }}
-      >
+        }}>
         <View style={s.container}>
           <View style={s.fixed}>
             <View style={s.backbutton}>
@@ -101,7 +100,7 @@ const Favorite = ({navigation}) => {
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
-              >
+                zIndex={1000}>
                 <Image source={backarrow} resizeMode="contain" />
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
@@ -124,8 +123,7 @@ const Favorite = ({navigation}) => {
                           source={item.image}
                           resizeMode={'cover'}
                           width={undefined}
-                          height={undefined}
-                        >
+                          height={undefined}>
                           <View style={s.innerView}>
                             <Image
                               source={play}
