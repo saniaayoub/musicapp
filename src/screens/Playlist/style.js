@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   },
   centerView: {
     marginHorizontal: moderateScale(10, 0.1),
-    width: moderateScale(230, 0.1),
+    width: moderateScale(200, 0.1),
   },
   descriptionView: {
     marginTop: moderateScale(10, 0.1),
@@ -184,6 +184,9 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(7, 0.1),
     fontFamily: InterRegular,
     // fontWeight: '700',
+  },
+  slider: {
+    marginTop: moderateScale(-5, 0.1),
   },
   imgtext2: {
     color: '#fff',

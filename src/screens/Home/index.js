@@ -115,7 +115,10 @@ const UserHome = ({navigation}) => {
                 numColumns={3}
                 renderItem={({item, index, separators}) => (
                   <>
-                    <TouchableOpacity style={s.item}>
+                    <TouchableOpacity
+                      style={s.item}
+                      onPress={() => navigation.navigate('Playlist')}
+                    >
                       <ImageBackground
                         source={item.image}
                         resizeMode="contain"
@@ -140,7 +143,10 @@ const UserHome = ({navigation}) => {
                   numColumns={3}
                   renderItem={({item, index, separators}) => (
                     <>
-                      <TouchableOpacity style={s.item}>
+                      <TouchableOpacity
+                        style={s.item}
+                        onPress={() => navigation.navigate('NowPlaying')}
+                      >
                         <ImageBackground
                           source={item.image}
                           resizeMode="contain"

@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
+    height: '100%',
   },
   empty: {
     position: 'relative',
@@ -23,20 +24,22 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
+    paddingLeft: moderateScale(70, 0.1),
     marginRight: moderateScale(100, 0.1),
     width: moderateScale(350, 0.1),
     height: moderateScale(500, 0.1),
     backgroundColor: 'rgba(194, 106, 248, 0.36)',
     borderTopRightRadius: moderateScale(25, 0.1),
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'column',
+    // paddingVertical: moderateScale(50, 0.1),
   },
   button: {
     marginTop: moderateScale(15, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: moderateScale(45, 0.1),
+    // marginRight: moderateScale(45, 0.1),
   },
   btnText: {
     fontFamily: Poppins,
@@ -69,9 +72,8 @@ const styles = StyleSheet.create({
     fontWeight: '100',
   },
   subscription: {
-    width: '75%',
+    // width: '75%',
     marginTop: moderateScale(20, 0.1),
-    marginLeft: moderateScale(42, 0.1),
   },
   subscriptionText: {
     textAlign: 'center',
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: InterLight,
     fontSize: moderateScale(18, 0.1),
-    marginTop: moderateScale(20, 0.1),
+    marginTop: moderateScale(15, 0.1),
   },
 });
 

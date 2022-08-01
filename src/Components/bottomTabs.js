@@ -1,22 +1,33 @@
 import {StyleSheet, Text, View, Image} from 'react-native';
 import React from 'react';
-
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {moderateScale, s} from 'react-native-size-matters';
-import home from '../assets/images/home.png';
+import {createStackNavigator} from '@react-navigation/stack';
+// Icons
+import Home from '../assets/images/home.svg';
 import heart from '../assets/images/heart.png';
 import setting from '../assets/images/setting.png';
 import search from '../assets/images/search.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 // Screens
-import SignIn from '../screens/signIn';
-import SignUp from '../screens//signUp';
-import ForgetPassword from '../screens//ForgetPass';
-import GetStarted from '../screens//GetStarted';
 import UserHome from '../screens/Home';
 import Favorite from '../screens/Favourite';
 import Playlist from '../screens/Playlist';
+import Profile from '../screens/Profile';
+import NowPlaying from '../screens/NowPlaying';
+
+const Stack = createStackNavigator();
+
+const HomeStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="UserHome" component={UserHome} />
+      <Stack.Screen name="Playlist" component={Playlist} />
+      <Stack.Screen name="NowPlaying" component={NowPlaying} />
+    </Stack.Navigator>
+  );
+};
 const Tab = createBottomTabNavigator();
 
 const bottomTabs = () => {
@@ -30,7 +41,7 @@ const bottomTabs = () => {
             paddingVertical: moderateScale(5, 0.1),
             backgroundColor: '#000000',
             width: '100%',
-            height: moderateScale(55, 0.1),
+            height: moderateScale(53, 0.1),
             borderTopLeftRadius: moderateScale(25, 0.1),
             borderTopRightRadius: moderateScale(25, 0.1),
             elevation: 0,
@@ -42,12 +53,12 @@ const bottomTabs = () => {
       }}
     >
       <Tab.Screen
-        name="UserHome"
-        component={UserHome}
+        name="Home"
+        component={HomeStack}
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>
-              <Image source={home} />
+              <Home />
             </View>
           ),
         }}
@@ -75,8 +86,8 @@ const bottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name="GetStarted"
-        component={GetStarted}
+        name="Profile"
+        component={Profile}
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>

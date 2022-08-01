@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 const InterMedium = 'Inter-Medium';
 const InterRegular = 'Inter-Regular';
@@ -8,12 +8,18 @@ const Poppins = 'Poppins-Regular';
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    zIndex: 1000,
+    height: '100%',
   },
+
   backbutton: {
     position: 'absolute',
     left: 15,
     top: 15,
+  },
+  header: {
+    zIndex: 100,
   },
   heading: {
     justifyContent: 'center',
@@ -28,10 +34,65 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(29, 0.1),
     fontWeight: '500',
   },
-  collection: {
+  imageTop: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    overflow: 'hidden',
+    width: moderateScale(300, 0.1),
+    height: moderateScale(350, 0.1),
+    borderRadius: moderateScale(10, 0.1),
+  },
+  descriptionViewTop: {
+    position: 'absolute',
+    bottom: moderateScale(15, 0.1),
+    left: moderateScale(15, 0.1),
+  },
+  text1Top: {
+    color: '#fff',
+    fontSize: moderateScale(21, 0.1),
+    fontFamily: InterMedium,
+    paddingVertical: moderateScale(5, 0.1),
+  },
+  text2Top: {
+    color: '#fff',
+    fontSize: moderateScale(12, 0.1),
+    fontFamily: InterRegular,
+  },
+  bottomContainer: {
+    width: '100%',
+    backgroundColor: 'rgba(194, 106, 248, 0.36)',
+    borderTopLeftRadius: moderateScale(25, 0.1),
+    borderTopRightRadius: moderateScale(25, 0.1),
+    borderColor: '#fff',
+    marginTop: moderateScale(20, 0.1),
+    borderWidth: moderateScale(1, 0.1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  button: {
+    marginTop: moderateScale(15, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: moderateScale(45, 0.1),
+  },
+  btnText: {
+    fontFamily: Poppins,
+    lineHeight: moderateScale(18, 0.1),
+    fontSize: moderateScale(12, 0.1),
+    color: '#C26AF8',
+  },
+  collection: {
     width: '100%',
+    backgroundColor: 'rgba(194, 106, 248, 0.36)',
+    borderTopLeftRadius: moderateScale(25, 0.1),
+    borderTopRightRadius: moderateScale(25, 0.1),
+    borderColor: '#fff',
+    marginTop: moderateScale(20, 0.1),
+    borderWidth: moderateScale(1, 0.1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
   },
   image: {
     justifyContent: 'center',
@@ -45,14 +106,12 @@ const styles = StyleSheet.create({
   item: {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
     marginBottom: moderateScale(10, 0.1),
     borderRadius: moderateScale(10, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
     padding: moderateScale(5, 0.1),
   },
-
   row: {
     display: 'flex',
     flexDirection: 'row',
@@ -71,16 +130,11 @@ const styles = StyleSheet.create({
     width: moderateScale(8, 0.1),
     height: moderateScale(8, 0.1),
   },
-  slider: {
-    marginTop: moderateScale(-5, 0.1),
-  },
   timer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: moderateScale(-10, 0.1),
     marginBottom: moderateScale(10, 0.1),
-    // alignItems: 'center',
-    // paddingTop: moderateScale(-50, 0.1),
   },
   innerView: {
     width: moderateScale(100, 0.1),
@@ -102,24 +156,26 @@ const styles = StyleSheet.create({
     marginLeft: moderateScale(5, 0.1),
   },
   centerView: {
-    marginHorizontal: moderateScale(10, 0.1),
-    width: moderateScale(200, 0.1),
+    marginTop: moderateScale(20, 0.1),
+    marginHorizontal: moderateScale(40, 0.1),
+  },
+  centerView1: {
+    marginBottom: moderateScale(20, 0.1),
+    marginHorizontal: moderateScale(20, 0.1),
+    marginTop: moderateScale(-10, 0.1),
   },
   descriptionView: {
     marginTop: moderateScale(10, 0.1),
   },
   text1: {
     color: '#fff',
-    fontSize: moderateScale(12, 0.1),
+    fontSize: moderateScale(14, 0.1),
     fontFamily: InterMedium,
-    paddingVertical: moderateScale(5, 0.1),
-    // fontWeight: '700',
   },
   text2: {
     color: '#fff',
     fontSize: moderateScale(7, 0.1),
     fontFamily: InterRegular,
-    // fontWeight: '700',
   },
   imgtext2: {
     color: '#fff',
@@ -143,6 +199,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     lineHeight: moderateScale(29, 0.1),
     marginLeft: moderateScale(35, 0.1),
+  },
+  space: {
+    marginTop: moderateScale(12, 0.1),
   },
 });
 

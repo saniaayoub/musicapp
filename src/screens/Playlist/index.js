@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import s from './style';
+import LinearGradient from 'react-native-linear-gradient';
 import playlistback from '../../assets/images/playlistback.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button, Box} from 'native-base';
@@ -91,16 +92,13 @@ const Playlist = ({navigation}) => {
       <ImageBackground
         source={playlistback}
         blurRadius={5}
-        resizeMode={'cover'}>
-        <Box
-          bg={{
-            linearGradient: {
-              colors: ['#000000', '#C26AF8'],
-              start: [0, 0],
-              end: [0, 1],
-            },
-          }}
-          opacity={0.7}>
+        resizeMode={'cover'}
+      >
+        <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
+        >
           <View style={[s.container]}>
             <View style={s.backbutton}>
               <Button
@@ -110,7 +108,8 @@ const Playlist = ({navigation}) => {
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
-                zIndex={1000}>
+                zIndex={1000}
+              >
                 <Image source={backarrow} resizeMode="contain" />
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
@@ -147,7 +146,8 @@ const Playlist = ({navigation}) => {
                             source={item.image}
                             resizeMode={'cover'}
                             width={undefined}
-                            height={undefined}>
+                            height={undefined}
+                          >
                             <View style={s.innerView}>
                               <Image
                                 source={play}
@@ -172,11 +172,12 @@ const Playlist = ({navigation}) => {
                               />
                             </TouchableOpacity>
                           </View>
-
-                          <Slider thumbStyle={s.thumb} trackStyle={s.track} />
-                          <View style={s.timer}>
-                            <Text style={s.text2}>00.00</Text>
-                            <Text style={s.text2}>03.20</Text>
+                          <View style={s.slider}>
+                            <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                            <View style={s.timer}>
+                              <Text style={s.text2}>00.00</Text>
+                              <Text style={s.text2}>03.20</Text>
+                            </View>
                           </View>
                         </View>
                       </View>
@@ -186,7 +187,7 @@ const Playlist = ({navigation}) => {
               </View>
             </ScrollView>
           </View>
-        </Box>
+        </LinearGradient>
       </ImageBackground>
     </SafeAreaView>
   );

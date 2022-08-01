@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {Box} from 'native-base';
 import s from './style';
 import background from '../../assets/images/background.png';
@@ -21,65 +21,74 @@ import healing1 from '../../assets/images/healing1.png';
 import play from '../../assets/images/play.png';
 import Playbutton from '../../assets/images/playbutton.svg';
 import backarrow from '../../assets/images/backarrow.png';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+
 const Collection2 = [
   {
     id: 1,
     image: require('../../assets/images/healing1.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
   {
     id: 2,
     image: require('../../assets/images/healing2.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
   {
     id: 3,
     image: require('../../assets/images/healing3.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
   {
     id: 4,
     image: require('../../assets/images/healing2.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
   {
     id: 5,
     image: require('../../assets/images/healing3.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
   {
     id: 6,
     image: require('../../assets/images/healing2.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
   {
     id: 7,
     image: require('../../assets/images/healing3.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
   {
     id: 8,
     image: require('../../assets/images/healing2.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
   {
     id: 9,
     image: require('../../assets/images/healing3.png'),
     text: 'Wait for a minute',
     description: 'Julie Watson And John Smith ',
+    play: false,
   },
 ];
 const Favorite = ({navigation}) => {
+  const [isPlay, setIsPlay] = useState(false);
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -89,7 +98,8 @@ const Favorite = ({navigation}) => {
             start: [0, 0],
             end: [0, 1],
           },
-        }}>
+        }}
+      >
         <View style={s.container}>
           <View style={s.fixed}>
             <View style={s.backbutton}>
@@ -100,7 +110,8 @@ const Favorite = ({navigation}) => {
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
-                zIndex={1000}>
+                zIndex={1000}
+              >
                 <Image source={backarrow} resizeMode="contain" />
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
@@ -123,7 +134,8 @@ const Favorite = ({navigation}) => {
                           source={item.image}
                           resizeMode={'cover'}
                           width={undefined}
-                          height={undefined}>
+                          height={undefined}
+                        >
                           <View style={s.innerView}>
                             <Image
                               source={play}
@@ -140,19 +152,32 @@ const Favorite = ({navigation}) => {
                             <Text style={s.text1}>{item.text}</Text>
                             <Text style={s.text2}>{item.description}</Text>
                           </View>
-                          <TouchableOpacity style={s.playbutton}>
-                            <Playbutton
-                              width={moderateScale(25, 0.1)}
-                              height={moderateScale(24, 0.1)}
-                              resizeMode={'contain'}
-                            />
+                          <TouchableOpacity
+                            style={s.playbutton}
+                            onPress={() => setIsPlay(!isPlay)}
+                          >
+                            {isPlay ? (
+                              <Icon
+                                name={'play-circle'}
+                                color={'#fff'}
+                                size={30}
+                              />
+                            ) : (
+                              <Icon
+                                name={'pause-circle'}
+                                color={'#fff'}
+                                size={30}
+                              />
+                            )}
                           </TouchableOpacity>
                         </View>
 
-                        <Slider thumbStyle={s.thumb} trackStyle={s.track} />
-                        <View style={s.timer}>
-                          <Text style={s.text2}>00.00</Text>
-                          <Text style={s.text2}>03.20</Text>
+                        <View style={s.slider}>
+                          <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                          <View style={s.timer}>
+                            <Text style={s.text2}>00.00</Text>
+                            <Text style={s.text2}>03.20</Text>
+                          </View>
                         </View>
                       </View>
                     </View>
