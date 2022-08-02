@@ -37,7 +37,7 @@ const height = Dimensions.get('window').height;
 const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
   const [data, setData] = useState(route.params?.data);
-
+  const [allSongs, setAllSongs] = useState(context.songs);
   const [play, setPlay] = useState('stop');
   const [random, setRandom] = useState(false);
   const [loop, setLoop] = useState(false);
@@ -77,7 +77,12 @@ const NowPlaying = ({navigation, route}) => {
   const remFromList = data => {
     setFav(false);
     let tempArray = [];
-    tempArray = favList.filter(item => item.id !== data.id);
+
+    tempArray = allSongs.map(elem => {
+      if (elem.id === data.id) {
+        data.fav = false;
+      }
+    });
     context.setFavList(tempArray);
     console.log(tempArray);
   };
@@ -143,13 +148,13 @@ const NowPlaying = ({navigation, route}) => {
                       size="sm"
                       onPress={() => {
                         {
-                          fav ? remFromList(data) : addToFavList(data);
+                          data.fav ? remFromList(data) : addToFavList(data);
                         }
                       }}
                       variant={'link'}
                       zIndex={1000}
                     >
-                      {fav ? (
+                      {data.fav ? (
                         <Icon
                           name={'heart'}
                           color={'#fff'}

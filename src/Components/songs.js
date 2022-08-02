@@ -6,6 +6,7 @@ export default Songs = [
     description: 'Wiz Khalifa',
     url:
       'https://cdn.beatzjam.com/wp-content/uploads/2021/Wiz-Khalifa-ft-Charlie-Puth-See-You-Again-(BeatzJam.com).mp3',
+    fav: false,
   },
   {
     id: 2,
@@ -13,6 +14,7 @@ export default Songs = [
     text: 'Lovely',
     description: 'Billie Eilish, Khalid',
     url: 'https://pagaliworld.com/files/download/id/3260',
+    fav: false,
   },
   {
     id: 3,
@@ -21,6 +23,7 @@ export default Songs = [
     description: 'Ed Sheeran',
     url:
       'https://cdn.beatzjam.com/wp-content/uploads/2021/Ed-Sheeran-Shape-Of-You-(BeatzJam.com).mp3',
+    fav: false,
   },
   {
     id: 4,
@@ -28,6 +31,7 @@ export default Songs = [
     text: 'Play Date',
     description: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
+    fav: false,
   },
   {
     id: 5,
@@ -35,6 +39,7 @@ export default Songs = [
     text: 'Peaches',
     description: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
+    fav: false,
   },
   {
     id: 6,
@@ -43,6 +48,7 @@ export default Songs = [
     description: 'Alec Benjamin',
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
+    fav: false,
   },
   {
     id: 7,
@@ -50,6 +56,7 @@ export default Songs = [
     text: 'Play Date',
     description: '	Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
+    fav: false,
   },
   {
     id: 8,
@@ -57,6 +64,7 @@ export default Songs = [
     text: 'Peaches',
     description: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
+    fav: false,
   },
   {
     id: 9,
@@ -65,5 +73,6 @@ export default Songs = [
     description: 'Alec Benjamin',
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
+    fav: false,
   },
 ];
