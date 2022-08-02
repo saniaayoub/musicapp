@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {Box} from 'native-base';
 import s from './style';
 import background from '../../assets/images/background.png';
@@ -21,6 +21,7 @@ import healing1 from '../../assets/images/healing1.png';
 import play from '../../assets/images/play.png';
 import Playbutton from '../../assets/images/playbutton.svg';
 import backarrow from '../../assets/images/backarrow.png';
+import AppContext from '../../Providers/AppContext';
 
 const Collection2 = [
   {
@@ -88,7 +89,13 @@ const Collection2 = [
   },
 ];
 const Favorite = ({navigation}) => {
+  const context = useContext(AppContext);
   const [isPlay, setIsPlay] = useState(false);
+  const [favList, setFavList] = useState(context.favList);
+
+  useEffect(() => {
+    setFavList(context.favList);
+  }, []);
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -125,7 +132,7 @@ const Favorite = ({navigation}) => {
           </View>
           <ScrollView>
             <View style={s.collection}>
-              {Collection2.map(item => {
+              {favList.map(item => {
                 return (
                   <>
                     <View style={s.item} key={item.id}>

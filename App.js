@@ -19,16 +19,23 @@ import AppContext from './src/Providers/AppContext';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import BottomTabs from './src/Components/bottomTabs';
+import Songs from './src/Components/songs';
 const Stack = createStackNavigator();
 
 const App = () => {
   const [userToken, setUserToken] = useState(null);
   const [songState, setSongState] = useState('stop');
+  const [songs, setSongs] = useState(Songs);
+  const [favList, setFavList] = useState([]);
   const userSettings = {
     userToken,
     setUserToken,
     songState,
     setSongState,
+    songs,
+    setSongs,
+    favList,
+    setFavList,
   };
   const config = {
     dependencies: {

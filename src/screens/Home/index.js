@@ -8,80 +8,20 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import React from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {Box} from 'native-base';
 import s from './style';
 import homeback from '../../assets/images/homeback.png';
-
-const Collection = [
-  {
-    id: 1,
-    image: require('../../assets/images/healing1.png'),
-    text: 'Healing01',
-  },
-  {
-    id: 2,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Healing02',
-  },
-  {
-    id: 3,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Healing03',
-  },
-  {
-    id: 4,
-    image: require('../../assets/images/healing4.png'),
-    text: 'Healing04',
-  },
-  {
-    id: 5,
-    image: require('../../assets/images/healing5.png'),
-    text: 'Healing05',
-  },
-  {
-    id: 6,
-    image: require('../../assets/images/healing6.png'),
-    text: 'Healing06',
-  },
-  {
-    id: 7,
-    image: require('../../assets/images/healing7.png'),
-    text: 'Healing07',
-  },
-  {
-    id: 8,
-    image: require('../../assets/images/healing8.png'),
-    text: 'Healing08',
-  },
-  {
-    id: 9,
-    image: require('../../assets/images/healing9.png'),
-    text: 'Healing09',
-  },
-];
-const Collection2 = [
-  {
-    id: 1,
-    image: require('../../assets/images/healing1.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 2,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 3,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-];
+import AppContext from '../../Providers/AppContext';
 
 const UserHome = ({navigation}) => {
+  const context = useContext(AppContext);
+  const [featured, setFeatured] = useState(context.songs);
+
+  useEffect(() => {
+    setFeatured(context.songs);
+    console.log(featured);
+  }, []);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={{width: '100%'}}>
@@ -111,7 +51,7 @@ const UserHome = ({navigation}) => {
             {/**** Collection *****/}
             <View style={s.collection}>
               <FlatList
-                data={Collection}
+                data={featured}
                 numColumns={3}
                 renderItem={({item, index, separators}) => (
                   <>
@@ -139,13 +79,15 @@ const UserHome = ({navigation}) => {
               <Text style={s.headingText2}>Featured Music</Text>
               <View style={s.collection2}>
                 <FlatList
-                  data={Collection2}
+                  data={featured}
                   numColumns={3}
                   renderItem={({item, index, separators}) => (
                     <>
                       <TouchableOpacity
                         style={s.item}
-                        onPress={() => navigation.navigate('NowPlaying')}
+                        onPress={() =>
+                          navigation.navigate('NowPlaying', {data: item})
+                        }
                       >
                         <ImageBackground
                           source={item.image}
