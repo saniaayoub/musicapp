@@ -15,6 +15,7 @@ import ForgetPassword from './src/screens/ForgetPass';
 import GetStarted from './src/screens/GetStarted';
 import Subscribe from './src/screens/Subscribe';
 import AppContext from './src/Providers/AppContext';
+
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import BottomTabs from './src/Components/bottomTabs';
@@ -22,9 +23,12 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const [userToken, setUserToken] = useState(null);
+  const [songState, setSongState] = useState('stop');
   const userSettings = {
     userToken,
     setUserToken,
+    songState,
+    setSongState,
   };
   const config = {
     dependencies: {

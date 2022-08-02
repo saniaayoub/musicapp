@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import s from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import playlistback from '../../assets/images/playlistback.png';
@@ -26,6 +26,9 @@ import backarrow from '../../assets/images/backarrow.png';
 import nowplay from '../../assets/images/nowplay.png';
 import Repeat from '../../assets/images/repeat.svg';
 
+import SoundPlayer from 'react-native-sound-player';
+import song1 from '../../assets/audio/seeyouagain.mp3';
+import Sound from 'react-native-sound';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -88,8 +91,33 @@ const Collection2 = [
 
 const NowPlaying = ({navigation}) => {
   const context = useContext(AppContext);
-  const [play, setPlay] = useState(true);
+  const [play, setPlay] = useState(context.songState);
+  const playSong = () => {
+    if (play === 'stop') {
+      setPlay('play');
+      SoundPlayer.playUrl(
+        'https://cdn.beatzjam.com/wp-content/uploads/2021/Wiz-Khalifa-ft-Charlie-Puth-See-You-Again-(BeatzJam.com).mp3',
+      );
+      context.setSongState('play');
+    }
+    if (play === 'pause') {
+      SoundPlayer.resume();
+      setPlay('play');
+      context.setSongState('play');
+    }
+    if (play === 'play') {
+      SoundPlayer.pause();
+      setPlay('pause');
+      context.setSongState('pause');
+    }
+  };
 
+  const stopSong = () => {
+    SoundPlayer.pause();
+  };
+  useEffect(() => {
+    setPlay(context.songState);
+  }, []);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
@@ -176,15 +204,18 @@ const NowPlaying = ({navigation}) => {
                     size={moderateScale(30, 0.1)}
                   />
                 </Button>
-                {play ? (
+                {play === 'play' ? (
                   <Button
                     size="sm"
-                    onPress={() => setPlay(!play)}
+                    onPress={() => {
+                      setPlay('pause');
+                      stopSong();
+                    }}
                     variant={'link'}
                     zIndex={1000}
                   >
                     <Icon
-                      name="play-circle"
+                      name="pause-circle"
                       color={'#fff'}
                       size={moderateScale(59, 0.1)}
                     />
@@ -192,12 +223,15 @@ const NowPlaying = ({navigation}) => {
                 ) : (
                   <Button
                     size="sm"
-                    onPress={() => setPlay(!play)}
+                    onPress={() => {
+                      setPlay('play');
+                      playSong();
+                    }}
                     variant={'link'}
                     zIndex={1000}
                   >
                     <Icon
-                      name="pause-circle"
+                      name="play-circle"
                       color={'#fff'}
                       size={moderateScale(59, 0.1)}
                     />

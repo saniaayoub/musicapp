@@ -12,7 +12,7 @@ import {
 import React, {useContext, useState} from 'react';
 import s from './style';
 import LinearGradient from 'react-native-linear-gradient';
-import profileimg from '../../assets/images/profileimg.jpg';
+import profileimg from '../../assets/images/profileimg.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';

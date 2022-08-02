@@ -3,12 +3,16 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {moderateScale, s} from 'react-native-size-matters';
 import {createStackNavigator} from '@react-navigation/stack';
+
 // Icons
 import Home from '../assets/images/home.svg';
 import heart from '../assets/images/heart.png';
 import setting from '../assets/images/setting.png';
 import search from '../assets/images/search.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Heart from '../assets/images/heart.svg';
+import Search from '../assets/images/search.svg';
+import Setting from '../assets/images/setting.svg';
 
 // Screens
 import UserHome from '../screens/Home';
@@ -41,7 +45,7 @@ const bottomTabs = () => {
             paddingVertical: moderateScale(5, 0.1),
             backgroundColor: '#000000',
             width: '100%',
-            height: moderateScale(53, 0.1),
+            height: moderateScale(50, 0.1),
             borderTopLeftRadius: moderateScale(25, 0.1),
             borderTopRightRadius: moderateScale(25, 0.1),
             elevation: 0,
@@ -58,7 +62,10 @@ const bottomTabs = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>
-              <Home />
+              <Home
+                width={moderateScale(25, 0.1)}
+                height={moderateScale(25, 0.1)}
+              />
             </View>
           ),
         }}
@@ -69,7 +76,11 @@ const bottomTabs = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>
-              <Image source={heart} />
+              {/* <Image source={heart} /> */}
+              <Heart
+                width={moderateScale(25, 0.1)}
+                height={moderateScale(25, 0.1)}
+              />
             </View>
           ),
         }}
@@ -80,7 +91,11 @@ const bottomTabs = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>
-              <Image source={search} />
+              {/* <Image source={search} /> */}
+              <Search
+                width={moderateScale(25, 0.1)}
+                height={moderateScale(25, 0.1)}
+              />
             </View>
           ),
         }}
@@ -91,7 +106,11 @@ const bottomTabs = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>
-              <Image source={setting} />
+              {/* <Image source={setting} /> */}
+              <Setting
+                width={moderateScale(25, 0.1)}
+                height={moderateScale(25, 0.1)}
+              />
             </View>
           ),
         }}
