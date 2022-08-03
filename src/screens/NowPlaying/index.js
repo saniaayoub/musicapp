@@ -25,13 +25,12 @@ import Playbutton from '../../assets/images/playbutton.svg';
 import backarrow from '../../assets/images/backarrow.png';
 import nowplay from '../../assets/images/nowplay.png';
 import Repeat from '../../assets/images/repeat.svg';
-
+import moment from "moment";
 import SoundPlayer from 'react-native-sound-player';
 import song1 from '../../assets/audio/seeyouagain.mp3';
 import Sound from 'react-native-sound';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
 const Collection2 = [
   {
     id: 1,
@@ -92,9 +91,18 @@ const Collection2 = [
 const NowPlaying = ({navigation}) => {
   const context = useContext(AppContext);
   const [play, setPlay] = useState(context.songState);
+  const [duration, setDuration] = useState([]);
+  const [currentTime, setCurrentTime] = useState([]);
+  const [unFormatcurrentTime, setunFormatcurrentTime] = useState([]);
+
+  
+  
   const playSong = () => {
     if (play === 'stop') {
       setPlay('play');
+      setTimeout(() => {
+        getInfo();
+      },500);
       SoundPlayer.playUrl(
         'https://cdn.beatzjam.com/wp-content/uploads/2021/Wiz-Khalifa-ft-Charlie-Puth-See-You-Again-(BeatzJam.com).mp3',
       );
@@ -103,6 +111,9 @@ const NowPlaying = ({navigation}) => {
     if (play === 'pause') {
       SoundPlayer.resume();
       setPlay('play');
+      setTimeout(() => {
+        getInfo();
+      },500);
       context.setSongState('play');
     }
     if (play === 'play') {
@@ -118,14 +129,25 @@ const NowPlaying = ({navigation}) => {
   useEffect(() => {
     setPlay(context.songState);
   }, []);
+  async function getInfo() {
+    try {
+      const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
+      console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
+      setunFormatcurrentTime(info.currentTime)
+      setDuration(moment.utc(info.duration *1000).format('mm:ss'));
+      setCurrentTime(moment.utc(info.currentTime *1000).format('mm:ss'))
+      
+    } catch (e) {
+      console.log('There is no song playing', e);
+    }
+  }
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
-          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
-        >
+          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}>
           <View style={[s.container]}>
             <View style={s.backbutton}>
               <Button
@@ -135,8 +157,7 @@ const NowPlaying = ({navigation}) => {
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
-                zIndex={1000}
-              >
+                zIndex={1000}>
                 <Image source={backarrow} resizeMode="contain" />
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
@@ -170,10 +191,17 @@ const NowPlaying = ({navigation}) => {
                   </View>
                 </View>
 
-                <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                <Slider
+                value={Number(unFormatcurrentTime)}
+                onValueChange={sliderValue => console.log("hello")}
+                step={1}
+                maximumValue={1000}
+                  thumbStyle={s.thumb}
+                  trackStyle={s.track}
+                />
                 <View style={s.timer}>
-                  <Text style={s.text2}>01.20</Text>
-                  <Text style={s.text2}>03.40</Text>
+                  <Text style={[s.text2,{fontSize:20}]}>{currentTime}</Text>
+                  <Text style={[s.text2,{fontSize:20}]}>{duration}</Text>
                 </View>
               </View>
 
@@ -182,8 +210,7 @@ const NowPlaying = ({navigation}) => {
                   size="sm"
                   // onPress={() => navigation.goBack()}
                   variant={'link'}
-                  zIndex={1000}
-                >
+                  zIndex={1000}>
                   <Icon
                     name="random"
                     color={'#fff'}
@@ -196,8 +223,7 @@ const NowPlaying = ({navigation}) => {
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(20, 0.1)}
-                  marginRight={moderateScale(-20, 0.1)}
-                >
+                  marginRight={moderateScale(-20, 0.1)}>
                   <Icon
                     name="backward"
                     color={'#fff'}
@@ -212,8 +238,7 @@ const NowPlaying = ({navigation}) => {
                       stopSong();
                     }}
                     variant={'link'}
-                    zIndex={1000}
-                  >
+                    zIndex={1000}>
                     <Icon
                       name="pause-circle"
                       color={'#fff'}
@@ -228,8 +253,7 @@ const NowPlaying = ({navigation}) => {
                       playSong();
                     }}
                     variant={'link'}
-                    zIndex={1000}
-                  >
+                    zIndex={1000}>
                     <Icon
                       name="play-circle"
                       color={'#fff'}
@@ -243,8 +267,7 @@ const NowPlaying = ({navigation}) => {
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(-20, 0.1)}
-                  marginRight={moderateScale(20, 0.1)}
-                >
+                  marginRight={moderateScale(20, 0.1)}>
                   <Icon
                     name="forward"
                     color={'#fff'}
@@ -255,8 +278,7 @@ const NowPlaying = ({navigation}) => {
                   size="sm"
                   // onPress={() => navigation.goBack()}
                   variant={'link'}
-                  zIndex={1000}
-                >
+                  zIndex={1000}>
                   <Repeat
                     width={moderateScale(24, 0.1)}
                     height={moderateScale(24, 0.1)}

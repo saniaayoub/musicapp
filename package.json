@@ -15,6 +15,7 @@
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/stack": "^6.2.2",
     "fbjs": "^3.0.4",
+    "moment": "^2.29.4",
     "native-base": "^3.4.9",
     "react": "17.0.2",
     "react-native": "0.68.2",
