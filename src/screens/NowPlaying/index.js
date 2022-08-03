@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import AppContext from '../../Providers/AppContext';
-import Slider from 'react-native-slider';
+// import Slider from 'react-native-slider';
 import nowplayback from '../../assets/images/nowpb.png';
 import play from '../../assets/images/play.png';
 import Playbutton from '../../assets/images/playbutton.svg';
@@ -36,41 +36,42 @@ const height = Dimensions.get('window').height;
 
 const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
+  console.log(route.params.data);
   const [data, setData] = useState(route.params?.data);
   const [allSongs, setAllSongs] = useState(context.songs);
   const [play, setPlay] = useState('stop');
   const [random, setRandom] = useState(false);
   const [loop, setLoop] = useState(false);
   const [fav, setFav] = useState(route.params?.data?.fav);
-  const [favList, setFavList] = useState(context.favList);
-  const [unFormatcurrentTime, setunFormatcurrentTime] = useState([]);
-  const [currentTime, setCurrentTime] = useState([]);
-  const [duration, setDuration] = useState([]);
+  // const [favList, setFavList] = useState(context.favList);
+  // const [unFormatcurrentTime, setunFormatcurrentTime] = useState([]);
+  // const [currentTime, setCurrentTime] = useState([]);
+  // const [duration, setDuration] = useState([]);
 
-  const playSong = url => {
-    if (play === 'stop') {
-      setPlay('play');
-      SoundPlayer.playUrl(url);
-      context.setSongState('play');
-    }
-    if (play === 'pause') {
-      SoundPlayer.resume();
-      setPlay('play');
-      setTimeout(() => {
-        getInfo();
-      }, 500);
-      context.setSongState('play');
-    }
-    if (play === 'play') {
-      SoundPlayer.pause();
-      setPlay('pause');
-      context.setSongState('pause');
-    }
-  };
+  // const playSong = url => {
+  //   if (play === 'stop') {
+  //     setPlay('play');
+  //     SoundPlayer.playUrl(url);
+  //     context.setSongState('play');
+  //   }
+  //   if (play === 'pause') {
+  //     SoundPlayer.resume();
+  //     setPlay('play');
+  //     setTimeout(() => {
+  //       getInfo();
+  //     }, 500);
+  //     context.setSongState('play');
+  //   }
+  //   if (play === 'play') {
+  //     SoundPlayer.pause();
+  //     setPlay('pause');
+  //     context.setSongState('pause');
+  //   }
+  // };
 
-  const stopSong = () => {
-    SoundPlayer.pause();
-  };
+  // const stopSong = () => {
+  //   SoundPlayer.pause();
+  // };
 
   const addToFavList = data => {
     let tempArray = [];
@@ -103,45 +104,30 @@ const NowPlaying = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    setPlay('stop');
+    // setPlay('stop');
     // SoundPlayer.stop();
-    playSong(data.url);
+    // playSong(data.url);
   }, []);
-  async function getInfo() {
-    try {
-      const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
-<<<<<<< HEAD
-      console.log(
-        'getInfo',
-        info,
-        moment.utc(info.duration * 1000).format('mm:ss'),
-      );
-      setInterval(() => {
-        setunFormatcurrentTime(info.currentTime);
-        setDuration(moment.utc(info.duration * 1000).format('mm:ss'));
-        console.log(unFormatcurrentTime);
-      });
-      setCurrentTime(moment.utc(info.currentTime * 1000).format('mm:ss'));
-=======
-      // console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
-      setDuration(moment.utc(info.duration *1000).format('mm:ss'));
-      const timer = window.setInterval(async() => {
-        const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
-        const currenttime = info.currentTime
-        const unForcurrenttime = info.currentTime
-        setCurrentTime(moment.utc(info.currentTime *1000).format('mm:ss'))
-        setunFormatcurrentTime(info.currentTime)
-        //   setTimeout(() => {
-        //   console.log(unForcurrenttime);
-        // }, 2000);
-        // window.clearInterval(timer);
-      });
-      
->>>>>>> 0d9291a6d31329fb9ddf091a2fd2564be6c228fd
-    } catch (e) {
-      console.log('There is no song playing', e);
-    }
-  }
+  // async function getInfo() {
+  //   try {
+  //     const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
+  //     // console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
+  //     setDuration(moment.utc(info.duration * 1000).format('mm:ss'));
+  //     const timer = window.setInterval(async () => {
+  //       const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
+  //       const currenttime = info.currentTime;
+  //       const unForcurrenttime = info.currentTime;
+  //       setCurrentTime(moment.utc(info.currentTime * 1000).format('mm:ss'));
+  //       setunFormatcurrentTime(info.currentTime);
+  //       //   setTimeout(() => {
+  //       //   console.log(unForcurrenttime);
+  //       // }, 2000);
+  //       // window.clearInterval(timer);
+  //     });
+  //   } catch (e) {
+  //     console.log('There is no song playing', e);
+  //   }
+  // }
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
@@ -205,13 +191,13 @@ const NowPlaying = ({navigation, route}) => {
                     >
                       {fav ? (
                         <Icon
-                          name={'heart-o'}
+                          name={'heart'}
                           color={'#fff'}
                           size={moderateScale(20, 0.1)}
                         />
                       ) : (
                         <Icon
-                          name={'heart'}
+                          name={'heart-o'}
                           color={'#fff'}
                           size={moderateScale(20, 0.1)}
                         />
@@ -220,17 +206,19 @@ const NowPlaying = ({navigation, route}) => {
                   </View>
                 </View>
 
-                <Slider
+                {/* <Slider
                   value={Number(unFormatcurrentTime)}
                   onValueChange={sliderValue => console.log('hello')}
                   step={1}
                   maximumValue={1000}
                   thumbStyle={s.thumb}
                   trackStyle={s.track}
-                />
+                /> */}
                 <View style={s.timer}>
-                  <Text style={[s.text2, {fontSize: 20}]}>{currentTime}</Text>
-                  <Text style={[s.text2, {fontSize: 20}]}>{duration}</Text>
+                  {/* <Text style={[s.text2, {fontSize: 20}]}>{currentTime}</Text>
+                  <Text style={[s.text2, {fontSize: 20}]}>{duration}</Text> */}
+                  <Text style={[s.text2, {fontSize: 20}]}>00.00</Text>
+                  <Text style={[s.text2, {fontSize: 20}]}>03.00</Text>
                 </View>
               </View>
 
@@ -266,7 +254,7 @@ const NowPlaying = ({navigation, route}) => {
                     size="sm"
                     onPress={() => {
                       setPlay('pause');
-                      stopSong();
+                      // stopSong();
                     }}
                     variant={'link'}
                     zIndex={1000}
@@ -282,7 +270,7 @@ const NowPlaying = ({navigation, route}) => {
                     size="sm"
                     onPress={() => {
                       setPlay('play');
-                      playSong(data.url);
+                      // playSong(data.url);
                     }}
                     variant={'link'}
                     zIndex={1000}

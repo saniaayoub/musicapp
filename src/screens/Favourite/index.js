@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import {Box} from 'native-base';
@@ -22,80 +23,80 @@ import play from '../../assets/images/play.png';
 import Playbutton from '../../assets/images/playbutton.svg';
 import backarrow from '../../assets/images/backarrow.png';
 import AppContext from '../../Providers/AppContext';
+import SoundPlayer from 'react-native-sound-player';
 
-const Collection2 = [
-  {
-    id: 1,
-    image: require('../../assets/images/healing1.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-  {
-    id: 2,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-  {
-    id: 3,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-  {
-    id: 4,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-  {
-    id: 5,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-  {
-    id: 6,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-  {
-    id: 7,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-  {
-    id: 8,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-  {
-    id: 9,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-    play: false,
-  },
-];
 const Favorite = ({navigation}) => {
   const context = useContext(AppContext);
-  const [isPlay, setIsPlay] = useState(false);
-  const [favList, setFavList] = useState(context.favList);
 
+  const [isPlay, setIsPlay] = useState(false);
+  const [favList, setFavList] = useState([]);
+  const [loader, setLoader] = useState(false);
+  const [index, setIndex] = useState(0);
   useEffect(() => {
-    setFavList(context.favList);
-  }, []);
+    getSongs(context.songs);
+    SoundPlayer.stop();
+    context.setSongState('stop');
+  }, [context.songs]);
+
+  const getSongs = songs => {
+    setLoader(true);
+    let tempArray;
+    tempArray = songs.filter(item => item.fav == true);
+    tempArray = tempArray.map(item => {
+      return {...item, play: false};
+    });
+    setFavList(tempArray);
+    setLoader(false);
+  };
+
+  const playSong = item => {
+    setIsPlay(!isPlay);
+
+    //update play pause button
+    setPlayButton(item);
+
+    if (index == item.id) {
+      // If same song
+      console.log('here2');
+      if (context.songState === 'play') {
+        console.log(context.songState);
+        SoundPlayer.pause();
+        context.setSongState('pause');
+      } else if (context.songState === 'pause') {
+        console.log(context.songState);
+        SoundPlayer.resume();
+        context.setSongState('play');
+      }
+    } else {
+      console.log('here1');
+      if (
+        context.songState === 'play' ||
+        context.songState === 'stop' ||
+        context.songState === 'pause'
+      ) {
+        console.log(context.songState);
+        SoundPlayer.stop();
+        SoundPlayer.playUrl(item.url);
+        context.setSongState('play');
+        console.log(index);
+        setIndex(item.id);
+      }
+    }
+  };
+  const setPlayButton = item => {
+    let tempArray;
+    tempArray = favList.map(elem => {
+      if (elem.id === item.id) {
+        return {...elem, play: !elem.play};
+      } else if (elem.id === index) {
+        return {...elem, play: false};
+      } else {
+        return elem;
+      }
+    });
+    setFavList(tempArray);
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -106,6 +107,7 @@ const Favorite = ({navigation}) => {
             end: [0, 1],
           },
         }}
+        flex={1}
       >
         <View style={s.container}>
           <View style={s.fixed}>
@@ -130,69 +132,90 @@ const Favorite = ({navigation}) => {
               </View>
             </View>
           </View>
-          <ScrollView>
-            <View style={s.collection}>
-              {favList.map(item => {
-                return (
-                  <>
-                    <View style={s.item} key={item.id}>
-                      <TouchableOpacity style={s.image}>
-                        <ImageBackground
-                          source={item.image}
-                          resizeMode={'cover'}
-                          width={undefined}
-                          height={undefined}
+          {loader ? (
+            <ActivityIndicator />
+          ) : favList.length ? (
+            <ScrollView
+              style={{marginBottom: moderateScale(20, 0.1)}}
+              contentContainerStyle={{flexGrow: 1}}
+            >
+              <View style={s.collection}>
+                {favList.map(item => {
+                  return (
+                    <>
+                      <View style={s.item} key={item.id}>
+                        <TouchableOpacity
+                          style={s.image}
+                          onPress={() =>
+                            navigation.navigate('Home', {
+                              screen: 'NowPlaying',
+                              params: {data: item},
+                            })
+                          }
                         >
-                          <View style={s.innerView}>
-                            <Image
-                              source={play}
-                              width={undefined}
-                              height={undefined}
-                              resizeMode={'cover'}
-                            />
-                          </View>
-                        </ImageBackground>
-                      </TouchableOpacity>
-                      <View style={s.centerView}>
-                        <View style={s.row}>
-                          <View style={s.descriptionView}>
-                            <Text style={s.text1}>{item.text}</Text>
-                            <Text style={s.text2}>{item.description}</Text>
-                          </View>
-                          <TouchableOpacity
-                            style={s.playbutton}
-                            onPress={() => setIsPlay(!isPlay)}
+                          <ImageBackground
+                            source={item.image}
+                            resizeMode={'cover'}
+                            width={undefined}
+                            height={undefined}
                           >
-                            {isPlay ? (
-                              <Icon
-                                name={'play-circle'}
-                                color={'#fff'}
-                                size={30}
+                            <View style={s.innerView}>
+                              <Image
+                                source={play}
+                                width={undefined}
+                                height={undefined}
+                                resizeMode={'cover'}
                               />
-                            ) : (
-                              <Icon
-                                name={'pause-circle'}
-                                color={'#fff'}
-                                size={30}
-                              />
-                            )}
-                          </TouchableOpacity>
-                        </View>
+                            </View>
+                          </ImageBackground>
+                        </TouchableOpacity>
+                        <View style={s.centerView}>
+                          <View style={s.row}>
+                            <View style={s.descriptionView}>
+                              <Text style={s.text1}>{item.text}</Text>
+                              <Text style={s.text2}>{item.description}</Text>
+                            </View>
+                            <TouchableOpacity
+                              style={s.playbutton}
+                              onPress={() => {
+                                playSong(item);
+                              }}
+                            >
+                              {item.play ? (
+                                <Icon
+                                  name={'pause-circle'}
+                                  color={'#fff'}
+                                  size={30}
+                                />
+                              ) : (
+                                <Icon
+                                  name={'play-circle'}
+                                  color={'#fff'}
+                                  size={30}
+                                />
+                              )}
+                            </TouchableOpacity>
+                          </View>
 
-                        <View style={s.slider}>
-                          <Slider thumbStyle={s.thumb} trackStyle={s.track} />
-                          <View style={s.timer}>
-                            <Text style={s.text2}>00.00</Text>
-                            <Text style={s.text2}>03.20</Text>
+                          <View style={s.slider}>
+                            <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                            <View style={s.timer}>
+                              <Text style={s.text2}>00.00</Text>
+                              <Text style={s.text2}>03.20</Text>
+                            </View>
                           </View>
                         </View>
                       </View>
-                    </View>
-                  </>
-                );
-              })}
+                    </>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          ) : (
+            <View>
+              <Text style={s.empty}>No Songs</Text>
             </View>
-          </ScrollView>
+          )}
         </View>
       </Box>
     </SafeAreaView>

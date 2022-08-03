@@ -13,14 +13,14 @@ import {Box} from 'native-base';
 import s from './style';
 import homeback from '../../assets/images/homeback.png';
 import AppContext from '../../Providers/AppContext';
-
+import Categories from '../../Components/Categories';
 const UserHome = ({navigation}) => {
   const context = useContext(AppContext);
   const [featured, setFeatured] = useState(context.songs);
 
   useEffect(() => {
     setFeatured(context.songs);
-  }, []);
+  }, [context.songs]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -51,7 +51,7 @@ const UserHome = ({navigation}) => {
             {/**** Collection *****/}
             <View style={s.collection}>
               <FlatList
-                data={featured}
+                data={Categories}
                 numColumns={3}
                 renderItem={({item, index, separators}) => (
                   <>
@@ -66,7 +66,7 @@ const UserHome = ({navigation}) => {
                         height={undefined}
                       >
                         <View style={s.innerView}>
-                          <Text style={s.imgtext}>{item.text}</Text>
+                          <Text style={s.imgtext}>{item.category}</Text>
                         </View>
                       </ImageBackground>
                     </TouchableOpacity>
