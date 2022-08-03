@@ -41,7 +41,7 @@ const NowPlaying = ({navigation, route}) => {
   const [play, setPlay] = useState('stop');
   const [random, setRandom] = useState(false);
   const [loop, setLoop] = useState(false);
-  const [fav, setFav] = useState(false);
+  const [fav, setFav] = useState(route.params?.data?.fav);
   const [favList, setFavList] = useState(context.favList);
   const [unFormatcurrentTime, setunFormatcurrentTime] = useState([]);
   const [currentTime, setCurrentTime] = useState([]);
