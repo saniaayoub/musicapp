@@ -33,191 +33,86 @@ import song1 from '../../assets/audio/seeyouagain.mp3';
 import Sound from 'react-native-sound';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-let timeout;
+
 const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
+  console.log(route.params.data);
   const [data, setData] = useState(route.params?.data);
   const [allSongs, setAllSongs] = useState(context.songs);
-  const [play, setPlay] = useState('stop');
+
   const [random, setRandom] = useState(false);
   const [loop, setLoop] = useState(false);
-  const [fav, setFav] = useState(false);
-  const [favList, setFavList] = useState(context.favList);
-  const [unFormatcurrentTime, setunFormatcurrentTime] = useState([]);
-  const [unFormatduration, setunFormatduration] = useState([]);
-  const [currentTime, setCurrentTime] = useState([]);
-  const [duration, setDuration] = useState([]);
-  const playSong = url => {
-    if (play === 'stop') {
-      setPlay('play');
-      SoundPlayer.playUrl(url);
-      context.setSongState('play');
-    }
-    if (play === 'pause') {
-      SoundPlayer.resume();
-      setPlay('play');
-      setTimeout(() => {
-        getInfo();
-      }, 500);
-      context.setSongState('play');
-    }
-    if (play === 'play') {
-      SoundPlayer.pause();
-      setPlay('pause');
-      context.setSongState('pause');
-    }
-  };
+  const [fav, setFav] = useState(route.params?.data?.fav);
+  // const [favList, setFavList] = useState(context.favList);
+  // const [unFormatcurrentTime, setunFormatcurrentTime] = useState([]);
+  // const [currentTime, setCurrentTime] = useState([]);
+  // const [duration, setDuration] = useState([]);
 
-  const stopSong = () => {
-    SoundPlayer.pause();
-  };
+  // const playSong = url => {
+  //   if (play === 'stop') {
+  //     setPlay('play');
+  //     SoundPlayer.playUrl(url);
+  //     context.setSongState('play');
+  //   }
+  //   if (play === 'pause') {
+  //     SoundPlayer.resume();
+  //     setPlay('play');
+  //     setTimeout(() => {
+  //       getInfo();
+  //     }, 500);
+  //     context.setSongState('play');
+  //   }
+  //   if (play === 'play') {
+  //     SoundPlayer.pause();
+  //     setPlay('pause');
+  //     context.setSongState('pause');
+  //   }
+  // };
+
+  // const stopSong = () => {
+  //   SoundPlayer.pause();
+  // };
 
   const addToFavList = data => {
+    let tempArray = [];
+    console.log(allSongs);
     setFav(true);
-    context.setFavList([...context.favList, data]);
-    setTimeout(() => {
-      console.log(favList);
-    }, 2000);
+    tempArray = allSongs.map(item => {
+      if (item.id === data.id) {
+        return {...item, fav: true};
+      } else {
+        return item;
+      }
+    });
+    context.setSongs(tempArray);
+    setAllSongs(tempArray);
   };
 
   const remFromList = data => {
-    setFav(false);
     let tempArray = [];
-
-    tempArray = allSongs.map(elem => {
-      if (elem.id === data.id) {
-        data.fav = false;
+    console.log(allSongs);
+    setFav(false);
+    tempArray = allSongs.map(item => {
+      if (item.id === data.id) {
+        return {...item, fav: false};
+      } else {
+        return item;
       }
     });
-    context.setFavList(tempArray);
-    console.log(tempArray);
+    context.setSongs(tempArray);
+    setAllSongs(tempArray);
   };
 
-  useEffect(() => {
-    setPlay('stop');
-    SoundPlayer.stop();
-    playSong(data.url);
-  }, []);
-  useEffect(() => {
-    getInfo();
-  }, [duration]);
-  function seekPlayer(sliderValue) {
-    console.log(sliderValue);
-    SoundPlayer.seek(sliderValue);
-  }
-  async function getInfo() {
-    try {
-      const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
-      // console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
-      setunFormatduration(info.duration);
-      setDuration(moment.utc(info.duration * 1000).format('mm:ss'));
-      // const timer = window.setInterval(async() => {
-      //   const info = await SoundPlayer.getInfo();
-      // const unForcurrenttime = info.currentTime
-      setCurrentTime([...moment.utc(info.currentTime * 1000).format('mm:ss')]);
-      setunFormatcurrentTime(info.currentTime);
-      //   // setTimeout(() => {
-      //   //   console.log(unForcurrenttime);
-      //   // }, 2000);
-      // });
-      SoundPlayer.onFinishedPlaying(e => {
-        if (e.success == true) {
-          // window.clearInterval(timer);
-          setPlay('pause');
-        }
-      });
-    } catch (e) {
-      console.log('There is no song playing', e);
-    }
-  }
-  useEffect(() => {
-    // clearTimeout(timeout);
-    getSongPosition()
-    // setInterval(getSongPosition, 1000);
-    console.log(currentTime);
-  }, [currentTime]);
-  async function getSongPosition() {
-    // setCurrentTime([])
-    try {
-      // const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
-      // console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
+  useEffect(() => {}, []);
 
-      // const timer = window.setInterval(async() => {
-      const info = await SoundPlayer.getInfo();
-      // const unForcurrenttime = info.currentTime
-      setCurrentTime([...moment.utc(info.currentTime * 1000).format('mm:ss')]);
-      // setunFormatcurrentTime(info.currentTime)
-      setunFormatcurrentTime(info.currentTime);
-      // setTimeout(() => {
-      //   console.log(unForcurrenttime);
-      // }, 2000);
-      // });
-      SoundPlayer.onFinishedPlaying(e => {
-        if (e.success == true) {
-          // window.clearInterval(timer);
-          setPlay('pause');
-        }
-      });
-    } catch (e) {
-      console.log('There is no song playing', e);
-    }
-  }
-  // async function loopFunc(){
-  SoundPlayer.onFinishedPlaying(e => {
-    if (loop == true) {
-      if (e.success == true) {
-        SoundPlayer.playUrl(data.url);
-      }
-    }
-  });
-  function randomFunc() {
-    if (random == false) {
-      setAllSongs(allSongs.sort(() => 0.5 - Math.random()));
-      console.log(allSongs);
-    }
-    if (random == true) {
-      const srotedSongs = context.songs.sort(function (a, b) {
-        return -(b.id - a.id);
-      });
-      setAllSongs(srotedSongs);
-    }
-  }
-  // }
-  function previousSong() {
-    allSongs.map((song, i) => {
-      if (song.id == data.id) {
-        i--;
-        const currentSong = allSongs[i];
-        SoundPlayer.playUrl(allSongs[i].url);
-        setData(currentSong);
-        setTimeout(() => {
-          console.log(data);
-        }, 1000);
-      }
-    });
-    getInfo();
-  }
-  function nextSong() {
-    allSongs.map((song, i) => {
-      if (song.id == data.id) {
-        i++;
-        const currentSong = allSongs[i];
-        SoundPlayer.playUrl(allSongs[i].url);
-        setData(currentSong);
-        setTimeout(() => {
-          console.log(data);
-        }, 1000);
-      }
-    });
-    getInfo();
-  }
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
-          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}>
+          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
+        >
           <View style={[s.container]}>
             <View style={s.backbutton}>
               <Button
@@ -227,7 +122,8 @@ const NowPlaying = ({navigation, route}) => {
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
-                zIndex={1000}>
+                zIndex={1000}
+              >
                 <Image source={backarrow} resizeMode="contain" />
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
@@ -242,10 +138,9 @@ const NowPlaying = ({navigation, route}) => {
               <View style={s.section}>
                 <View style={s.imageTop}>
                   <Image
-                    source={data.image}
+                    source={nowplayback}
                     width={undefined}
                     height={undefined}
-                    style={s.ImageTopImg}
                     resizeMode={'cover'}
                   />
                   <View style={s.descriptionViewTop}>
@@ -265,12 +160,13 @@ const NowPlaying = ({navigation, route}) => {
                       size="sm"
                       onPress={() => {
                         {
-                          data.fav ? remFromList(data) : addToFavList(data);
+                          fav ? remFromList(data) : addToFavList(data);
                         }
                       }}
                       variant={'link'}
-                      zIndex={1000}>
-                      {data.fav ? (
+                      zIndex={1000}
+                    >
+                      {fav ? (
                         <Icon
                           name={'heart'}
                           color={'#fff'}
@@ -288,28 +184,28 @@ const NowPlaying = ({navigation, route}) => {
                 </View>
 
                 <Slider
-                value={Number(unFormatcurrentTime)}
-                onValueChange={sliderValue => seekPlayer(sliderValue)}
-                step={0.1}
-                maximumValue={Number(unFormatduration)}
+                  // value={Number(unFormatcurrentTime)}
+                  // onValueChange={sliderValue => console.log('hello')}
+                  // step={1}
+                  maximumValue={1000}
                   thumbStyle={s.thumb}
                   trackStyle={s.track}
                 />
                 <View style={s.timer}>
-                  <Text style={[s.text2, {fontSize: 20}]}>{currentTime}</Text>
-                  <Text style={[s.text2, {fontSize: 20}]}>{duration}</Text>
+                  {/* <Text style={[s.text2, {fontSize: 20}]}>{currentTime}</Text>
+                  <Text style={[s.text2, {fontSize: 20}]}>{duration}</Text> */}
+                  <Text style={[s.text2, {fontSize: 20}]}>00.00</Text>
+                  <Text style={[s.text2, {fontSize: 20}]}>03.00</Text>
                 </View>
               </View>
 
               <View style={[s.centerView1, s.row]}>
                 <Button
                   size="sm"
-                  onPress={() => {
-                    setRandom(!random);
-                    randomFunc();
-                  }}
+                  onPress={() => setRandom(!random)}
                   variant={'link'}
-                  zIndex={1000}>
+                  zIndex={1000}
+                >
                   <Icon
                     name="random"
                     color={random ? '#fff' : '#808080'}
@@ -318,11 +214,12 @@ const NowPlaying = ({navigation, route}) => {
                 </Button>
                 <Button
                   size="sm"
-                  onPress={() => previousSong()}
+                  // onPress={() => navigation.goBack()}
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(20, 0.1)}
-                  marginRight={moderateScale(-20, 0.1)}>
+                  marginRight={moderateScale(-20, 0.1)}
+                >
                   <Icon
                     name="backward"
                     color={'#fff'}
@@ -334,10 +231,11 @@ const NowPlaying = ({navigation, route}) => {
                     size="sm"
                     onPress={() => {
                       setPlay('pause');
-                      stopSong();
+                      // stopSong();
                     }}
                     variant={'link'}
-                    zIndex={1000}>
+                    zIndex={1000}
+                  >
                     <Icon
                       name="pause-circle"
                       color={'#fff'}
@@ -349,10 +247,11 @@ const NowPlaying = ({navigation, route}) => {
                     size="sm"
                     onPress={() => {
                       setPlay('play');
-                      playSong(data.url);
+                      // playSong(data.url);
                     }}
                     variant={'link'}
-                    zIndex={1000}>
+                    zIndex={1000}
+                  >
                     <Icon
                       name="play-circle"
                       color={'#fff'}
@@ -362,11 +261,12 @@ const NowPlaying = ({navigation, route}) => {
                 )}
                 <Button
                   size="sm"
-                  onPress={() => nextSong()}
+                  // onPress={() => navigation.goBack()}
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(-20, 0.1)}
-                  marginRight={moderateScale(20, 0.1)}>
+                  marginRight={moderateScale(20, 0.1)}
+                >
                   <Icon
                     name="forward"
                     color={'#fff'}
@@ -377,7 +277,8 @@ const NowPlaying = ({navigation, route}) => {
                   size="sm"
                   onPress={() => setLoop(!loop)}
                   variant={'link'}
-                  zIndex={1000}>
+                  zIndex={1000}
+                >
                   {loop ? (
                     <Repeat
                       width={moderateScale(24, 0.1)}

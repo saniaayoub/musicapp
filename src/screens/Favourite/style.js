@@ -74,6 +74,11 @@ const styles = StyleSheet.create({
   slider: {
     marginTop: moderateScale(-5, 0.1),
   },
+  empty: {
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: InterRegular,
+  },
   timer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

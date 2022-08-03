@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     // alignItems: 'center',
     // flexDirection: 'column',
+
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 
