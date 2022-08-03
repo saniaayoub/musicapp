@@ -20,8 +20,8 @@ const UserHome = ({navigation}) => {
 
   useEffect(() => {
     setFeatured(context.songs);
-    console.log(featured);
   }, []);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={{width: '100%'}}>

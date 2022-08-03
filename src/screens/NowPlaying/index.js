@@ -28,7 +28,7 @@ import Repeat from '../../assets/images/repeat.svg';
 import Loop from '../../assets/images/loopgrey.svg';
 import SoundPlayer from 'react-native-sound-player';
 import Heart from '../../assets/images/heart.svg';
-import moment from "moment";
+import moment from 'moment';
 import song1 from '../../assets/audio/seeyouagain.mp3';
 import Sound from 'react-native-sound';
 const width = Dimensions.get('window').width;
@@ -43,9 +43,10 @@ const NowPlaying = ({navigation, route}) => {
   const [loop, setLoop] = useState(false);
   const [fav, setFav] = useState(false);
   const [favList, setFavList] = useState(context.favList);
-  const [unFormatcurrentTime, setunFormatcurrentTime] = useState([])
-  const [currentTime, setCurrentTime] = useState([])
-  const [duration, setDuration] = useState([])
+  const [unFormatcurrentTime, setunFormatcurrentTime] = useState([]);
+  const [currentTime, setCurrentTime] = useState([]);
+  const [duration, setDuration] = useState([]);
+
   const playSong = url => {
     if (play === 'stop') {
       setPlay('play');
@@ -57,7 +58,7 @@ const NowPlaying = ({navigation, route}) => {
       setPlay('play');
       setTimeout(() => {
         getInfo();
-      },500);
+      }, 500);
       context.setSongState('play');
     }
     if (play === 'play') {
@@ -72,42 +73,54 @@ const NowPlaying = ({navigation, route}) => {
   };
 
   const addToFavList = data => {
+    let tempArray = [];
+    console.log(allSongs);
     setFav(true);
-    context.setFavList([...context.favList, data]);
-    setTimeout(() => {
-      console.log(favList);
-    }, 2000);
+    tempArray = allSongs.map(item => {
+      if (item.id === data.id) {
+        return {...item, fav: true};
+      } else {
+        return item;
+      }
+    });
+    context.setSongs(tempArray);
+    setAllSongs(tempArray);
   };
 
   const remFromList = data => {
-    setFav(false);
     let tempArray = [];
-
-    tempArray = allSongs.map(elem => {
-      if (elem.id === data.id) {
-        data.fav = false;
+    console.log(allSongs);
+    setFav(false);
+    tempArray = allSongs.map(item => {
+      if (item.id === data.id) {
+        return {...item, fav: false};
+      } else {
+        return item;
       }
     });
-    context.setFavList(tempArray);
-    console.log(tempArray);
+    context.setSongs(tempArray);
+    setAllSongs(tempArray);
   };
 
   useEffect(() => {
     setPlay('stop');
-    SoundPlayer.stop();
+    // SoundPlayer.stop();
     playSong(data.url);
   }, []);
   async function getInfo() {
     try {
       const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
-      console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
+      console.log(
+        'getInfo',
+        info,
+        moment.utc(info.duration * 1000).format('mm:ss'),
+      );
       setInterval(() => {
-        setunFormatcurrentTime(info.currentTime)
-        setDuration(moment.utc(info.duration *1000).format('mm:ss'));
+        setunFormatcurrentTime(info.currentTime);
+        setDuration(moment.utc(info.duration * 1000).format('mm:ss'));
         console.log(unFormatcurrentTime);
       });
-      setCurrentTime(moment.utc(info.currentTime *1000).format('mm:ss'))
-      
+      setCurrentTime(moment.utc(info.currentTime * 1000).format('mm:ss'));
     } catch (e) {
       console.log('There is no song playing', e);
     }
@@ -118,7 +131,8 @@ const NowPlaying = ({navigation, route}) => {
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
-          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}>
+          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
+        >
           <View style={[s.container]}>
             <View style={s.backbutton}>
               <Button
@@ -128,7 +142,8 @@ const NowPlaying = ({navigation, route}) => {
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
-                zIndex={1000}>
+                zIndex={1000}
+              >
                 <Image source={backarrow} resizeMode="contain" />
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
@@ -165,21 +180,21 @@ const NowPlaying = ({navigation, route}) => {
                       size="sm"
                       onPress={() => {
                         {
-                          data.fav ? remFromList(data) : addToFavList(data);
+                          fav ? remFromList(data) : addToFavList(data);
                         }
                       }}
                       variant={'link'}
                       zIndex={1000}
                     >
-                      {data.fav ? (
+                      {fav ? (
                         <Icon
-                          name={'heart'}
+                          name={'heart-o'}
                           color={'#fff'}
                           size={moderateScale(20, 0.1)}
                         />
                       ) : (
                         <Icon
-                          name={'heart-o'}
+                          name={'heart'}
                           color={'#fff'}
                           size={moderateScale(20, 0.1)}
                         />
@@ -189,16 +204,16 @@ const NowPlaying = ({navigation, route}) => {
                 </View>
 
                 <Slider
-                value={Number(unFormatcurrentTime)}
-                onValueChange={sliderValue => console.log("hello")}
-                step={1}
-                maximumValue={1000}
+                  value={Number(unFormatcurrentTime)}
+                  onValueChange={sliderValue => console.log('hello')}
+                  step={1}
+                  maximumValue={1000}
                   thumbStyle={s.thumb}
                   trackStyle={s.track}
                 />
                 <View style={s.timer}>
-                  <Text style={[s.text2,{fontSize:20}]}>{currentTime}</Text>
-                  <Text style={[s.text2,{fontSize:20}]}>{duration}</Text>
+                  <Text style={[s.text2, {fontSize: 20}]}>{currentTime}</Text>
+                  <Text style={[s.text2, {fontSize: 20}]}>{duration}</Text>
                 </View>
               </View>
 
@@ -207,7 +222,8 @@ const NowPlaying = ({navigation, route}) => {
                   size="sm"
                   onPress={() => setRandom(!random)}
                   variant={'link'}
-                  zIndex={1000}>
+                  zIndex={1000}
+                >
                   <Icon
                     name="random"
                     color={random ? '#fff' : '#808080'}
@@ -220,7 +236,8 @@ const NowPlaying = ({navigation, route}) => {
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(20, 0.1)}
-                  marginRight={moderateScale(-20, 0.1)}>
+                  marginRight={moderateScale(-20, 0.1)}
+                >
                   <Icon
                     name="backward"
                     color={'#fff'}
@@ -235,7 +252,8 @@ const NowPlaying = ({navigation, route}) => {
                       stopSong();
                     }}
                     variant={'link'}
-                    zIndex={1000}>
+                    zIndex={1000}
+                  >
                     <Icon
                       name="pause-circle"
                       color={'#fff'}
@@ -250,7 +268,8 @@ const NowPlaying = ({navigation, route}) => {
                       playSong(data.url);
                     }}
                     variant={'link'}
-                    zIndex={1000}>
+                    zIndex={1000}
+                  >
                     <Icon
                       name="play-circle"
                       color={'#fff'}
@@ -264,7 +283,8 @@ const NowPlaying = ({navigation, route}) => {
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(-20, 0.1)}
-                  marginRight={moderateScale(20, 0.1)}>
+                  marginRight={moderateScale(20, 0.1)}
+                >
                   <Icon
                     name="forward"
                     color={'#fff'}
