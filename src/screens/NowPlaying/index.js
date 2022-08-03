@@ -100,13 +100,19 @@ const NowPlaying = ({navigation, route}) => {
   async function getInfo() {
     try {
       const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
-      console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
-      setInterval(() => {
+      // console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
+      setDuration(moment.utc(info.duration *1000).format('mm:ss'));
+      const timer = window.setInterval(async() => {
+        const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
+        const currenttime = info.currentTime
+        const unForcurrenttime = info.currentTime
+        setCurrentTime(moment.utc(info.currentTime *1000).format('mm:ss'))
         setunFormatcurrentTime(info.currentTime)
-        setDuration(moment.utc(info.duration *1000).format('mm:ss'));
-        console.log(unFormatcurrentTime);
+        //   setTimeout(() => {
+        //   console.log(unForcurrenttime);
+        // }, 2000);
+        // window.clearInterval(timer);
       });
-      setCurrentTime(moment.utc(info.currentTime *1000).format('mm:ss'))
       
     } catch (e) {
       console.log('There is no song playing', e);
