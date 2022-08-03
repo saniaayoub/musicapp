@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import AppContext from '../../Providers/AppContext';
-// import Slider from 'react-native-slider';
+import Slider from 'react-native-slider';
 import nowplayback from '../../assets/images/nowpb.png';
 import play from '../../assets/images/play.png';
 import Playbutton from '../../assets/images/playbutton.svg';
@@ -39,7 +39,7 @@ const NowPlaying = ({navigation, route}) => {
   console.log(route.params.data);
   const [data, setData] = useState(route.params?.data);
   const [allSongs, setAllSongs] = useState(context.songs);
-  const [play, setPlay] = useState('stop');
+
   const [random, setRandom] = useState(false);
   const [loop, setLoop] = useState(false);
   const [fav, setFav] = useState(route.params?.data?.fav);
@@ -103,31 +103,8 @@ const NowPlaying = ({navigation, route}) => {
     setAllSongs(tempArray);
   };
 
-  useEffect(() => {
-    // setPlay('stop');
-    // SoundPlayer.stop();
-    // playSong(data.url);
-  }, []);
-  // async function getInfo() {
-  //   try {
-  //     const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
-  //     // console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
-  //     setDuration(moment.utc(info.duration * 1000).format('mm:ss'));
-  //     const timer = window.setInterval(async () => {
-  //       const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
-  //       const currenttime = info.currentTime;
-  //       const unForcurrenttime = info.currentTime;
-  //       setCurrentTime(moment.utc(info.currentTime * 1000).format('mm:ss'));
-  //       setunFormatcurrentTime(info.currentTime);
-  //       //   setTimeout(() => {
-  //       //   console.log(unForcurrenttime);
-  //       // }, 2000);
-  //       // window.clearInterval(timer);
-  //     });
-  //   } catch (e) {
-  //     console.log('There is no song playing', e);
-  //   }
-  // }
+  useEffect(() => {}, []);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
@@ -206,19 +183,19 @@ const NowPlaying = ({navigation, route}) => {
                   </View>
                 </View>
 
-                {/* <Slider
-                  value={Number(unFormatcurrentTime)}
-                  onValueChange={sliderValue => console.log('hello')}
-                  step={1}
+                <Slider
+                  // value={Number(unFormatcurrentTime)}
+                  // onValueChange={sliderValue => console.log('hello')}
+                  // step={1}
                   maximumValue={1000}
                   thumbStyle={s.thumb}
                   trackStyle={s.track}
-                /> */}
+                />
                 <View style={s.timer}>
                   {/* <Text style={[s.text2, {fontSize: 20}]}>{currentTime}</Text>
                   <Text style={[s.text2, {fontSize: 20}]}>{duration}</Text> */}
-                  <Text style={[s.text2, {fontSize: 20}]}>00.00</Text>
-                  <Text style={[s.text2, {fontSize: 20}]}>03.00</Text>
+                  <Text style={[s.text2, {fontSize: 12}]}>00.00</Text>
+                  <Text style={[s.text2, {fontSize: 12}]}>03.00</Text>
                 </View>
               </View>
 

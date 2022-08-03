@@ -27,63 +27,6 @@ import SoundPlayer from 'react-native-sound-player';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Collection2 = [
-  {
-    id: 1,
-    image: require('../../assets/images/healing1.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 2,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 3,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 4,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 5,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 6,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 7,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 8,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 9,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-];
-
 const Playlist = ({navigation}) => {
   const context = useContext(AppContext);
   const [isPlay, setIsPlay] = useState(false);
@@ -117,28 +60,28 @@ const Playlist = ({navigation}) => {
 
     if (index == item.id) {
       // If same song
-      console.log('here2');
+      //console.log('here2');
       if (context.songState === 'play') {
-        console.log(context.songState);
+        //console.log(context.songState);
         SoundPlayer.pause();
         context.setSongState('pause');
       } else if (context.songState === 'pause') {
-        console.log(context.songState);
+        //console.log(context.songState);
         SoundPlayer.resume();
         context.setSongState('play');
       }
     } else {
-      console.log('here1');
+      //console.log('here1');
       if (
         context.songState === 'play' ||
         context.songState === 'stop' ||
         context.songState === 'pause'
       ) {
-        console.log(context.songState);
+        //console.log(context.songState);
         SoundPlayer.stop();
         SoundPlayer.playUrl(item.url);
         context.setSongState('play');
-        console.log(index);
+        //console.log(index);
         setIndex(item.id);
       }
     }
