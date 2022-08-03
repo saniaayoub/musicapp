@@ -43,7 +43,9 @@ const NowPlaying = ({navigation, route}) => {
   const [loop, setLoop] = useState(false);
   const [fav, setFav] = useState(false);
   const [favList, setFavList] = useState(context.favList);
-
+  const [unFormatcurrentTime, setunFormatcurrentTime] = useState([])
+  const [currentTime, setCurrentTime] = useState([])
+  const [duration, setDuration] = useState([])
   const playSong = url => {
     if (play === 'stop') {
       setPlay('play');
@@ -99,8 +101,11 @@ const NowPlaying = ({navigation, route}) => {
     try {
       const info = await SoundPlayer.getInfo(); // Also, you need to await this because it is async
       console.log('getInfo', info, moment.utc(info.duration *1000).format('mm:ss'));
-      setunFormatcurrentTime(info.currentTime)
-      setDuration(moment.utc(info.duration *1000).format('mm:ss'));
+      setInterval(() => {
+        setunFormatcurrentTime(info.currentTime)
+        setDuration(moment.utc(info.duration *1000).format('mm:ss'));
+        console.log(unFormatcurrentTime);
+      });
       setCurrentTime(moment.utc(info.currentTime *1000).format('mm:ss'))
       
     } catch (e) {
