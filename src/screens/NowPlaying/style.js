@@ -203,6 +203,11 @@ const styles = StyleSheet.create({
   space: {
     marginTop: moderateScale(12, 0.1),
   },
+  heart: {
+    // paddingTop: moderateScale(5, 0.1),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default styles;

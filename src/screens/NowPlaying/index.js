@@ -25,87 +25,29 @@ import Playbutton from '../../assets/images/playbutton.svg';
 import backarrow from '../../assets/images/backarrow.png';
 import nowplay from '../../assets/images/nowplay.png';
 import Repeat from '../../assets/images/repeat.svg';
-import moment from "moment";
+import Loop from '../../assets/images/loopgrey.svg';
 import SoundPlayer from 'react-native-sound-player';
+import Heart from '../../assets/images/heart.svg';
+import moment from "moment";
 import song1 from '../../assets/audio/seeyouagain.mp3';
 import Sound from 'react-native-sound';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const Collection2 = [
-  {
-    id: 1,
-    image: require('../../assets/images/healing1.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 2,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 3,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 4,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 5,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 6,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 7,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 8,
-    image: require('../../assets/images/healing2.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-  {
-    id: 9,
-    image: require('../../assets/images/healing3.png'),
-    text: 'Wait for a minute',
-    description: 'Julie Watson And John Smith ',
-  },
-];
 
-const NowPlaying = ({navigation}) => {
+const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
-  const [play, setPlay] = useState(context.songState);
-  const [duration, setDuration] = useState([]);
-  const [currentTime, setCurrentTime] = useState([]);
-  const [unFormatcurrentTime, setunFormatcurrentTime] = useState([]);
+  const [data, setData] = useState(route.params?.data);
+  const [allSongs, setAllSongs] = useState(context.songs);
+  const [play, setPlay] = useState('stop');
+  const [random, setRandom] = useState(false);
+  const [loop, setLoop] = useState(false);
+  const [fav, setFav] = useState(false);
+  const [favList, setFavList] = useState(context.favList);
 
-  
-  
-  const playSong = () => {
+  const playSong = url => {
     if (play === 'stop') {
       setPlay('play');
-      setTimeout(() => {
-        getInfo();
-      },500);
-      SoundPlayer.playUrl(
-        'https://cdn.beatzjam.com/wp-content/uploads/2021/Wiz-Khalifa-ft-Charlie-Puth-See-You-Again-(BeatzJam.com).mp3',
-      );
+      SoundPlayer.playUrl(url);
       context.setSongState('play');
     }
     if (play === 'pause') {
@@ -126,8 +68,32 @@ const NowPlaying = ({navigation}) => {
   const stopSong = () => {
     SoundPlayer.pause();
   };
+
+  const addToFavList = data => {
+    setFav(true);
+    context.setFavList([...context.favList, data]);
+    setTimeout(() => {
+      console.log(favList);
+    }, 2000);
+  };
+
+  const remFromList = data => {
+    setFav(false);
+    let tempArray = [];
+
+    tempArray = allSongs.map(elem => {
+      if (elem.id === data.id) {
+        data.fav = false;
+      }
+    });
+    context.setFavList(tempArray);
+    console.log(tempArray);
+  };
+
   useEffect(() => {
-    setPlay(context.songState);
+    setPlay('stop');
+    SoundPlayer.stop();
+    playSong(data.url);
   }, []);
   async function getInfo() {
     try {
@@ -178,8 +144,8 @@ const NowPlaying = ({navigation}) => {
                     resizeMode={'cover'}
                   />
                   <View style={s.descriptionViewTop}>
-                    <Text style={s.text1Top}>Wait for a minute</Text>
-                    <Text style={s.text2Top}>Julie Watson And John Smith</Text>
+                    <Text style={s.text1Top}>{data.text}</Text>
+                    <Text style={s.text2Top}>{data.description}</Text>
                   </View>
                 </View>
               </View>
@@ -187,7 +153,33 @@ const NowPlaying = ({navigation}) => {
               <View style={s.centerView}>
                 <View style={s.row}>
                   <View style={s.descriptionView}>
-                    <Text style={s.text1}>Wait for a minute</Text>
+                    <Text style={s.text1}>{data.text}</Text>
+                  </View>
+                  <View style={s.heart}>
+                    <Button
+                      size="sm"
+                      onPress={() => {
+                        {
+                          data.fav ? remFromList(data) : addToFavList(data);
+                        }
+                      }}
+                      variant={'link'}
+                      zIndex={1000}
+                    >
+                      {data.fav ? (
+                        <Icon
+                          name={'heart'}
+                          color={'#fff'}
+                          size={moderateScale(20, 0.1)}
+                        />
+                      ) : (
+                        <Icon
+                          name={'heart-o'}
+                          color={'#fff'}
+                          size={moderateScale(20, 0.1)}
+                        />
+                      )}
+                    </Button>
                   </View>
                 </View>
 
@@ -208,12 +200,12 @@ const NowPlaying = ({navigation}) => {
               <View style={[s.centerView1, s.row]}>
                 <Button
                   size="sm"
-                  // onPress={() => navigation.goBack()}
+                  onPress={() => setRandom(!random)}
                   variant={'link'}
                   zIndex={1000}>
                   <Icon
                     name="random"
-                    color={'#fff'}
+                    color={random ? '#fff' : '#808080'}
                     size={moderateScale(24, 0.1)}
                   />
                 </Button>
@@ -250,7 +242,7 @@ const NowPlaying = ({navigation}) => {
                     size="sm"
                     onPress={() => {
                       setPlay('play');
-                      playSong();
+                      playSong(data.url);
                     }}
                     variant={'link'}
                     zIndex={1000}>
@@ -276,13 +268,21 @@ const NowPlaying = ({navigation}) => {
                 </Button>
                 <Button
                   size="sm"
-                  // onPress={() => navigation.goBack()}
+                  onPress={() => setLoop(!loop)}
                   variant={'link'}
-                  zIndex={1000}>
-                  <Repeat
-                    width={moderateScale(24, 0.1)}
-                    height={moderateScale(24, 0.1)}
-                  />
+                  zIndex={1000}
+                >
+                  {loop ? (
+                    <Repeat
+                      width={moderateScale(24, 0.1)}
+                      height={moderateScale(24, 0.1)}
+                    />
+                  ) : (
+                    <Loop
+                      width={moderateScale(24, 0.1)}
+                      height={moderateScale(24, 0.1)}
+                    />
+                  )}
                 </Button>
               </View>
             </ScrollView>
