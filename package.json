@@ -30,6 +30,7 @@
     "react-native-svg": "^12.4.3",
     "react-native-svg-transformer": "^1.0.0",
     "react-native-text-gradient": "^0.1.7",
+    "react-native-track-player": "^2.1.4",
     "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {

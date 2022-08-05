@@ -154,7 +154,7 @@ const Favorite = ({navigation}) => {
                           }
                         >
                           <ImageBackground
-                            source={item.image}
+                            source={item.artwork}
                             resizeMode={'cover'}
                             width={undefined}
                             height={undefined}
@@ -172,8 +172,8 @@ const Favorite = ({navigation}) => {
                         <View style={s.centerView}>
                           <View style={s.row}>
                             <View style={s.descriptionView}>
-                              <Text style={s.text1}>{item.text}</Text>
-                              <Text style={s.text2}>{item.description}</Text>
+                              <Text style={s.text1}>{item.title}</Text>
+                              <Text style={s.text2}>{item.artist}</Text>
                             </View>
                             <TouchableOpacity
                               style={s.playbutton}

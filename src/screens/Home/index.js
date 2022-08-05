@@ -90,16 +90,14 @@ const UserHome = ({navigation}) => {
                         }
                       >
                         <ImageBackground
-                          source={item.image}
+                          source={item.artwork}
                           resizeMode="contain"
                           width={undefined}
                           height={undefined}
                         >
                           <View style={s.innerView}>
-                            <Text style={s.imgtext2}>{item.text}</Text>
-                            <Text style={s.description}>
-                              {item.description}
-                            </Text>
+                            <Text style={s.imgtext2}>{item.title}</Text>
+                            <Text style={s.description}>{item.artist}</Text>
                           </View>
                         </ImageBackground>
                       </TouchableOpacity>
