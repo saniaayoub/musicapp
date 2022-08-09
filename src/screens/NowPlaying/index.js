@@ -105,6 +105,7 @@ const NowPlaying = ({navigation, route}) => {
   //     .catch(err => {
   //       console.log(err);
   //     });
+
   // };
 
   const togglePlayback = async playbackState => {
