@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
   },
   headingText: {
     fontFamily: Imperial,
-    color: '#fff',
-    fontSize: moderateScale(58, 0.1),
+    // color: '#fff',
+    fontSize: moderateScale(50, 0.1),
     lineHeight: moderateScale(70, 0.1),
     borderWidth: 1,
     borderColor: '#fff',

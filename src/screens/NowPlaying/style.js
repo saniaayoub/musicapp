@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   centerView1: {
     marginBottom: moderateScale(20, 0.1),
     marginHorizontal: moderateScale(20, 0.1),
-    marginTop: moderateScale(-10, 0.1),
+    marginTop: moderateScale(-25, 0.1),
   },
   descriptionView: {
     marginTop: moderateScale(10, 0.1),

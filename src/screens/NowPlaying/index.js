@@ -15,6 +15,7 @@ import s from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import playlistback from '../../assets/images/playlistback.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import AppContext from '../../Providers/AppContext';
@@ -48,7 +49,7 @@ const NowPlaying = ({navigation, route}) => {
   const [allSongs, setAllSongs] = useState(context.songs);
   const [index, setIndex] = useState(0);
   const [random, setRandom] = useState(false);
-  const [loop, setLoop] = useState(false);
+  const [repeat, setRepeat] = useState('off');
   const [fav, setFav] = useState(route.params?.data?.fav);
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const NowPlaying = ({navigation, route}) => {
       .then(() => {
         TrackPlayer.add(allSongs);
         console.log(playbackState, 'here2');
+        TrackPlayer.setRepeatMode(RepeatMode.Off);
         skipToIndex(i);
       })
       .catch(e => {
@@ -92,18 +94,18 @@ const NowPlaying = ({navigation, route}) => {
       });
   };
 
-  const play = async data => {
-    await TrackPlayer.setupPlayer()
-      .then(() => {
-        TrackPlayer.add(data);
-      })
-      .then(() => {
-        TrackPlayer.play();
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  // const play = async data => {
+  //   await TrackPlayer.setupPlayer()
+  //     .then(() => {
+  //       TrackPlayer.add(data);
+  //     })
+  //     .then(() => {
+  //       TrackPlayer.play();
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // };
 
   const togglePlayback = async playbackState => {
     const currentTrack = await TrackPlayer.getCurrentTrack();
@@ -147,26 +149,97 @@ const NowPlaying = ({navigation, route}) => {
   };
 
   const skipToNext = async i => {
-    setIndex(i);
-    if (i == allSongs.length) {
-      setIndex(0);
-      setData(allSongs[0]);
-      skipToIndex(0);
+    console.log(i, 'i', allSongs.length, 'len', repeat, 'repeat');
+    if (repeat == 'off' && i == allSongs.length) {
+      alert('Turn the repeat mode on to start the list again');
+    } else if (repeat == 'track') {
+      alert('Turn the repeat mode on to play next song');
     } else {
-      skipToIndex(i);
-      setData(allSongs[i]);
+      if (i == allSongs.length) {
+        await TrackPlayer.skipToNext().then(() => {
+          // TrackPlayer.play();
+          setIndex(0);
+          setData(allSongs[0]);
+        });
+      } else {
+        await TrackPlayer.skipToNext().then(() => {
+          // TrackPlayer.play();
+          setIndex(i);
+          setData(allSongs[i]);
+        });
+      }
     }
+
+    // setIndex(i);
+    // if (i == allSongs.length) {
+    //   setIndex(0);
+    //   setData(allSongs[0]);
+    //   skipToIndex(0);
+    // } else {
+    //   skipToIndex(i);
+    //   setData(allSongs[i]);
+    // }
   };
 
   const skipToPrevious = async i => {
-    setIndex(i);
-    if (i == -1) {
-      setIndex(allSongs.length - 1);
-      setData(allSongs[allSongs.length - 1]);
-      skipToIndex(allSongs.length - 1);
+    // TrackPlayer.skipToPrevious().then(() => {
+    //   setIndex(i);
+    //   setData(allSongs[i]);
+    // });
+    // setIndex(i);
+    // if (i == -1) {
+    //   setIndex(allSongs.length - 1);
+    //   setData(allSongs[allSongs.length - 1]);
+    //   skipToIndex(allSongs.length - 1);
+    // } else {
+    //   skipToIndex(i);
+    //   setData(allSongs[i]);
+    // }
+    console.log(i, 'i', allSongs.length, 'len', repeat, 'repeat');
+    if (repeat == 'off' && i == -1) {
+      alert('Turn the repeat mode on to start the list again');
+    } else if (repeat == 'track') {
+      alert('Turn the repeat mode on to play next song');
     } else {
-      skipToIndex(i);
-      setData(allSongs[i]);
+      if (i == -1) {
+        await TrackPlayer.skipToPrevious().then(() => {
+          // TrackPlayer.play();
+          setIndex(allSongs.length - 1);
+          setData(allSongs[allSongs.length - 1]);
+        });
+      } else {
+        await TrackPlayer.skipToPrevious().then(() => {
+          // TrackPlayer.play();
+          setIndex(i);
+          setData(allSongs[i]);
+        });
+      }
+    }
+  };
+  const repeatMode = () => {
+    if (repeat == 'off') {
+      return 'repeat-off';
+    }
+    if (repeat == 'track') {
+      return 'repeat-once';
+    }
+    if (repeat == 'repeat') {
+      return 'repeat';
+    }
+  };
+
+  const changeRepeatMode = () => {
+    if (repeat == 'off') {
+      TrackPlayer.setRepeatMode(RepeatMode.Track);
+      setRepeat('track');
+    }
+    if (repeat == 'track') {
+      TrackPlayer.setRepeatMode(RepeatMode.Queue);
+      setRepeat('repeat');
+    }
+    if (repeat == 'repeat') {
+      TrackPlayer.setRepeatMode(RepeatMode.Off);
+      setRepeat('off');
     }
   };
   // const skipToPrevious = async index => {
@@ -230,8 +303,7 @@ const NowPlaying = ({navigation, route}) => {
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
-          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
-        >
+          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}>
           <View style={[s.container]}>
             <View style={s.backbutton}>
               <Button
@@ -241,8 +313,7 @@ const NowPlaying = ({navigation, route}) => {
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
-                zIndex={1000}
-              >
+                zIndex={1000}>
                 <Image source={backarrow} resizeMode="contain" />
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
@@ -284,8 +355,7 @@ const NowPlaying = ({navigation, route}) => {
                         }
                       }}
                       variant={'link'}
-                      zIndex={1000}
-                    >
+                      zIndex={1000}>
                       {fav ? (
                         <Icon
                           name={'heart'}
@@ -332,12 +402,16 @@ const NowPlaying = ({navigation, route}) => {
                   size="sm"
                   onPress={() => setRandom(!random)}
                   variant={'link'}
-                  zIndex={1000}
-                >
-                  <Icon
+                  zIndex={1000}>
+                  {/* <Icon
                     name="random"
                     color={random ? '#fff' : '#808080'}
                     size={moderateScale(24, 0.1)}
+                  /> */}
+                  <MaterialIcon
+                    name={random ? 'shuffle-disabled' : 'shuffle-variant'}
+                    color={'#fff'}
+                    size={moderateScale(30, 0.1)}
                   />
                 </Button>
                 <Button
@@ -346,8 +420,7 @@ const NowPlaying = ({navigation, route}) => {
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(20, 0.1)}
-                  marginRight={moderateScale(-20, 0.1)}
-                >
+                  marginRight={moderateScale(-20, 0.1)}>
                   <Icon
                     name="backward"
                     color={'#fff'}
@@ -360,8 +433,7 @@ const NowPlaying = ({navigation, route}) => {
                     togglePlayback(playbackState);
                   }}
                   variant={'link'}
-                  zIndex={1000}
-                >
+                  zIndex={1000}>
                   <Icon
                     name={
                       playbackState === State.Playing
@@ -379,8 +451,7 @@ const NowPlaying = ({navigation, route}) => {
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(-20, 0.1)}
-                  marginRight={moderateScale(20, 0.1)}
-                >
+                  marginRight={moderateScale(20, 0.1)}>
                   <Icon
                     name="forward"
                     color={'#fff'}
@@ -389,21 +460,36 @@ const NowPlaying = ({navigation, route}) => {
                 </Button>
                 <Button
                   size="sm"
-                  onPress={() => setLoop(!loop)}
+                  onPress={() => changeRepeatMode()}
                   variant={'link'}
-                  zIndex={1000}
-                >
-                  {loop ? (
-                    <Repeat
-                      width={moderateScale(24, 0.1)}
-                      height={moderateScale(24, 0.1)}
+                  zIndex={1000}>
+                  <MaterialIcon
+                    name={`${repeatMode()}`}
+                    color={'#fff'}
+                    size={moderateScale(30, 0.1)}
+                  />
+                  {/* {loop ? (
+                    // <Repeat
+                    //   width={moderateScale(24, 0.1)}
+                    //   height={moderateScale(24, 0.1)}
+                    // />
+                    <MaterialIcon
+                      name={loop? "repeat":"repeat-off"}
+                      color={'#fff'}
+                      size={moderateScale(24, 0.1)}
                     />
                   ) : (
-                    <Loop
-                      width={moderateScale(24, 0.1)}
-                      height={moderateScale(24, 0.1)}
+                    <MaterialIcon
+                      name="repeat-off"
+                      color={'#fff'}
+                      size={moderateScale(26, 0.1)}
                     />
-                  )}
+
+                    // <Loop
+                    //   width={moderateScale(24, 0.1)}
+                    //   height={moderateScale(24, 0.1)}
+                    // />
+                  )} */}
                 </Button>
               </View>
             </ScrollView>
