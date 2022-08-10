@@ -23,20 +23,76 @@ import play from '../../assets/images/play.png';
 import Playbutton from '../../assets/images/playbutton.svg';
 import backarrow from '../../assets/images/backarrow.png';
 import AppContext from '../../Providers/AppContext';
-import SoundPlayer from 'react-native-sound-player';
+import TrackPlayer, {
+  Capability,
+  Event,
+  RepeatMode,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+} from 'react-native-track-player';
 
 const Favorite = ({navigation}) => {
   const context = useContext(AppContext);
-
+  const playbackState = usePlaybackState();
+  const progress = useProgress();
   const [isPlay, setIsPlay] = useState(false);
   const [favList, setFavList] = useState([]);
   const [loader, setLoader] = useState(false);
   const [index, setIndex] = useState(0);
+
   useEffect(() => {
-    getSongs(context.songs);
-    SoundPlayer.stop();
-    context.setSongState('stop');
+    TrackPlayer.destroy();
+    console.log(playbackState, 'here1');
+    setUpTrackPlayer();
   }, [context.songs]);
+
+  // useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+  //   if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
+  //     const track = await TrackPlayer.getTrack(event.nextTrack);
+  //     const {title, artwork, artist} = track;
+  //     setTrackArtist(artist);
+  //     setTrackArtwork(artwork);
+  //     setTrackTitle(title);
+  //   }
+  // });
+
+  const getIndex = async () => {
+    await allSongs.map((item, i) => {
+      if (item.id == data.id) {
+        setIndex(i);
+        setUpTrackPlayer(i);
+      }
+    });
+    return index;
+  };
+
+  const setUpTrackPlayer = async () => {
+    await TrackPlayer.setupPlayer()
+      .then(() => {
+        getSongs(context.songs);
+      })
+      .then(() => {
+        TrackPlayer.add(favList);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  const skipToIndex = async i => {
+    // console.log(allSongs[index]);
+    await TrackPlayer.skip(i)
+      .then(() => {
+        console.log(i, 'skip to');
+        TrackPlayer.play();
+        console.log(playbackState, 'here3');
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   const getSongs = songs => {
     setLoader(true);
@@ -51,7 +107,6 @@ const Favorite = ({navigation}) => {
 
   const playSong = item => {
     setIsPlay(!isPlay);
-
     //update play pause button
     setPlayButton(item);
 
@@ -60,11 +115,11 @@ const Favorite = ({navigation}) => {
       console.log('here2');
       if (context.songState === 'play') {
         console.log(context.songState);
-        SoundPlayer.pause();
+        TrackPlayer.pause();
         context.setSongState('pause');
       } else if (context.songState === 'pause') {
         console.log(context.songState);
-        SoundPlayer.resume();
+        TrackPlayer.play();
         context.setSongState('play');
       }
     } else {
@@ -75,8 +130,8 @@ const Favorite = ({navigation}) => {
         context.songState === 'pause'
       ) {
         console.log(context.songState);
-        SoundPlayer.stop();
-        SoundPlayer.playUrl(item.url);
+        TrackPlayer.stop();
+        TrackPlayer.add(item.url);
         context.setSongState('play');
         console.log(index);
         setIndex(item.id);
@@ -96,7 +151,16 @@ const Favorite = ({navigation}) => {
     });
     setFavList(tempArray);
   };
-
+  const togglePlayback = async playbackState => {
+    const currentTrack = await TrackPlayer.getCurrentTrack();
+    if (currentTrack !== null) {
+      if (playbackState == State.Paused) {
+        await TrackPlayer.play();
+      } else {
+        await TrackPlayer.pause();
+      }
+    }
+  };
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -178,10 +242,10 @@ const Favorite = ({navigation}) => {
                             <TouchableOpacity
                               style={s.playbutton}
                               onPress={() => {
-                                playSong(item);
+                                togglePlayback(playbackState);
                               }}
                             >
-                              {item.play ? (
+                              {playbackState === State.Playing ? (
                                 <Icon
                                   name={'pause-circle'}
                                   color={'#fff'}
@@ -198,7 +262,16 @@ const Favorite = ({navigation}) => {
                           </View>
 
                           <View style={s.slider}>
-                            <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                            <Slider
+                              value={progress.position}
+                              minimumValue={0}
+                              maximumValue={progress.duration}
+                              onSlidingComplete={async value => {
+                                await TrackPlayer.seekTo(value);
+                              }}
+                              thumbStyle={s.thumb}
+                              trackStyle={s.track}
+                            />
                             <View style={s.timer}>
                               <Text style={s.text2}>00.00</Text>
                               <Text style={s.text2}>03.20</Text>

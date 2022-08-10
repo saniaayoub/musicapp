@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   empty: {
     position: 'relative',
     marginRight: moderateScale(100, 0.1),
-    marginTop: moderateScale(120, 0.1),
+    marginTop: moderateScale(150, 0.1),
     width: moderateScale(350, 0.1),
     height: moderateScale(47, 0.1),
     backgroundColor: 'rgba(194, 106, 248, 0.36)',
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     paddingLeft: moderateScale(70, 0.1),
     marginRight: moderateScale(100, 0.1),
     width: moderateScale(350, 0.1),
-    height: moderateScale(460, 0.1),
+    height: moderateScale(500, 0.1),
     backgroundColor: 'rgba(194, 106, 248, 0.36)',
     borderTopRightRadius: moderateScale(25, 0.1),
     justifyContent: 'center',

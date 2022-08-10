@@ -46,17 +46,31 @@ const NowPlaying = ({navigation, route}) => {
   const playbackState = usePlaybackState();
   const progress = useProgress();
   const [data, setData] = useState(route.params?.data);
+  const [trackArtwork, setTrackArtwork] = useState();
+  const [trackArtist, setTrackArtist] = useState();
+  const [trackTitle, setTrackTitle] = useState();
   const [allSongs, setAllSongs] = useState(context.songs);
   const [index, setIndex] = useState(0);
-  const [random, setRandom] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState('off');
   const [fav, setFav] = useState(route.params?.data?.fav);
-
+  const [shuffleArr, setshuffleArr] = useState([]);
   useEffect(() => {
     // play(data);
+    TrackPlayer.destroy();
     console.log(playbackState, 'here1');
     getIndex();
   }, []);
+
+  useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+    if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
+      const track = await TrackPlayer.getTrack(event.nextTrack);
+      const {title, artwork, artist} = track;
+      setTrackArtist(artist);
+      setTrackArtwork(artwork);
+      setTrackTitle(title);
+    }
+  });
 
   const getIndex = async () => {
     await allSongs.map((item, i) => {
@@ -148,26 +162,70 @@ const NowPlaying = ({navigation, route}) => {
     context.setSongs(tempArray);
     setAllSongs(tempArray);
   };
-
+  const shuffleArray = array => {
+    let currentIndex = array.length - 1,
+      temporaryValue,
+      randomIndex;
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+      currentIndex -= 1;
+    }
+    return array;
+  };
+  const shuffleFunc = async () => {
+    const queue = await allSongs;
+    const shuffledQueue = shuffleArray(queue);
+    setshuffleArr(shuffledQueue);
+    console.log(shuffledQueue);
+    await TrackPlayer.reset().then(() => {
+      TrackPlayer.setupPlayer();
+      TrackPlayer.add(shuffledQueue);
+      TrackPlayer.play();
+    });
+  };
   const skipToNext = async i => {
-    console.log(i, 'i', allSongs.length, 'len', repeat, 'repeat');
-    if (repeat == 'off' && i == allSongs.length) {
-      alert('Turn the repeat mode on to start the list again');
-    } else if (repeat == 'track') {
-      alert('Turn the repeat mode on to play next song');
-    } else {
-      if (i == allSongs.length) {
-        await TrackPlayer.skipToNext().then(() => {
-          // TrackPlayer.play();
+    if (shuffle) {
+      let randomIndex = Math.floor(Math.random() * allSongs.length - 1);
+      console.log(randomIndex);
+      if (randomIndex == -1 || randomIndex == allSongs.length) {
+        await TrackPlayer.skip(0).then(() => {
+          TrackPlayer.play();
           setIndex(0);
           setData(allSongs[0]);
         });
       } else {
-        await TrackPlayer.skipToNext().then(() => {
-          // TrackPlayer.play();
-          setIndex(i);
-          setData(allSongs[i]);
+        await TrackPlayer.skip(randomIndex).then(() => {
+          TrackPlayer.play();
+          setIndex(randomIndex);
+          setData(allSongs[randomIndex]);
         });
+      }
+    } else {
+      console.log(i, 'i', allSongs.length, 'len', repeat, 'repeat');
+      if (repeat == 'off' && i == allSongs.length) {
+        alert('Turn the repeat mode on to start the list again');
+      } else if (repeat == 'track') {
+        alert('Turn the repeat mode on to play next song');
+      } else {
+        if (i == allSongs.length) {
+          await TrackPlayer.skip(0).then(() => {
+            TrackPlayer.play();
+            setIndex(0);
+            setData(allSongs[0]);
+          });
+        } else {
+          await TrackPlayer.skipToNext().then(() => {
+            TrackPlayer.play();
+            setIndex(i);
+            setData(allSongs[i]);
+          });
+        }
       }
     }
 
@@ -183,6 +241,45 @@ const NowPlaying = ({navigation, route}) => {
   };
 
   const skipToPrevious = async i => {
+    if (shuffle) {
+      let randomIndex = Math.floor(Math.random() * allSongs.length - 1);
+      console.log(randomIndex);
+      if (randomIndex == -1 || randomIndex == allSongs.length) {
+        await TrackPlayer.skip(0).then(() => {
+          TrackPlayer.play();
+          setIndex(0);
+          setData(allSongs[0]);
+        });
+      } else {
+        await TrackPlayer.skip(randomIndex).then(() => {
+          TrackPlayer.play();
+          setIndex(randomIndex);
+          setData(allSongs[randomIndex]);
+        });
+      }
+    } else {
+      console.log(i, 'i', allSongs.length, 'len', repeat, 'repeat');
+      if (repeat == 'off' && i == -1) {
+        alert('Turn the repeat mode on to start the list again');
+      } else if (repeat == 'track') {
+        alert('Turn the repeat mode on to play next song');
+      } else {
+        if (i == -1) {
+          await TrackPlayer.skip(allSongs.length - 1).then(() => {
+            TrackPlayer.play();
+            setIndex(allSongs.length - 1);
+            setData(allSongs[allSongs.length - 1]);
+          });
+        } else {
+          await TrackPlayer.skipToPrevious().then(() => {
+            TrackPlayer.play();
+            setIndex(i);
+            setData(allSongs[i]);
+          });
+        }
+      }
+    }
+
     // TrackPlayer.skipToPrevious().then(() => {
     //   setIndex(i);
     //   setData(allSongs[i]);
@@ -196,26 +293,6 @@ const NowPlaying = ({navigation, route}) => {
     //   skipToIndex(i);
     //   setData(allSongs[i]);
     // }
-    console.log(i, 'i', allSongs.length, 'len', repeat, 'repeat');
-    if (repeat == 'off' && i == -1) {
-      alert('Turn the repeat mode on to start the list again');
-    } else if (repeat == 'track') {
-      alert('Turn the repeat mode on to play next song');
-    } else {
-      if (i == -1) {
-        await TrackPlayer.skipToPrevious().then(() => {
-          // TrackPlayer.play();
-          setIndex(allSongs.length - 1);
-          setData(allSongs[allSongs.length - 1]);
-        });
-      } else {
-        await TrackPlayer.skipToPrevious().then(() => {
-          // TrackPlayer.play();
-          setIndex(i);
-          setData(allSongs[i]);
-        });
-      }
-    }
   };
   const repeatMode = () => {
     if (repeat == 'off') {
@@ -304,7 +381,8 @@ const NowPlaying = ({navigation, route}) => {
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
-          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}>
+          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
+        >
           <View style={[s.container]}>
             <View style={s.backbutton}>
               <Button
@@ -314,7 +392,8 @@ const NowPlaying = ({navigation, route}) => {
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
-                zIndex={1000}>
+                zIndex={1000}
+              >
                 <Image source={backarrow} resizeMode="contain" />
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
@@ -329,15 +408,15 @@ const NowPlaying = ({navigation, route}) => {
               <View style={s.section}>
                 <View style={s.imageTop}>
                   <Image
-                    source={data.artwork}
+                    source={trackArtwork}
                     width={undefined}
                     height={undefined}
                     resizeMode={'cover'}
                     style={{width: '100%', height: '100%'}}
                   />
                   <View style={s.descriptionViewTop}>
-                    <Text style={s.text1Top}>{data.title}</Text>
-                    <Text style={s.text2Top}>{data.artist}</Text>
+                    <Text style={s.text1Top}>{trackTitle}</Text>
+                    <Text style={s.text2Top}>{trackArtist}</Text>
                   </View>
                 </View>
               </View>
@@ -345,7 +424,7 @@ const NowPlaying = ({navigation, route}) => {
               <View style={s.centerView}>
                 <View style={s.row}>
                   <View style={s.descriptionView}>
-                    <Text style={s.text1}>{data.title}</Text>
+                    <Text style={s.text1}>{trackTitle}</Text>
                   </View>
                   <View style={s.heart}>
                     <Button
@@ -356,7 +435,8 @@ const NowPlaying = ({navigation, route}) => {
                         }
                       }}
                       variant={'link'}
-                      zIndex={1000}>
+                      zIndex={1000}
+                    >
                       {fav ? (
                         <Icon
                           name={'heart'}
@@ -401,16 +481,29 @@ const NowPlaying = ({navigation, route}) => {
               <View style={[s.centerView1, s.row]}>
                 <Button
                   size="sm"
-                  onPress={() => setRandom(!random)}
+                  onPress={async () => {
+                    if (!shuffle) {
+                      setShuffle(true);
+                      shuffleFunc();
+                    } else {
+                      setShuffle(false);
+                      await TrackPlayer.reset().then(() => {
+                        TrackPlayer.setupPlayer();
+                        TrackPlayer.add(allSongs);
+                        TrackPlayer.play();
+                      });
+                    }
+                  }}
                   variant={'link'}
-                  zIndex={1000}>
+                  zIndex={1000}
+                >
                   {/* <Icon
                     name="random"
                     color={random ? '#fff' : '#808080'}
                     size={moderateScale(24, 0.1)}
                   /> */}
                   <MaterialIcon
-                    name={random ? 'shuffle-disabled' : 'shuffle-variant'}
+                    name={shuffle ? 'shuffle-variant' : 'shuffle-disabled'}
                     color={'#fff'}
                     size={moderateScale(30, 0.1)}
                   />
@@ -421,7 +514,8 @@ const NowPlaying = ({navigation, route}) => {
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(20, 0.1)}
-                  marginRight={moderateScale(-20, 0.1)}>
+                  marginRight={moderateScale(-20, 0.1)}
+                >
                   <Icon
                     name="backward"
                     color={'#fff'}
@@ -434,7 +528,8 @@ const NowPlaying = ({navigation, route}) => {
                     togglePlayback(playbackState);
                   }}
                   variant={'link'}
-                  zIndex={1000}>
+                  zIndex={1000}
+                >
                   <Icon
                     name={
                       playbackState === State.Playing
@@ -452,7 +547,8 @@ const NowPlaying = ({navigation, route}) => {
                   variant={'link'}
                   zIndex={1000}
                   marginLeft={moderateScale(-20, 0.1)}
-                  marginRight={moderateScale(20, 0.1)}>
+                  marginRight={moderateScale(20, 0.1)}
+                >
                   <Icon
                     name="forward"
                     color={'#fff'}
@@ -463,7 +559,8 @@ const NowPlaying = ({navigation, route}) => {
                   size="sm"
                   onPress={() => changeRepeatMode()}
                   variant={'link'}
-                  zIndex={1000}>
+                  zIndex={1000}
+                >
                   <MaterialIcon
                     name={`${repeatMode()}`}
                     color={'#fff'}
