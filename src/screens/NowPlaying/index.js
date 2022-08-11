@@ -57,7 +57,7 @@ const NowPlaying = ({navigation, route}) => {
   const [shuffleArr, setshuffleArr] = useState([]);
   useEffect(() => {
     // play(data);
-    TrackPlayer.destroy();
+    // TrackPlayer.destroy();
     console.log(playbackState, 'here1');
     getIndex();
   }, []);

@@ -41,9 +41,9 @@ const Favorite = ({navigation}) => {
   const [favList, setFavList] = useState([]);
   const [loader, setLoader] = useState(false);
   const [index, setIndex] = useState(0);
-
+  const [slide, setSlide] = useState(false);
   useEffect(() => {
-    TrackPlayer.destroy();
+    // TrackPlayer.destroy();
     console.log(playbackState, 'here1');
     setUpTrackPlayer();
   }, [context.songs]);
@@ -58,14 +58,14 @@ const Favorite = ({navigation}) => {
   //   }
   // });
 
-  const getIndex = async () => {
-    await allSongs.map((item, i) => {
+  const getIndex = async data => {
+    let ind;
+    favList.map((item, i) => {
       if (item.id == data.id) {
-        setIndex(i);
-        setUpTrackPlayer(i);
+        ind = i;
       }
     });
-    return index;
+    return ind;
   };
 
   const setUpTrackPlayer = async () => {
@@ -73,26 +73,23 @@ const Favorite = ({navigation}) => {
       .then(() => {
         getSongs(context.songs);
       })
-      .then(() => {
-        TrackPlayer.add(favList);
-      })
       .catch(e => {
         console.log(e);
       });
   };
 
-  const skipToIndex = async i => {
-    // console.log(allSongs[index]);
-    await TrackPlayer.skip(i)
-      .then(() => {
-        console.log(i, 'skip to');
-        TrackPlayer.play();
-        console.log(playbackState, 'here3');
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  // const skipToIndex = async i => {
+  //   // console.log(allSongs[index]);
+  //   await TrackPlayer.skip(i)
+  //     .then(() => {
+  //       console.log(i, 'skip to');
+  //       TrackPlayer.play();
+  //       console.log(playbackState, 'here3');
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // };
 
   const getSongs = songs => {
     setLoader(true);
@@ -105,45 +102,31 @@ const Favorite = ({navigation}) => {
     setLoader(false);
   };
 
-  const playSong = item => {
-    setIsPlay(!isPlay);
-    //update play pause button
-    setPlayButton(item);
+  const playSong = async item => {
+    let i = getIndex(item);
 
-    if (index == item.id) {
+    if (index == i) {
       // If same song
-      console.log('here2');
-      if (context.songState === 'play') {
-        console.log(context.songState);
-        TrackPlayer.pause();
-        context.setSongState('pause');
-      } else if (context.songState === 'pause') {
-        console.log(context.songState);
-        TrackPlayer.play();
-        context.setSongState('play');
-      }
+      setPlayButton(item);
+      togglePlayback(playbackState);
     } else {
-      console.log('here1');
-      if (
-        context.songState === 'play' ||
-        context.songState === 'stop' ||
-        context.songState === 'pause'
-      ) {
-        console.log(context.songState);
-        TrackPlayer.stop();
-        TrackPlayer.add(item.url);
-        context.setSongState('play');
-        console.log(index);
-        setIndex(item.id);
-      }
+      setIndex(i);
+      await TrackPlayer.add(favList[index])
+        .then(() => {
+          setPlayButton(item);
+          TrackPlayer.play();
+        })
+        .catch(e => console.log(e));
     }
   };
   const setPlayButton = item => {
     let tempArray;
     tempArray = favList.map(elem => {
       if (elem.id === item.id) {
+        console.log('here');
         return {...elem, play: !elem.play};
       } else if (elem.id === index) {
+        console.log('here2');
         return {...elem, play: false};
       } else {
         return elem;
@@ -151,7 +134,7 @@ const Favorite = ({navigation}) => {
     });
     setFavList(tempArray);
   };
-  const togglePlayback = async playbackState => {
+  const togglePlayback = async (playbackState, url) => {
     const currentTrack = await TrackPlayer.getCurrentTrack();
     if (currentTrack !== null) {
       if (playbackState == State.Paused) {
@@ -204,10 +187,10 @@ const Favorite = ({navigation}) => {
               contentContainerStyle={{flexGrow: 1}}
             >
               <View style={s.collection}>
-                {favList.map(item => {
+                {favList.map((item, i) => {
                   return (
                     <>
-                      <View style={s.item} key={item.id}>
+                      <View style={s.item} key={i.toString()}>
                         <TouchableOpacity
                           style={s.image}
                           onPress={() =>
@@ -242,10 +225,10 @@ const Favorite = ({navigation}) => {
                             <TouchableOpacity
                               style={s.playbutton}
                               onPress={() => {
-                                togglePlayback(playbackState);
+                                playSong(item);
                               }}
                             >
-                              {playbackState === State.Playing ? (
+                              {item.play ? (
                                 <Icon
                                   name={'pause-circle'}
                                   color={'#fff'}
