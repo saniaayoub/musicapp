@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 
 import React, {useContext, useEffect, useState} from 'react';
@@ -55,10 +56,12 @@ const NowPlaying = ({navigation, route}) => {
   const [repeat, setRepeat] = useState('off');
   const [fav, setFav] = useState(route.params?.data?.fav);
   const [shuffleArr, setshuffleArr] = useState([]);
+  const [loader, setLoader] = useState(false);
+
   useEffect(() => {
     // play(data);
     // TrackPlayer.destroy();
-    console.log(playbackState, 'here1');
+    console.log(route.params?.data);
     getIndex();
   }, []);
 
@@ -73,6 +76,7 @@ const NowPlaying = ({navigation, route}) => {
   });
 
   const getIndex = async () => {
+    setLoader(true);
     await allSongs.map((item, i) => {
       if (item.id == data.id) {
         setIndex(i);
@@ -102,6 +106,9 @@ const NowPlaying = ({navigation, route}) => {
         console.log(i, 'skip to');
         TrackPlayer.play();
         console.log(playbackState, 'here3');
+      })
+      .then(() => {
+        setLoader(false);
       })
       .catch(err => {
         console.log(err);
@@ -407,13 +414,18 @@ const NowPlaying = ({navigation, route}) => {
             <ScrollView>
               <View style={s.section}>
                 <View style={s.imageTop}>
-                  <Image
-                    source={trackArtwork}
-                    width={undefined}
-                    height={undefined}
-                    resizeMode={'cover'}
-                    style={{width: '100%', height: '100%'}}
-                  />
+                  {loader ? (
+                    <ActivityIndicator />
+                  ) : (
+                    <Image
+                      source={trackArtwork}
+                      width={undefined}
+                      height={undefined}
+                      resizeMode={'cover'}
+                      style={{width: '100%', height: '100%'}}
+                    />
+                  )}
+
                   <View style={s.descriptionViewTop}>
                     <Text style={s.text1Top}>{trackTitle}</Text>
                     <Text style={s.text2Top}>{trackArtist}</Text>

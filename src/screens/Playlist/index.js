@@ -26,79 +26,168 @@ import trackback from '../../assets/images/trackback.png';
 import SoundPlayer from 'react-native-sound-player';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+import TrackPlayer, {
+  Capability,
+  Event,
+  RepeatMode,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+} from 'react-native-track-player';
 
 const Playlist = ({navigation}) => {
   const context = useContext(AppContext);
+  const playbackState = usePlaybackState();
+  const progress = useProgress();
+  const [favList, setFavList] = useState([]);
+  const [loader, setLoader] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState({});
+
   const [isPlay, setIsPlay] = useState(false);
   const [playList, setPlayList] = useState(context.songs);
-  const [loader, setLoader] = useState(false);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     // get List of playlist songs
     getSongs();
-    SoundPlayer.stop();
-    context.setSongState('stop');
+    console.log(playbackState, 'here1');
+    setUpTrackPlayer();
   }, [context.songs]);
 
-  const getSongs = () => {
+  const getQueue = async () => {
+    const queue = await TrackPlayer.getQueue();
+    console.log(queue);
+  };
+
+  const getIndex = async data => {
+    if (data.id == currentTrack.id) {
+      console.log('already playing');
+      togglePlayback(playbackState);
+      setPlayButton(data);
+    } else {
+      console.log('new');
+      favList.map((item, i) => {
+        if (item.id == data.id) {
+          TrackPlayer.reset();
+          playSong(data);
+          setPlayButton(data);
+        }
+      });
+    }
+  };
+
+  const setUpTrackPlayer = async () => {
+    await TrackPlayer.setupPlayer()
+      .then(() => {
+        getSongs(context.songs);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  const getSongs = songs => {
     setLoader(true);
     let tempArray;
-
-    tempArray = playList.map(item => {
+    tempArray = songs.filter(item => item.fav == true);
+    tempArray = tempArray.map(item => {
       return {...item, play: false};
     });
-    setPlayList(tempArray);
+    setFavList(tempArray);
     setLoader(false);
   };
 
-  const playSong = item => {
-    setIsPlay(!isPlay);
+  const playSong = async item => {
+    await TrackPlayer.add(item)
+      .then(() => {
+        TrackPlayer.play();
+        setCurrentTrack(item);
+      })
+      .catch(e => console.log(e));
+  };
 
-    //update play pause button
-    setPlayButton(item);
-
-    if (index == item.id) {
-      // If same song
-      //console.log('here2');
-      if (context.songState === 'play') {
-        //console.log(context.songState);
-        SoundPlayer.pause();
-        context.setSongState('pause');
-      } else if (context.songState === 'pause') {
-        //console.log(context.songState);
-        SoundPlayer.resume();
-        context.setSongState('play');
+  const setPlayButton = item => {
+    let tempArray;
+    tempArray = favList.map((elem, i) => {
+      if (elem.id == item.id) {
+        return {...elem, play: !elem.play};
+      } else {
+        return {...elem, play: false};
       }
-    } else {
-      //console.log('here1');
-      if (
-        context.songState === 'play' ||
-        context.songState === 'stop' ||
-        context.songState === 'pause'
-      ) {
-        //console.log(context.songState);
-        SoundPlayer.stop();
-        SoundPlayer.playUrl(item.url);
-        context.setSongState('play');
-        //console.log(index);
-        setIndex(item.id);
+    });
+    setFavList(tempArray);
+  };
+
+  const togglePlayback = async playbackState => {
+    const currentTrack = await TrackPlayer.getCurrentTrack();
+    if (currentTrack !== null) {
+      if (playbackState == State.Paused) {
+        await TrackPlayer.play();
+      } else {
+        await TrackPlayer.pause();
       }
     }
   };
-  const setPlayButton = item => {
-    let tempArray;
-    tempArray = playList.map(elem => {
-      if (elem.id === item.id) {
-        return {...elem, play: !elem.play};
-      } else if (elem.id === index) {
-        return {...elem, play: false};
-      } else {
-        return elem;
-      }
-    });
-    setPlayList(tempArray);
-  };
+
+  // const getSongs = () => {
+  //   setLoader(true);
+  //   let tempArray;
+
+  //   tempArray = playList.map(item => {
+  //     return {...item, play: false};
+  //   });
+  //   setPlayList(tempArray);
+  //   setLoader(false);
+  // };
+
+  // const playSong = item => {
+  //   setIsPlay(!isPlay);
+
+  //   //update play pause button
+  //   setPlayButton(item);
+
+  //   if (index == item.id) {
+  //     // If same song
+  //     //console.log('here2');
+  //     if (context.songState === 'play') {
+  //       //console.log(context.songState);
+  //       SoundPlayer.pause();
+  //       context.setSongState('pause');
+  //     } else if (context.songState === 'pause') {
+  //       //console.log(context.songState);
+  //       SoundPlayer.resume();
+  //       context.setSongState('play');
+  //     }
+  //   } else {
+  //     //console.log('here1');
+  //     if (
+  //       context.songState === 'play' ||
+  //       context.songState === 'stop' ||
+  //       context.songState === 'pause'
+  //     ) {
+  //       //console.log(context.songState);
+  //       SoundPlayer.stop();
+  //       SoundPlayer.playUrl(item.url);
+  //       context.setSongState('play');
+  //       //console.log(index);
+  //       setIndex(item.id);
+  //     }
+  //   }
+  // };
+  // const setPlayButton = item => {
+  //   let tempArray;
+  //   tempArray = playList.map(elem => {
+  //     if (elem.id === item.id) {
+  //       return {...elem, play: !elem.play};
+  //     } else if (elem.id === index) {
+  //       return {...elem, play: false};
+  //     } else {
+  //       return elem;
+  //     }
+  //   });
+  //   setPlayList(tempArray);
+  // };
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -149,10 +238,10 @@ const Playlist = ({navigation}) => {
               </View>
 
               <View style={s.collection}>
-                {playList.map(item => {
+                {playList.map((item, i) => {
                   return (
                     <>
-                      <View style={s.item} key={item.id}>
+                      <View style={s.item} key={i.toString()}>
                         <TouchableOpacity style={s.image}>
                           <ImageBackground
                             source={item.artwork}
