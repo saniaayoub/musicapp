@@ -7,6 +7,7 @@ export default Songs = [
     artist: 'Billie Eilish, Khalid',
     artwork: require('../assets/images/healing1.png'),
     fav: false,
+    duration: 200,
   },
   {
     id: 2,
@@ -15,6 +16,7 @@ export default Songs = [
     artist: 'Wiz Khalifa',
     artwork: require('../assets/images/healing2.png'),
     fav: false,
+    duration: 230,
   },
   {
     id: 3,
@@ -25,6 +27,7 @@ export default Songs = [
     title: 'Shape of you',
     artist: 'Ed Sheeran',
     fav: false,
+    duration: 180,
   },
   {
     id: 4,
@@ -33,6 +36,7 @@ export default Songs = [
     artist: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
     fav: false,
+    duration: 150,
   },
   {
     id: 5,
@@ -41,6 +45,7 @@ export default Songs = [
     artist: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
     fav: false,
+    duration: 240,
   },
   {
     id: 6,
@@ -50,6 +55,7 @@ export default Songs = [
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
     fav: false,
+    duration: 200,
   },
   {
     id: 7,
@@ -58,6 +64,7 @@ export default Songs = [
     artist: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
     fav: false,
+    duration: 230,
   },
   {
     id: 8,
@@ -66,6 +73,7 @@ export default Songs = [
     artist: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
     fav: false,
+    duration: 160,
   },
   {
     id: 9,
@@ -75,5 +83,6 @@ export default Songs = [
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
     fav: false,
+    duration: 180,
   },
 ];

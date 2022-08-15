@@ -15,8 +15,11 @@ import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 import backarrow from '../../assets/images/backarrow.png';
+import Backarrowsvg from '../../assets/images/backarrow.svg';
+
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+
 const ForgetPassword = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -31,7 +34,11 @@ const ForgetPassword = ({navigation}) => {
               borderRadius={moderateScale(14, 0.1)}
               padding={moderateScale(7, 0.1)}
             >
-              <Image source={backarrow} resizeMode="contain" />
+              <Backarrowsvg
+                width={moderateScale(14, 0.1)}
+                height={moderateScale(14, 0.1)}
+              />
+              {/* <Image source={backarrow} resizeMode="contain" /> */}
               {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
             </Button>
           </View>

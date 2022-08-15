@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  BackHandler,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import {Box} from 'native-base';
@@ -32,66 +33,52 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from 'react-native-track-player';
+import Backarrowsvg from '../../assets/images/backarrow.svg';
 
 const Favorite = ({navigation}) => {
   const context = useContext(AppContext);
   const playbackState = usePlaybackState();
   const progress = useProgress();
-  const [isPlay, setIsPlay] = useState(false);
   const [favList, setFavList] = useState([]);
   const [loader, setLoader] = useState(false);
-  const [index, setIndex] = useState(0);
+  const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
-    TrackPlayer.destroy();
-    console.log(playbackState, 'here1');
+    // console.log(playbackState, 'here1');
     setUpTrackPlayer();
   }, [context.songs]);
 
-  // useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-  //   if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
-  //     const track = await TrackPlayer.getTrack(event.nextTrack);
-  //     const {title, artwork, artist} = track;
-  //     setTrackArtist(artist);
-  //     setTrackArtwork(artwork);
-  //     setTrackTitle(title);
-  //   }
-  // });
+  const getQueue = async () => {
+    const queue = await TrackPlayer.getQueue();
+    console.log(queue);
+  };
 
-  const getIndex = async () => {
-    await allSongs.map((item, i) => {
-      if (item.id == data.id) {
-        setIndex(i);
-        setUpTrackPlayer(i);
-      }
-    });
-    return index;
+  const getIndex = async data => {
+    if (data.id == currentTrack.id) {
+      console.log('already playing');
+      togglePlayback(playbackState);
+      setPlayButton(data);
+    } else {
+      console.log('new');
+      favList.map((item, i) => {
+        if (item.id == data.id) {
+          TrackPlayer.reset();
+          playSong(data);
+          setPlayButton(data);
+        }
+      });
+    }
   };
 
   const setUpTrackPlayer = async () => {
-    await TrackPlayer.setupPlayer()
-      .then(() => {
-        getSongs(context.songs);
-      })
-      .then(() => {
-        TrackPlayer.add(favList);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  const skipToIndex = async i => {
-    // console.log(allSongs[index]);
-    await TrackPlayer.skip(i)
-      .then(() => {
-        console.log(i, 'skip to');
-        TrackPlayer.play();
-        console.log(playbackState, 'here3');
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    getSongs(context.songs);
+    // await TrackPlayer.setupPlayer()
+    //   .then(() => {
+    //     getSongs(context.songs);
+    //   })
+    //   .catch(e => {
+    //     console.log(e);
+    //   });
   };
 
   const getSongs = songs => {
@@ -105,52 +92,27 @@ const Favorite = ({navigation}) => {
     setLoader(false);
   };
 
-  const playSong = item => {
-    setIsPlay(!isPlay);
-    //update play pause button
-    setPlayButton(item);
-
-    if (index == item.id) {
-      // If same song
-      console.log('here2');
-      if (context.songState === 'play') {
-        console.log(context.songState);
-        TrackPlayer.pause();
-        context.setSongState('pause');
-      } else if (context.songState === 'pause') {
-        console.log(context.songState);
+  const playSong = async item => {
+    await TrackPlayer.add(item)
+      .then(() => {
         TrackPlayer.play();
-        context.setSongState('play');
-      }
-    } else {
-      console.log('here1');
-      if (
-        context.songState === 'play' ||
-        context.songState === 'stop' ||
-        context.songState === 'pause'
-      ) {
-        console.log(context.songState);
-        TrackPlayer.stop();
-        TrackPlayer.add(item.url);
-        context.setSongState('play');
-        console.log(index);
-        setIndex(item.id);
-      }
-    }
+        setCurrentTrack(item);
+      })
+      .catch(e => console.log(e));
   };
+
   const setPlayButton = item => {
     let tempArray;
-    tempArray = favList.map(elem => {
-      if (elem.id === item.id) {
+    tempArray = favList.map((elem, i) => {
+      if (elem.id == item.id) {
         return {...elem, play: !elem.play};
-      } else if (elem.id === index) {
-        return {...elem, play: false};
       } else {
-        return elem;
+        return {...elem, play: false};
       }
     });
     setFavList(tempArray);
   };
+
   const togglePlayback = async playbackState => {
     const currentTrack = await TrackPlayer.getCurrentTrack();
     if (currentTrack !== null) {
@@ -161,6 +123,7 @@ const Favorite = ({navigation}) => {
       }
     }
   };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -178,14 +141,20 @@ const Favorite = ({navigation}) => {
             <View style={s.backbutton}>
               <Button
                 size="sm"
-                onPress={() => navigation.goBack()}
+                onPress={() =>
+                  navigation.navigate('Home', {screen: 'UserHome'})
+                }
                 variant={'link'}
                 backgroundColor={'#fff'}
                 borderRadius={moderateScale(14, 0.1)}
                 padding={moderateScale(7, 0.1)}
                 zIndex={1000}
               >
-                <Image source={backarrow} resizeMode="contain" />
+                <Backarrowsvg
+                  width={moderateScale(14, 0.1)}
+                  height={moderateScale(14, 0.1)}
+                />
+                {/* <Image source={backarrow} resizeMode="contain" /> */}
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
             </View>
@@ -204,10 +173,10 @@ const Favorite = ({navigation}) => {
               contentContainerStyle={{flexGrow: 1}}
             >
               <View style={s.collection}>
-                {favList.map(item => {
+                {favList.map((item, i) => {
                   return (
                     <>
-                      <View style={s.item} key={item.id}>
+                      <View style={s.item} key={i}>
                         <TouchableOpacity
                           style={s.image}
                           onPress={() =>
@@ -242,10 +211,11 @@ const Favorite = ({navigation}) => {
                             <TouchableOpacity
                               style={s.playbutton}
                               onPress={() => {
-                                togglePlayback(playbackState);
+                                setPlayButton(item);
+                                // getIndex(item);
                               }}
                             >
-                              {playbackState === State.Playing ? (
+                              {item.play ? (
                                 <Icon
                                   name={'pause-circle'}
                                   color={'#fff'}
@@ -263,7 +233,11 @@ const Favorite = ({navigation}) => {
 
                           <View style={s.slider}>
                             <Slider
-                              value={progress.position}
+                              value={
+                                currentTrack.id === item.id
+                                  ? progress.position
+                                  : 0
+                              }
                               minimumValue={0}
                               maximumValue={progress.duration}
                               onSlidingComplete={async value => {
@@ -273,8 +247,19 @@ const Favorite = ({navigation}) => {
                               trackStyle={s.track}
                             />
                             <View style={s.timer}>
-                              <Text style={s.text2}>00.00</Text>
-                              <Text style={s.text2}>03.20</Text>
+                              <Text style={s.text2}>
+                                {currentTrack.id === item.id
+                                  ? new Date(progress.position * 1000)
+                                      .toString()
+                                      .substring(19, 24)
+                                  : `00:00`}
+                              </Text>
+                              <Text style={s.text2}>
+                                {' '}
+                                {new Date(progress.duration * 1000)
+                                  .toString()
+                                  .substring(19, 24)}
+                              </Text>
                             </View>
                           </View>
                         </View>

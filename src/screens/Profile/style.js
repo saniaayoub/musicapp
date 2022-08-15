@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   profileSection: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: moderateScale(5, 0.1),
     // backgroundColor: 'red',
   },
   profileimg: {
@@ -115,6 +116,12 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(18, 0.1),
     fontSize: moderateScale(12, 0.1),
     color: '#fff',
+  },
+  profileName: {
+    color: '#fff',
+    fontFamily: InterBold,
+    fontSize: moderateScale(14, 0.1),
+    lineHeight: moderateScale(17, 0.1),
   },
 });
 

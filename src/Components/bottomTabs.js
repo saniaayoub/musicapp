@@ -1,4 +1,5 @@
-import {StyleSheet, Text, View, Image, Platform} from 'react-native';
+
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {moderateScale, s} from 'react-native-size-matters';
@@ -35,6 +36,8 @@ const HomeStack = () => {
 const Tab = createBottomTabNavigator();
 
 const bottomTabs = () => {
+  //  'https://www.poemsurdu.com/wp-content/uploads/2016/08/Dil-Se-Maine-Dekha-Pakistan.mp3',
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -76,7 +79,12 @@ const bottomTabs = () => {
         component={Favorite}
         options={{
           tabBarIcon: ({focused}) => (
-            <View style={focused ? styles.focused : null}>
+            <View
+              style={focused ? styles.focused : null}
+              // onPress={() => {
+              //   navigation.navigate('Home');
+              // }}
+            >
               {/* <Image source={heart} /> */}
               <Heart
                 width={moderateScale(25, 0.1)}
