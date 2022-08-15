@@ -11,18 +11,18 @@ import React from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Input, Button } from 'native-base';
-import { moderateScale } from 'react-native-size-matters';
+import {Input, Button} from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const SignIn = ({ navigation }) => {
+const SignIn = ({navigation}) => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
-        <View style={[s.container, { width: width, height: height }]}>
+        <View style={[s.container, {width: width, height: height}]}>
           <View></View>
-          <View style={{width:'100%', alignItems:'center'}}>
+          <View style={{width: '100%', alignItems: 'center'}}>
             <View style={s.heading}>
               <Text style={s.headingText}>Sign In</Text>
             </View>
@@ -40,7 +40,8 @@ const SignIn = ({ navigation }) => {
                 }
                 placeholder="Email"
                 placeholderTextColor={'#fff'}
-                fontSize={moderateScale(13, 0.1)}
+                color={'#fff'}
+                fontSize={moderateScale(14, 0.1)}
               />
             </View>
             <View style={s.input}>
@@ -60,7 +61,8 @@ const SignIn = ({ navigation }) => {
                 }
                 placeholder="Password"
                 placeholderTextColor={'#fff'}
-                fontSize={moderateScale(13, 0.1)}
+                color={'#fff'}
+                fontSize={moderateScale(14, 0.1)}
                 secureTextEntry={true}
               />
             </View>
@@ -102,10 +104,10 @@ const SignIn = ({ navigation }) => {
                 color: '#fff',
               }}
             >
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{flexDirection: 'row'}}>
                 <Text style={s.forgetPass}>Don’t Have an Account?</Text>
                 <Text
-                  style={[s.forgetPass, { fontWeight: '700', color: '#4B79F1' }]}
+                  style={[s.forgetPass, {fontWeight: '700', color: '#4B79F1'}]}
                 >
                   {' '}
                   Sign up Now!

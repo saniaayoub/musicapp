@@ -30,7 +30,7 @@ import nowplay from '../../assets/images/nowplay.png';
 import Repeat from '../../assets/images/repeat.svg';
 import Loop from '../../assets/images/loopgrey.svg';
 import Heart from '../../assets/images/heart.svg';
-
+import Backarrowsvg from '../../assets/images/backarrow.svg';
 import TrackPlayer, {
   Capability,
   Event,
@@ -41,7 +41,6 @@ import TrackPlayer, {
   useTrackPlayerEvents,
 } from 'react-native-track-player';
 import styles from './style';
-import Backarrowsvg from '../../assets/images/backarrow.svg';
 
 const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
@@ -394,6 +393,24 @@ const NowPlaying = ({navigation, route}) => {
           colors={['rgba(0,0,0,0)', 'rgba(194, 106, 248, 0.5)']}
         >
           <View style={[s.container]}>
+            <View style={s.backbutton}>
+              <Button
+                size="sm"
+                onPress={() => navigation.goBack()}
+                variant={'solid'}
+                backgroundColor={'#fff'}
+                borderRadius={moderateScale(14, 0.1)}
+                padding={moderateScale(7, 0.1)}
+                zIndex={1000}
+              >
+                <Backarrowsvg
+                  width={moderateScale(14, 0.1)}
+                  height={moderateScale(14, 0.1)}
+                />
+                {/* <Image source={backarrow} resizeMode="contain" /> */}
+                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
+              </Button>
+            </View>
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>
@@ -601,20 +618,6 @@ const NowPlaying = ({navigation, route}) => {
             </ScrollView>
           </View>
         </LinearGradient>
-        <TouchableOpacity style={s.backbutton}>
-              <Button
-                size="sm"
-                onPress={() => navigation.goBack()}
-                variant={'solid'}
-                backgroundColor={'#fff'}
-                borderRadius={moderateScale(14, 0.1)}
-                padding={moderateScale(7, 0.1)}
-                zIndex={1000}
-              >
-                <Image source={backarrow} resizeMode="contain" />
-                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
-              </Button>
-            </TouchableOpacity>
       </ImageBackground>
     </SafeAreaView>
   );

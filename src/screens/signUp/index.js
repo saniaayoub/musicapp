@@ -33,7 +33,8 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Full Name"
               placeholderTextColor={'#fff'}
-              fontSize={moderateScale(13, 0.1)}
+              color={'#fff'}
+              fontSize={moderateScale(14, 0.1)}
             />
           </View>
           <View style={s.input}>
@@ -45,7 +46,8 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Email"
               placeholderTextColor={'#fff'}
-              fontSize={moderateScale(13, 0.1)}
+              color={'#fff'}
+              fontSize={moderateScale(14, 0.1)}
             />
           </View>
           <View style={s.input}>
@@ -57,7 +59,8 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Contact No."
               placeholderTextColor={'#fff'}
-              fontSize={moderateScale(13, 0.1)}
+              color={'#fff'}
+              fontSize={moderateScale(14, 0.1)}
             />
           </View>
           <View style={s.input}>
@@ -69,7 +72,8 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Create Password"
               placeholderTextColor={'#fff'}
-              fontSize={moderateScale(13, 0.1)}
+              color={'#fff'}
+              fontSize={moderateScale(14, 0.1)}
               secureTextEntry={true}
             />
           </View>
@@ -82,7 +86,8 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Confirm Password"
               placeholderTextColor={'#fff'}
-              fontSize={moderateScale(13, 0.1)}
+              color={'#fff'}
+              fontSize={moderateScale(14, 0.1)}
               secureTextEntry={true}
             />
           </View>

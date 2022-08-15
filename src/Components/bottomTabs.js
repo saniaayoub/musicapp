@@ -1,4 +1,3 @@
-
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -12,7 +11,7 @@ import setting from '../assets/images/setting.png';
 import search from '../assets/images/search.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Heart from '../assets/images/heart.svg';
-import Search from '../assets/images/search.svg';
+import SearchIcon from '../assets/images/search.svg';
 import Setting from '../assets/images/setting.svg';
 
 // Screens
@@ -21,7 +20,7 @@ import Favorite from '../screens/Favourite';
 import Playlist from '../screens/Playlist';
 import Profile from '../screens/Profile';
 import NowPlaying from '../screens/NowPlaying';
-
+import Search from '../screens/Search';
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
@@ -48,15 +47,19 @@ const bottomTabs = () => {
             paddingVertical: moderateScale(5, 0.1),
             backgroundColor: '#000000',
             width: '100%',
-            height: Platform.OS == 'ios' ? moderateScale(90, 0.1) : moderateScale(50, 0.1),
+            height:
+              Platform.OS == 'ios'
+                ? moderateScale(90, 0.1)
+                : moderateScale(50, 0.1),
             borderTopLeftRadius: moderateScale(25, 0.1),
             borderTopRightRadius: moderateScale(25, 0.1),
             elevation: 0,
             position: 'absolute',
-            borderTopColor:'#000'
+            borderTopColor: '#000',
           },
           null,
         ],
+
         tabBarShowLabel: false,
       }}
     >
@@ -95,13 +98,13 @@ const bottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Playlist"
-        component={Playlist}
+        name="Search"
+        component={Search}
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>
               {/* <Image source={search} /> */}
-              <Search
+              <SearchIcon
                 width={moderateScale(25, 0.1)}
                 height={moderateScale(25, 0.1)}
               />

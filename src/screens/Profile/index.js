@@ -108,6 +108,8 @@ const Playlist = ({navigation}) => {
                   md: '15%',
                 }}
                 variant="underlined"
+                color={'#000'}
+                fontSize={moderateScale(12, 0.1)}
                 InputLeftElement={
                   <View style={s.icon}>
                     {/* <Icon name={'user'} color="#C8C4C4" size={20} /> */}
@@ -128,7 +130,7 @@ const Playlist = ({navigation}) => {
                 }
                 placeholder="Full Name"
                 placeholderTextColor={'#3E3E3E'}
-                fontSize={moderateScale(10, 0.1)}
+                ke
               />
             </View>
             <View style={s.input}>
@@ -154,7 +156,8 @@ const Playlist = ({navigation}) => {
                 }
                 placeholder="Email"
                 placeholderTextColor={'#3E3E3E'}
-                fontSize={moderateScale(10, 0.1)}
+                color={'#000'}
+                fontSize={moderateScale(12, 0.1)}
               />
             </View>
             <View style={s.input}>
@@ -184,7 +187,9 @@ const Playlist = ({navigation}) => {
                 }
                 placeholder="Phone Number"
                 placeholderTextColor={'#3E3E3E'}
-                fontSize={moderateScale(10, 0.1)}
+                color={'#000'}
+                fontSize={moderateScale(12, 0.1)}
+                keyboardType={'numeric'}
               />
             </View>
             <View style={s.radioInput}>
