@@ -6,6 +6,7 @@ import {
   Text,
   View,
   Platform,
+  StatusBar,
 } from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {NativeBaseProvider} from 'native-base';
@@ -42,10 +43,20 @@ const App = () => {
       'linear-gradient': require('react-native-linear-gradient').default,
     },
   };
+
+  const MyStatusBar = ({backgroundColor, ...props}) => (
+    <View style={[ { backgroundColor }]}>
+      <SafeAreaView>
+        <StatusBar translucent backgroundColor={backgroundColor} {...props} />
+      </SafeAreaView>
+    </View>
+  );
   return (
     <AppContext.Provider value={userSettings}>
+      
       <NativeBaseProvider config={config}>
         <SafeAreaProvider>
+        <MyStatusBar backgroundColor="#130a18" barStyle="light-content" />
           <KeyboardAvoidingView
             style={{flex: 1}}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

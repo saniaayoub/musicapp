@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, Platform} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {moderateScale, s} from 'react-native-size-matters';
@@ -45,11 +45,12 @@ const bottomTabs = () => {
             paddingVertical: moderateScale(5, 0.1),
             backgroundColor: '#000000',
             width: '100%',
-            height: moderateScale(50, 0.1),
+            height: Platform.OS == 'ios' ? moderateScale(90, 0.1) : moderateScale(50, 0.1),
             borderTopLeftRadius: moderateScale(25, 0.1),
             borderTopRightRadius: moderateScale(25, 0.1),
             elevation: 0,
             position: 'absolute',
+            borderTopColor:'#000'
           },
           null,
         ],

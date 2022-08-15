@@ -17,6 +17,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 15,
     top: 15,
+    // zIndex:9,
+    // backgroundColor:'#000'
   },
   header: {
     zIndex: 100,

@@ -384,20 +384,7 @@ const NowPlaying = ({navigation, route}) => {
           colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
         >
           <View style={[s.container]}>
-            <View style={s.backbutton}>
-              <Button
-                size="sm"
-                onPress={() => navigation.goBack()}
-                variant={'solid'}
-                backgroundColor={'#fff'}
-                borderRadius={moderateScale(14, 0.1)}
-                padding={moderateScale(7, 0.1)}
-                zIndex={1000}
-              >
-                <Image source={backarrow} resizeMode="contain" />
-                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
-              </Button>
-            </View>
+            
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>
@@ -593,6 +580,20 @@ const NowPlaying = ({navigation, route}) => {
             </ScrollView>
           </View>
         </LinearGradient>
+        <TouchableOpacity style={s.backbutton}>
+              <Button
+                size="sm"
+                onPress={() => navigation.goBack()}
+                variant={'solid'}
+                backgroundColor={'#fff'}
+                borderRadius={moderateScale(14, 0.1)}
+                padding={moderateScale(7, 0.1)}
+                zIndex={1000}
+              >
+                <Image source={backarrow} resizeMode="contain" />
+                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
+              </Button>
+            </TouchableOpacity>
       </ImageBackground>
     </SafeAreaView>
   );
