@@ -15,6 +15,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
+import Title from '../../assets/images/title.svg';
+import title from '../../assets/images/title.png';
+
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 const GetStarted = ({navigation}) => {
@@ -25,15 +28,16 @@ const GetStarted = ({navigation}) => {
           <View></View>
           <View>
             <View style={s.heading}>
-              <LinearTextGradient
-                style={{fontWeight: 'bold', fontSize: 72}}
-                locations={[0, 1]}
-                colors={['rgb(192, 107, 248)', 'rgb(48, 231, 214)']}
-                start={{x: 0, y: 0}}
-                end={{x: 0, y: 1}}
-              >
-                <Text style={[s.headingText]}>Energy 4 Living</Text>
-              </LinearTextGradient>
+              <Image
+                source={title}
+                width={undefined}
+                height={undefined}
+                resizeMode={'contain'}
+              />
+              {/* <Title
+                width={moderateScale(282, 0.1)}
+                height={moderateScale(70, 0.1)}
+              /> */}
             </View>
             <View style={s.para}>
               <Text style={s.paraText}>
