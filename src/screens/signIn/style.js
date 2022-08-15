@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   bottomLink: {
     position: 'absolute',
-    bottom: moderateScale(50, 0.1),
+    bottom: Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(50, 0.1),
   },
 });
 

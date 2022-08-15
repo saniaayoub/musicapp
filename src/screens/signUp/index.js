@@ -70,6 +70,7 @@ const SignUp = ({navigation}) => {
               placeholder="Create Password"
               placeholderTextColor={'#fff'}
               fontSize={moderateScale(13, 0.1)}
+              secureTextEntry={true}
             />
           </View>
           <View style={s.input}>
@@ -82,6 +83,7 @@ const SignUp = ({navigation}) => {
               placeholder="Confirm Password"
               placeholderTextColor={'#fff'}
               fontSize={moderateScale(13, 0.1)}
+              secureTextEntry={true}
             />
           </View>
           <View style={s.button}>
@@ -106,7 +108,7 @@ const SignUp = ({navigation}) => {
           <View style={s.bottomLink}>
             <Button
               size="sm"
-              // onPress={() => navigation.navigate('SignUp')}
+              onPress={() => navigation.navigate('SignIn')}
               variant={'link'}
               _text={{
                 color: '#fff',

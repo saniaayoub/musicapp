@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import s from './style';
@@ -201,33 +202,16 @@ const Playlist = ({navigation}) => {
           end={{x: 0, y: 1}}
           colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
         >
+          
           <View style={[s.container]}>
-            <View style={s.backbutton}>
-              <Button
-                size="sm"
-                onPress={() => navigation.goBack()}
-                variant={'solid'}
-                backgroundColor={'#fff'}
-                borderRadius={moderateScale(14, 0.1)}
-                padding={moderateScale(7, 0.1)}
-                zIndex={1000}
-              >
-                <Backarrowsvg
-                  width={moderateScale(14, 0.1)}
-                  height={moderateScale(14, 0.1)}
-                />
-
-                {/* <Image source={backarrow} resizeMode="contain" /> */}
-                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
-              </Button>
-            </View>
+            
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>
                 <Text style={s.headingText}>Playlist</Text>
               </View>
             </View>
-            <ScrollView style={{marginBottom: moderateScale(80, 0.1)}}>
+            <ScrollView style={{marginBottom: Platform.OS == 'ios' ? moderateScale(330, 0.1) : moderateScale(80, 0.1)}}>
               <View style={s.section}>
                 <View style={s.imageTop}>
                   <Image
@@ -309,6 +293,20 @@ const Playlist = ({navigation}) => {
             </ScrollView>
           </View>
         </LinearGradient>
+        <TouchableOpacity style={s.backbutton}>
+              <Button
+                size="sm"
+                onPress={() => navigation.goBack()}
+                variant={'solid'}
+                backgroundColor={'#fff'}
+                borderRadius={moderateScale(14, 0.1)}
+                padding={moderateScale(7, 0.1)}
+                zIndex={1000}
+              >
+                <Image source={backarrow} resizeMode="contain" />
+                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
+              </Button>
+            </TouchableOpacity>
       </ImageBackground>
     </SafeAreaView>
   );
