@@ -202,16 +202,21 @@ const Playlist = ({navigation}) => {
           end={{x: 0, y: 1}}
           colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
         >
-          
           <View style={[s.container]}>
-            
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>
                 <Text style={s.headingText}>Playlist</Text>
               </View>
             </View>
-            <ScrollView style={{marginBottom: Platform.OS == 'ios' ? moderateScale(330, 0.1) : moderateScale(80, 0.1)}}>
+            <ScrollView
+              style={{
+                marginBottom:
+                  Platform.OS == 'ios'
+                    ? moderateScale(330, 0.1)
+                    : moderateScale(80, 0.1),
+              }}
+            >
               <View style={s.section}>
                 <View style={s.imageTop}>
                   <Image
@@ -240,12 +245,12 @@ const Playlist = ({navigation}) => {
                             height={undefined}
                           >
                             <View style={s.innerView}>
-                              <Image
+                              {/* <Image
                                 source={play}
                                 width={undefined}
                                 height={undefined}
                                 resizeMode={'cover'}
-                              />
+                              /> */}
                             </View>
                           </ImageBackground>
                         </TouchableOpacity>
@@ -294,19 +299,19 @@ const Playlist = ({navigation}) => {
           </View>
         </LinearGradient>
         <TouchableOpacity style={s.backbutton}>
-              <Button
-                size="sm"
-                onPress={() => navigation.goBack()}
-                variant={'solid'}
-                backgroundColor={'#fff'}
-                borderRadius={moderateScale(14, 0.1)}
-                padding={moderateScale(7, 0.1)}
-                zIndex={1000}
-              >
-                <Image source={backarrow} resizeMode="contain" />
-                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
-              </Button>
-            </TouchableOpacity>
+          <Button
+            size="sm"
+            onPress={() => navigation.goBack()}
+            variant={'solid'}
+            backgroundColor={'#fff'}
+            borderRadius={moderateScale(14, 0.1)}
+            padding={moderateScale(7, 0.1)}
+            zIndex={1000}
+          >
+            <Image source={backarrow} resizeMode="contain" />
+            {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
+          </Button>
+        </TouchableOpacity>
       </ImageBackground>
     </SafeAreaView>
   );

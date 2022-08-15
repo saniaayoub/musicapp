@@ -33,6 +33,7 @@ const ForgetPassword = ({navigation}) => {
               backgroundColor={'#fff'}
               borderRadius={moderateScale(14, 0.1)}
               padding={moderateScale(7, 0.1)}
+              zIndex={1000}
             >
               <Backarrowsvg
                 width={moderateScale(14, 0.1)}
@@ -52,6 +53,8 @@ const ForgetPassword = ({navigation}) => {
                 md: '25%',
               }}
               variant="underlined"
+              color={'#fff'}
+              fontSize={moderateScale(14, 0.1)}
               InputLeftElement={
                 <View style={s.iconCircle}>
                   <Icon name={'envelope'} color="#fff" size={15} />
@@ -59,7 +62,6 @@ const ForgetPassword = ({navigation}) => {
               }
               placeholder="Email"
               placeholderTextColor={'#fff'}
-              fontSize={moderateScale(13, 0.1)}
             />
           </View>
 
@@ -85,7 +87,7 @@ const ForgetPassword = ({navigation}) => {
           <View style={s.bottomLink}>
             <Button
               size="sm"
-              // onPress={() => navigation.navigate('SignUp')}
+              onPress={() => navigation.navigate('SignUp')}
               variant={'link'}
               _text={{
                 color: '#fff',

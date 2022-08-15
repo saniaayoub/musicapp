@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     top: 25,
+    zIndex: 1000,
   },
   headingText: {
     fontFamily: InterBold,
