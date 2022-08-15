@@ -39,14 +39,14 @@ const Favorite = ({navigation}) => {
   const context = useContext(AppContext);
   const playbackState = usePlaybackState();
   const progress = useProgress();
-  const [favList, setFavList] = useState([]);
+  const [favList, setFavList] = useState(context.songs);
   const [loader, setLoader] = useState(false);
   const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
     // console.log(playbackState, 'here1');
-    setUpTrackPlayer();
-  }, [context.songs]);
+    // setUpTrackPlayer();
+  }, []);
 
   const getQueue = async () => {
     const queue = await TrackPlayer.getQueue();
@@ -138,7 +138,7 @@ const Favorite = ({navigation}) => {
       >
         <View style={s.container}>
           <View style={s.fixed}>
-            <View style={s.backbutton}>
+            {/* <View style={s.backbutton}>
               <Button
                 size="sm"
                 onPress={() =>
@@ -154,10 +154,10 @@ const Favorite = ({navigation}) => {
                   width={moderateScale(14, 0.1)}
                   height={moderateScale(14, 0.1)}
                 />
-                {/* <Image source={backarrow} resizeMode="contain" /> */}
-                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
+                <Image source={backarrow} resizeMode="contain" />
+                <Icon name={'arrow-circle-left'} color={'#fff'} size={25} />
               </Button>
-            </View>
+            </View> */}
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>
@@ -179,12 +179,12 @@ const Favorite = ({navigation}) => {
                       <View style={s.item} key={i}>
                         <TouchableOpacity
                           style={s.image}
-                          onPress={() =>
-                            navigation.navigate('Home', {
-                              screen: 'NowPlaying',
-                              params: {data: item},
-                            })
-                          }
+                          // onPress={() =>
+                          //   navigation.navigate('Home', {
+                          //     screen: 'NowPlaying',
+                          //     params: {data: item},
+                          //   })
+                          // }
                         >
                           <ImageBackground
                             source={item.artwork}
@@ -193,12 +193,12 @@ const Favorite = ({navigation}) => {
                             height={undefined}
                           >
                             <View style={s.innerView}>
-                              <Image
+                              {/* <Image
                                 source={play}
                                 width={undefined}
                                 height={undefined}
                                 resizeMode={'cover'}
-                              />
+                              /> */}
                             </View>
                           </ImageBackground>
                         </TouchableOpacity>
@@ -208,27 +208,43 @@ const Favorite = ({navigation}) => {
                               <Text style={s.text1}>{item.title}</Text>
                               <Text style={s.text2}>{item.artist}</Text>
                             </View>
-                            <TouchableOpacity
-                              style={s.playbutton}
-                              onPress={() => {
-                                setPlayButton(item);
-                                // getIndex(item);
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                // justifyContent: 'center',
+                                // alignItems: 'center',
                               }}
                             >
-                              {item.play ? (
-                                <Icon
-                                  name={'pause-circle'}
-                                  color={'#fff'}
-                                  size={30}
-                                />
-                              ) : (
-                                <Icon
-                                  name={'play-circle'}
-                                  color={'#fff'}
-                                  size={30}
-                                />
-                              )}
-                            </TouchableOpacity>
+                              <View
+                                style={{
+                                  marginRight: moderateScale(10, 0.1),
+                                  marginTop: moderateScale(23, 0.1),
+                                }}
+                              >
+                                <Icon name={'heart'} color={'#fff'} size={25} />
+                              </View>
+                              <TouchableOpacity
+                                style={s.playbutton}
+                                onPress={() => {
+                                  setPlayButton(item);
+                                  // getIndex(item);
+                                }}
+                              >
+                                {item.play ? (
+                                  <Icon
+                                    name={'pause-circle'}
+                                    color={'#fff'}
+                                    size={30}
+                                  />
+                                ) : (
+                                  <Icon
+                                    name={'play-circle'}
+                                    color={'#fff'}
+                                    size={30}
+                                  />
+                                )}
+                              </TouchableOpacity>
+                            </View>
                           </View>
 
                           <View style={s.slider}>
