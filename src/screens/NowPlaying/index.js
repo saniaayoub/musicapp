@@ -41,6 +41,7 @@ import TrackPlayer, {
   useTrackPlayerEvents,
 } from 'react-native-track-player';
 import styles from './style';
+import Backarrowsvg from '../../assets/images/backarrow.svg';
 
 const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
@@ -68,10 +69,12 @@ const NowPlaying = ({navigation, route}) => {
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
     if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
+
       const {title, artwork, artist} = track;
       setTrackArtist(artist);
       setTrackArtwork(artwork);
       setTrackTitle(title);
+      setLoader(false);
     }
   });
 
@@ -107,9 +110,7 @@ const NowPlaying = ({navigation, route}) => {
         TrackPlayer.play();
         console.log(playbackState, 'here3');
       })
-      .then(() => {
-        setLoader(false);
-      })
+      .then(() => {})
       .catch(err => {
         console.log(err);
       });
@@ -126,7 +127,6 @@ const NowPlaying = ({navigation, route}) => {
   //     .catch(err => {
   //       console.log(err);
   //     });
-
   // };
 
   const togglePlayback = async playbackState => {
@@ -169,6 +169,7 @@ const NowPlaying = ({navigation, route}) => {
     context.setSongs(tempArray);
     setAllSongs(tempArray);
   };
+
   const shuffleArray = array => {
     let currentIndex = array.length - 1,
       temporaryValue,
@@ -185,6 +186,7 @@ const NowPlaying = ({navigation, route}) => {
     }
     return array;
   };
+
   const shuffleFunc = async () => {
     const queue = await allSongs;
     const shuffledQueue = shuffleArray(queue);
@@ -196,6 +198,7 @@ const NowPlaying = ({navigation, route}) => {
       TrackPlayer.play();
     });
   };
+
   const skipToNext = async i => {
     if (shuffle) {
       let randomIndex = Math.floor(Math.random() * allSongs.length - 1);
@@ -388,7 +391,7 @@ const NowPlaying = ({navigation, route}) => {
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
-          colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.3)']}
+          colors={['rgba(0,0,0,0)', 'rgba(194, 106, 248, 0.5)']}
         >
           <View style={[s.container]}>
             <View style={s.backbutton}>
@@ -401,7 +404,11 @@ const NowPlaying = ({navigation, route}) => {
                 padding={moderateScale(7, 0.1)}
                 zIndex={1000}
               >
-                <Image source={backarrow} resizeMode="contain" />
+                <Backarrowsvg
+                  width={moderateScale(14, 0.1)}
+                  height={moderateScale(14, 0.1)}
+                />
+                {/* <Image source={backarrow} resizeMode="contain" /> */}
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
             </View>
@@ -425,10 +432,15 @@ const NowPlaying = ({navigation, route}) => {
                       style={{width: '100%', height: '100%'}}
                     />
                   )}
-
                   <View style={s.descriptionViewTop}>
-                    <Text style={s.text1Top}>{trackTitle}</Text>
-                    <Text style={s.text2Top}>{trackArtist}</Text>
+                    <LinearGradient
+                      start={{x: 0, y: 0}}
+                      end={{x: 0, y: 1}}
+                      colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.5))']}
+                    >
+                      <Text style={s.text1Top}>{trackTitle}</Text>
+                      <Text style={s.text2Top}>{trackArtist}</Text>
+                    </LinearGradient>
                   </View>
                 </View>
               </View>
@@ -443,13 +455,15 @@ const NowPlaying = ({navigation, route}) => {
                       size="sm"
                       onPress={() => {
                         {
-                          fav ? remFromFavList(data) : addToFavList(data);
+                          allSongs[index].fav
+                            ? remFromFavList(data)
+                            : addToFavList(data);
                         }
                       }}
                       variant={'link'}
                       zIndex={1000}
                     >
-                      {fav ? (
+                      {allSongs[index].fav ? (
                         <Icon
                           name={'heart'}
                           color={'#fff'}
@@ -500,7 +514,7 @@ const NowPlaying = ({navigation, route}) => {
                     } else {
                       setShuffle(false);
                       await TrackPlayer.reset().then(() => {
-                        TrackPlayer.setupPlayer();
+                        // TrackPlayer.setupPlayer();
                         TrackPlayer.add(allSongs);
                         TrackPlayer.play();
                       });

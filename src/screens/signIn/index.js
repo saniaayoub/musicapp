@@ -85,7 +85,7 @@ const SignIn = ({navigation}) => {
               onPress={() => navigation.navigate('ForgetPassword')}
               variant={'link'}
             >
-              <Text style={s.forgetPass}> Forget Password</Text>
+              <Text style={s.forgetPass}> Forgot Password?</Text>
             </Button>
           </View>
           <View style={s.bottomLink}>

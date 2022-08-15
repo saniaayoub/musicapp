@@ -35,12 +35,13 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from 'react-native-track-player';
+import Backarrowsvg from '../../assets/images/backarrow.svg';
 
 const Playlist = ({navigation}) => {
   const context = useContext(AppContext);
   const playbackState = usePlaybackState();
   const progress = useProgress();
-  const [favList, setFavList] = useState([]);
+  // const [allsongs, setAllSongs] = useState(context.songs);
   const [loader, setLoader] = useState(false);
   const [currentTrack, setCurrentTrack] = useState({});
 
@@ -48,12 +49,12 @@ const Playlist = ({navigation}) => {
   const [playList, setPlayList] = useState(context.songs);
   const [index, setIndex] = useState(0);
 
-  useEffect(() => {
-    // get List of playlist songs
-    getSongs();
-    console.log(playbackState, 'here1');
-    setUpTrackPlayer();
-  }, [context.songs]);
+  // useEffect(() => {
+  //   // get List of playlist songs
+  //   // getSongs();
+  //   // console.log(playbackState, 'here1');
+  //   // setUpTrackPlayer();
+  // }, [context.songs]);
 
   const getQueue = async () => {
     const queue = await TrackPlayer.getQueue();
@@ -90,11 +91,11 @@ const Playlist = ({navigation}) => {
   const getSongs = songs => {
     setLoader(true);
     let tempArray;
-    tempArray = songs.filter(item => item.fav == true);
+    tempArray = allsongs.filter(item => item.fav == true);
     tempArray = tempArray.map(item => {
       return {...item, play: false};
     });
-    setFavList(tempArray);
+    setAllSongs(tempArray);
     setLoader(false);
   };
 
@@ -109,14 +110,14 @@ const Playlist = ({navigation}) => {
 
   const setPlayButton = item => {
     let tempArray;
-    tempArray = favList.map((elem, i) => {
+    tempArray = playList.map((elem, i) => {
       if (elem.id == item.id) {
         return {...elem, play: !elem.play};
       } else {
         return {...elem, play: false};
       }
     });
-    setFavList(tempArray);
+    setPlayList(tempArray);
   };
 
   const togglePlayback = async playbackState => {
@@ -211,7 +212,12 @@ const Playlist = ({navigation}) => {
                 padding={moderateScale(7, 0.1)}
                 zIndex={1000}
               >
-                <Image source={backarrow} resizeMode="contain" />
+                <Backarrowsvg
+                  width={moderateScale(14, 0.1)}
+                  height={moderateScale(14, 0.1)}
+                />
+
+                {/* <Image source={backarrow} resizeMode="contain" /> */}
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
             </View>
@@ -268,7 +274,8 @@ const Playlist = ({navigation}) => {
                             <TouchableOpacity
                               style={s.playbutton}
                               onPress={() => {
-                                playSong(item);
+                                setPlayButton(item);
+                                // playSong(item);
                               }}
                             >
                               {item.play ? (

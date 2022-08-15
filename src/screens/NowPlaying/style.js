@@ -44,20 +44,26 @@ const styles = StyleSheet.create({
   },
   descriptionViewTop: {
     position: 'absolute',
-    bottom: moderateScale(15, 0.1),
-    left: moderateScale(15, 0.1),
+    width: '100%',
+    bottom: 0,
   },
   text1Top: {
     color: '#fff',
+    paddingLeft: moderateScale(20, 0.1),
     fontSize: moderateScale(21, 0.1),
     fontFamily: InterMedium,
     paddingVertical: moderateScale(5, 0.1),
+    paddingTop: moderateScale(100, 0.1),
   },
   text2Top: {
     color: '#fff',
+    paddingLeft: moderateScale(20, 0.1),
+
     fontSize: moderateScale(12, 0.1),
     fontFamily: InterRegular,
+    paddingBottom: moderateScale(30, 0.1),
   },
+
   bottomContainer: {
     width: '100%',
     backgroundColor: 'rgba(194, 106, 248, 0.36)',

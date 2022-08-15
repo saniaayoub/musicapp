@@ -33,6 +33,7 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from 'react-native-track-player';
+import Backarrowsvg from '../../assets/images/backarrow.svg';
 
 const Favorite = ({navigation}) => {
   const context = useContext(AppContext);
@@ -43,23 +44,9 @@ const Favorite = ({navigation}) => {
   const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
-    // TrackPlayer.destroy();
-    console.log(playbackState, 'here1');
+    // console.log(playbackState, 'here1');
     setUpTrackPlayer();
-    // BackHandler.addEventListener('hardwareBackPress', () => {
-    //   BackHandler.exitApp();
-    // });
   }, [context.songs]);
-
-  // useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-  //   if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
-  //     const track = await TrackPlayer.getTrack(event.nextTrack);
-  //     const {title, artwork, artist} = track;
-  //     setTrackArtist(artist);
-  //     setTrackArtwork(artwork);
-  //     setTrackTitle(title);
-  //   }
-  // });
 
   const getQueue = async () => {
     const queue = await TrackPlayer.getQueue();
@@ -68,7 +55,7 @@ const Favorite = ({navigation}) => {
 
   const getIndex = async data => {
     if (data.id == currentTrack.id) {
-      console.log('already play');
+      console.log('already playing');
       togglePlayback(playbackState);
       setPlayButton(data);
     } else {
@@ -76,8 +63,7 @@ const Favorite = ({navigation}) => {
       favList.map((item, i) => {
         if (item.id == data.id) {
           TrackPlayer.reset();
-          setIndex(i);
-          playSong(data, i);
+          playSong(data);
           setPlayButton(data);
         }
       });
@@ -85,27 +71,15 @@ const Favorite = ({navigation}) => {
   };
 
   const setUpTrackPlayer = async () => {
-    await TrackPlayer.setupPlayer()
-      .then(() => {
-        getSongs(context.songs);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    getSongs(context.songs);
+    // await TrackPlayer.setupPlayer()
+    //   .then(() => {
+    //     getSongs(context.songs);
+    //   })
+    //   .catch(e => {
+    //     console.log(e);
+    //   });
   };
-
-  // const skipToIndex = async i => {
-  //   // console.log(allSongs[index]);
-  //   await TrackPlayer.skip(i)
-  //     .then(() => {
-  //       console.log(i, 'skip to');
-  //       TrackPlayer.play();
-  //       console.log(playbackState, 'here3');
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     });
-  // };
 
   const getSongs = songs => {
     setLoader(true);
@@ -119,25 +93,15 @@ const Favorite = ({navigation}) => {
   };
 
   const playSong = async item => {
-    // getIndex(item);
-    console.log('3');
     await TrackPlayer.add(item)
       .then(() => {
-        console.log('4');
         TrackPlayer.play();
         setCurrentTrack(item);
       })
       .catch(e => console.log(e));
-    // if (index == currentTrack) {
-    //   setIndex(currentTrack);
-    // } else {
-    //   setIndex(currentTrack);
-    //   // console.log(currentTrack, 'currentTrack');
-
-    // }
   };
+
   const setPlayButton = item => {
-    console.log('5');
     let tempArray;
     tempArray = favList.map((elem, i) => {
       if (elem.id == item.id) {
@@ -145,18 +109,10 @@ const Favorite = ({navigation}) => {
       } else {
         return {...elem, play: false};
       }
-      // if (i == index) {
-      //   console.log('here');
-      //   return {...elem, play: !elem.play};
-      // } else if (elem.id == item.id) {
-      //   console.log('here2');
-      //   return {...elem, play: true};
-      // } else {
-      //   return elem;
-      // }
     });
     setFavList(tempArray);
   };
+
   const togglePlayback = async playbackState => {
     const currentTrack = await TrackPlayer.getCurrentTrack();
     if (currentTrack !== null) {
@@ -167,6 +123,7 @@ const Favorite = ({navigation}) => {
       }
     }
   };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -193,7 +150,11 @@ const Favorite = ({navigation}) => {
                 padding={moderateScale(7, 0.1)}
                 zIndex={1000}
               >
-                <Image source={backarrow} resizeMode="contain" />
+                <Backarrowsvg
+                  width={moderateScale(14, 0.1)}
+                  height={moderateScale(14, 0.1)}
+                />
+                {/* <Image source={backarrow} resizeMode="contain" /> */}
                 {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
               </Button>
             </View>
@@ -250,7 +211,8 @@ const Favorite = ({navigation}) => {
                             <TouchableOpacity
                               style={s.playbutton}
                               onPress={() => {
-                                getIndex(item);
+                                setPlayButton(item);
+                                // getIndex(item);
                               }}
                             >
                               {item.play ? (

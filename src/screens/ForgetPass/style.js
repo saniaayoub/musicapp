@@ -28,9 +28,9 @@ const styles = StyleSheet.create({
   iconCircle: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: moderateScale(7, 0.1),
+    paddingLeft: moderateScale(15, 0.1),
     marginRight: moderateScale(10, 0.1),
-    marginBottom: moderateScale(5, 0.1),
+    // marginBottom: moderateScale(5, 0.1),
   },
   input: {
     justifyContent: 'center',
