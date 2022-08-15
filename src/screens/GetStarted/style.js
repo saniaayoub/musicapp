@@ -17,14 +17,16 @@ const styles = StyleSheet.create({
   headingText: {
     fontFamily: Imperial,
     // color: '#fff',
-    fontSize: moderateScale(50, 0.1),
+    fontSize: moderateScale(55, 0.1),
     lineHeight: moderateScale(70, 0.1),
     borderWidth: 1,
     borderColor: '#fff',
-    textShadowColor: 'white', textShadowRadius: 1, textShadowOffset: { 
-      width: 2,
-      height: 2
-    }, 
+    textShadowColor: 'white',
+    textShadowRadius: 1,
+    textShadowOffset: {
+      width: 1,
+      height: 1,
+    },
   },
   para: {
     marginVertical: moderateScale(5, 0.1),

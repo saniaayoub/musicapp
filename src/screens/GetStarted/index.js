@@ -10,31 +10,34 @@ import {
 import React from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
-import { LinearTextGradient } from 'react-native-text-gradient';
+import {LinearTextGradient} from 'react-native-text-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Input, Button } from 'native-base';
-import { moderateScale } from 'react-native-size-matters';
+import {Input, Button} from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
+import Title from '../../assets/images/title.svg';
+import title from '../../assets/images/title.png';
+
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const GetStarted = ({ navigation }) => {
+const GetStarted = ({navigation}) => {
   return (
-    <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
+    <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
-        <View style={[s.container, { width: width, height: height }]}>
-
+        <View style={[s.container, {width: width, height: height}]}>
           <View></View>
           <View>
             <View style={s.heading}>
-              <LinearTextGradient
-                style={{ fontWeight: 'bold', fontSize: 72 }}
-                locations={[0, 1]}
-                colors={['#C26AF8', '#25ADF9']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-              >
-                <Text style={[s.headingText]} >Energy 4 Living</Text>
-              </LinearTextGradient>
+              <Image
+                source={title}
+                width={undefined}
+                height={undefined}
+                resizeMode={'contain'}
+              />
+              {/* <Title
+                width={moderateScale(282, 0.1)}
+                height={moderateScale(70, 0.1)}
+              /> */}
             </View>
             <View style={s.para}>
               <Text style={s.paraText}>
@@ -44,7 +47,6 @@ const GetStarted = ({ navigation }) => {
             </View>
           </View>
           <View></View>
-
         </View>
       </ImageBackground>
       <View style={s.button}>
