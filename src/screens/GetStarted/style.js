@@ -21,6 +21,10 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(70, 0.1),
     borderWidth: 1,
     borderColor: '#fff',
+    textShadowColor: 'white', textShadowRadius: 1, textShadowOffset: { 
+      width: 2,
+      height: 2
+    }, 
   },
   para: {
     marginVertical: moderateScale(5, 0.1),
