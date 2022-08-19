@@ -28,6 +28,13 @@ const styles = StyleSheet.create({
       height: 1,
     },
   },
+  topHeading: {
+    color: '#fff',
+    fontSize: moderateScale(26, 0.1),
+    fontWeight: '700',
+    textAlign: 'center',
+    paddingBottom: moderateScale(10, 0.1),
+  },
   para: {
     marginVertical: moderateScale(5, 0.1),
     width: '80%',

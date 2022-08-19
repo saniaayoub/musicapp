@@ -11,14 +11,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import s from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import playlistback from '../../assets/images/playlistback.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Input, Button, Box } from 'native-base';
-import { moderateScale } from 'react-native-size-matters';
+import {Input, Button, Box} from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
 import AppContext from '../../Providers/AppContext';
 import Slider from 'react-native-slider';
 
@@ -42,8 +42,9 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import styles from './style';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
+import Songs from '../../Components/songs';
 
-const NowPlaying = ({ navigation, route }) => {
+const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
   const playbackState = usePlaybackState();
   const progress = useProgress();
@@ -51,7 +52,7 @@ const NowPlaying = ({ navigation, route }) => {
   const [trackArtwork, setTrackArtwork] = useState();
   const [trackArtist, setTrackArtist] = useState();
   const [trackTitle, setTrackTitle] = useState();
-  const [allSongs, setAllSongs] = useState(context.songs);
+  const [allSongs, setAllSongs] = useState(Songs);
   const [index, setIndex] = useState(0);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState('off');
@@ -60,8 +61,6 @@ const NowPlaying = ({ navigation, route }) => {
   const [loader, setLoader] = useState(false);
 
   useEffect(() => {
-    // play(data);
-    // TrackPlayer.destroy();
     console.log(route.params?.data);
     getIndex();
   }, []);
@@ -70,7 +69,7 @@ const NowPlaying = ({ navigation, route }) => {
     if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
 
-      const { title, artwork, artist } = track;
+      const {title, artwork, artist} = track;
       setTrackArtist(artist);
       setTrackArtwork(artwork);
       setTrackTitle(title);
@@ -78,9 +77,9 @@ const NowPlaying = ({ navigation, route }) => {
     }
   });
 
-  const getIndex = async () => {
+  const getIndex = () => {
     setLoader(true);
-    await allSongs.map((item, i) => {
+    allSongs.map((item, i) => {
       if (item.id == data.id) {
         setIndex(i);
         setUpTrackPlayer(i);
@@ -110,13 +109,11 @@ const NowPlaying = ({ navigation, route }) => {
         TrackPlayer.play();
         console.log(playbackState, 'here3');
       })
-      .then(() => { })
+      .then(() => {})
       .catch(err => {
         console.log(err);
       });
   };
-
-
 
   const togglePlayback = async playbackState => {
     const currentTrack = await TrackPlayer.getCurrentTrack();
@@ -135,7 +132,7 @@ const NowPlaying = ({ navigation, route }) => {
     setFav(true);
     tempArray = allSongs.map(item => {
       if (item.id === data.id) {
-        return { ...item, fav: true };
+        return {...item, fav: true};
       } else {
         return item;
       }
@@ -150,7 +147,7 @@ const NowPlaying = ({ navigation, route }) => {
     setFav(false);
     tempArray = allSongs.map(item => {
       if (item.id === data.id) {
-        return { ...item, fav: false };
+        return {...item, fav: false};
       } else {
         return item;
       }
@@ -163,6 +160,10 @@ const NowPlaying = ({ navigation, route }) => {
     let currentIndex = array.length - 1,
       temporaryValue,
       randomIndex;
+
+    const tempArray = Songs.map(elem => {
+      return elem;
+    });
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
       // Pick a remaining element...
@@ -173,11 +174,12 @@ const NowPlaying = ({ navigation, route }) => {
       array[randomIndex] = temporaryValue;
       currentIndex -= 1;
     }
+    console.log(tempArray, 'temp');
     return array;
   };
 
   const shuffleFunc = async () => {
-    const queue = await allSongs;
+    const queue = Songs;
     const shuffledQueue = shuffleArray(queue);
     setshuffleArr(shuffledQueue);
     console.log(shuffledQueue);
@@ -185,6 +187,7 @@ const NowPlaying = ({ navigation, route }) => {
       TrackPlayer.setupPlayer();
       TrackPlayer.add(shuffledQueue);
       TrackPlayer.play();
+      // console.log(context.songs, 'songs2');
     });
   };
 
@@ -296,13 +299,12 @@ const NowPlaying = ({ navigation, route }) => {
     }
   };
 
-
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
         <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
           colors={['rgba(0,0,0,0)', 'rgba(194, 106, 248, 0.5)']}
         >
           <View style={[s.container]}>
@@ -323,13 +325,13 @@ const NowPlaying = ({ navigation, route }) => {
                       width={undefined}
                       height={undefined}
                       resizeMode={'cover'}
-                      style={{ width: '100%', height: '100%' }}
+                      style={{width: '100%', height: '100%'}}
                     />
                   )}
                   <View style={s.descriptionViewTop}>
                     <LinearGradient
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
+                      start={{x: 0, y: 0}}
+                      end={{x: 0, y: 1}}
                       colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.5))']}
                     >
                       <Text style={s.text1Top}>{trackTitle}</Text>
@@ -392,12 +394,12 @@ const NowPlaying = ({ navigation, route }) => {
                   trackStyle={s.track}
                 />
                 <View style={s.timer}>
-                  <Text style={[s.text2, { fontSize: 12 }]}>
+                  <Text style={[s.text2, {fontSize: 12}]}>
                     {new Date(progress.position * 1000)
                       .toString()
                       .substring(19, 24)}
                   </Text>
-                  <Text style={[s.text2, { fontSize: 12 }]}>
+                  <Text style={[s.text2, {fontSize: 12}]}>
                     {new Date(progress.duration * 1000)
                       .toString()
                       .substring(19, 24)}
@@ -487,18 +489,47 @@ const NowPlaying = ({ navigation, route }) => {
                     color={'#fff'}
                     size={moderateScale(30, 0.1)}
                   />
-                  
+                  {/* {loop ? (
+                      // <Repeat
+                      //   width={moderateScale(24, 0.1)}
+                      //   height={moderateScale(24, 0.1)}
+                      // />
+                      <MaterialIcon
+                        name={loop? "repeat":"repeat-off"}
+                        color={'#fff'}
+                        size={moderateScale(24, 0.1)}
+                      />
+                    ) : (
+                      <MaterialIcon
+                        name="repeat-off"
+                        color={'#fff'}
+                        size={moderateScale(26, 0.1)}
+                      />
+  
+                      // <Loop
+                      //   width={moderateScale(24, 0.1)}
+                      //   height={moderateScale(24, 0.1)}
+                      // />
+                    )} */}
                 </Button>
               </View>
             </ScrollView>
+            <TouchableOpacity style={s.backbutton}>
+              <Button
+                size="sm"
+                onPress={() => navigation.goBack()}
+                variant={'solid'}
+                backgroundColor={'#fff'}
+                borderRadius={moderateScale(14, 0.1)}
+                padding={moderateScale(7, 0.1)}
+                zIndex={1000}
+              >
+                <Image source={backarrow} resizeMode="contain" />
+                {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
+              </Button>
+            </TouchableOpacity>
           </View>
         </LinearGradient>
-        <TouchableOpacity 
-        style={{...s.backbutton, zIndex:1000, backgroundColor:'#fff', borderRadius: moderateScale(14, 0.1), padding:moderateScale(7, 0.1)}} 
-        onPress={() => navigation.goBack()}
-        >
-            <Image source={backarrow} resizeMode="contain" />
-        </TouchableOpacity>
       </ImageBackground>
     </SafeAreaView>
   );

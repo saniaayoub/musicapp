@@ -45,7 +45,7 @@ const App = () => {
   };
 
   const MyStatusBar = ({backgroundColor, ...props}) => (
-    <View style={[ { backgroundColor }]}>
+    <View style={[{backgroundColor}]}>
       <SafeAreaView>
         <StatusBar translucent backgroundColor={backgroundColor} {...props} />
       </SafeAreaView>
@@ -53,10 +53,9 @@ const App = () => {
   );
   return (
     <AppContext.Provider value={userSettings}>
-      
       <NativeBaseProvider config={config}>
         <SafeAreaProvider>
-        <MyStatusBar backgroundColor="#130a18" barStyle="light-content" />
+          <MyStatusBar backgroundColor="#130a18" barStyle="light-content" />
           <KeyboardAvoidingView
             style={{flex: 1}}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

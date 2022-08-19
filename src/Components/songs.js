@@ -4,7 +4,7 @@ export default Songs = [
     url:
       'https://cdn.beatzjam.com/wp-content/uploads/2021/Wiz-Khalifa-ft-Charlie-Puth-See-You-Again-(BeatzJam.com).mp3',
     title: 'See you Again',
-    artist: 'Billie Eilish, Khalid',
+    artist: 'Wiz Khalifa',
     artwork: require('../assets/images/healing1.png'),
     fav: false,
     duration: 200,
@@ -13,7 +13,7 @@ export default Songs = [
     id: 2,
     url: 'https://pagaliworld.com/files/download/id/3260',
     title: 'Lovely',
-    artist: 'Wiz Khalifa',
+    artist: 'Billie Eilish, Khalid',
     artwork: require('../assets/images/healing2.png'),
     fav: false,
     duration: 230,

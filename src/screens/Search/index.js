@@ -46,6 +46,7 @@ const Search = ({navigation}) => {
   const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {}, []);
+
   const setPlayButton = item => {
     let tempArray;
     tempArray = songList.map((elem, i) => {
@@ -57,6 +58,7 @@ const Search = ({navigation}) => {
     });
     setSongList(tempArray);
   };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -112,7 +114,7 @@ const Search = ({navigation}) => {
                 {songList.map((item, i) => {
                   return (
                     <>
-                      <View style={s.item} key={i}>
+                      <View style={s.item} key={i.toString()}>
                         <TouchableOpacity
                           style={s.image}
                           onPress={() =>
@@ -141,7 +143,6 @@ const Search = ({navigation}) => {
                               style={s.playbutton}
                               onPress={() => {
                                 setPlayButton(item);
-                                // getIndex(item);
                               }}
                             >
                               {item.play ? (
@@ -162,33 +163,18 @@ const Search = ({navigation}) => {
 
                           <View style={s.slider}>
                             <Slider
-                              value={
-                                currentTrack.id === item.id
-                                  ? progress.position
-                                  : 0
-                              }
-                              minimumValue={0}
-                              maximumValue={progress.duration}
-                              onSlidingComplete={async value => {
-                                await TrackPlayer.seekTo(value);
-                              }}
+                              // value={progress.position}
+                              // minimumValue={0}
+                              // maximumValue={progress.duration}
+                              // onSlidingComplete={async value => {
+                              //   await TrackPlayer.seekTo(value);
+                              // }}
                               thumbStyle={s.thumb}
                               trackStyle={s.track}
                             />
                             <View style={s.timer}>
-                              <Text style={s.text2}>
-                                {currentTrack.id === item.id
-                                  ? new Date(progress.position * 1000)
-                                      .toString()
-                                      .substring(19, 24)
-                                  : `00:00`}
-                              </Text>
-                              <Text style={s.text2}>
-                                {' '}
-                                {new Date(progress.duration * 1000)
-                                  .toString()
-                                  .substring(19, 24)}
-                              </Text>
+                              <Text style={s.text2}>00:00</Text>
+                              <Text style={s.text2}>03:00</Text>
                             </View>
                           </View>
                         </View>
