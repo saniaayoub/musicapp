@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     height: '100%',
+    position:'relative'
   },
   empty: {
     position: 'relative',
