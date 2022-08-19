@@ -40,74 +40,7 @@ import Backarrowsvg from '../../assets/images/backarrow.svg';
 
 const Playlist = ({navigation}) => {
   const context = useContext(AppContext);
-  const playbackState = usePlaybackState();
-  const progress = useProgress();
-  // const [allsongs, setAllSongs] = useState(context.songs);
-  const [loader, setLoader] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState({});
-
-  const [isPlay, setIsPlay] = useState(false);
   const [playList, setPlayList] = useState(context.songs);
-  const [index, setIndex] = useState(0);
-
-  // useEffect(() => {
-  //   // get List of playlist songs
-  //   // getSongs();
-  //   // console.log(playbackState, 'here1');
-  //   // setUpTrackPlayer();
-  // }, [context.songs]);
-
-  const getQueue = async () => {
-    const queue = await TrackPlayer.getQueue();
-    console.log(queue);
-  };
-
-  const getIndex = async data => {
-    if (data.id == currentTrack.id) {
-      console.log('already playing');
-      togglePlayback(playbackState);
-      setPlayButton(data);
-    } else {
-      console.log('new');
-      favList.map((item, i) => {
-        if (item.id == data.id) {
-          TrackPlayer.reset();
-          playSong(data);
-          setPlayButton(data);
-        }
-      });
-    }
-  };
-
-  const setUpTrackPlayer = async () => {
-    await TrackPlayer.setupPlayer()
-      .then(() => {
-        getSongs(context.songs);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  const getSongs = songs => {
-    setLoader(true);
-    let tempArray;
-    tempArray = allsongs.filter(item => item.fav == true);
-    tempArray = tempArray.map(item => {
-      return {...item, play: false};
-    });
-    setAllSongs(tempArray);
-    setLoader(false);
-  };
-
-  const playSong = async item => {
-    await TrackPlayer.add(item)
-      .then(() => {
-        TrackPlayer.play();
-        setCurrentTrack(item);
-      })
-      .catch(e => console.log(e));
-  };
 
   const setPlayButton = item => {
     let tempArray;
@@ -121,75 +54,6 @@ const Playlist = ({navigation}) => {
     setPlayList(tempArray);
   };
 
-  const togglePlayback = async playbackState => {
-    const currentTrack = await TrackPlayer.getCurrentTrack();
-    if (currentTrack !== null) {
-      if (playbackState == State.Paused) {
-        await TrackPlayer.play();
-      } else {
-        await TrackPlayer.pause();
-      }
-    }
-  };
-
-  // const getSongs = () => {
-  //   setLoader(true);
-  //   let tempArray;
-
-  //   tempArray = playList.map(item => {
-  //     return {...item, play: false};
-  //   });
-  //   setPlayList(tempArray);
-  //   setLoader(false);
-  // };
-
-  // const playSong = item => {
-  //   setIsPlay(!isPlay);
-
-  //   //update play pause button
-  //   setPlayButton(item);
-
-  //   if (index == item.id) {
-  //     // If same song
-  //     //console.log('here2');
-  //     if (context.songState === 'play') {
-  //       //console.log(context.songState);
-  //       SoundPlayer.pause();
-  //       context.setSongState('pause');
-  //     } else if (context.songState === 'pause') {
-  //       //console.log(context.songState);
-  //       SoundPlayer.resume();
-  //       context.setSongState('play');
-  //     }
-  //   } else {
-  //     //console.log('here1');
-  //     if (
-  //       context.songState === 'play' ||
-  //       context.songState === 'stop' ||
-  //       context.songState === 'pause'
-  //     ) {
-  //       //console.log(context.songState);
-  //       SoundPlayer.stop();
-  //       SoundPlayer.playUrl(item.url);
-  //       context.setSongState('play');
-  //       //console.log(index);
-  //       setIndex(item.id);
-  //     }
-  //   }
-  // };
-  // const setPlayButton = item => {
-  //   let tempArray;
-  //   tempArray = playList.map(elem => {
-  //     if (elem.id === item.id) {
-  //       return {...elem, play: !elem.play};
-  //     } else if (elem.id === index) {
-  //       return {...elem, play: false};
-  //     } else {
-  //       return elem;
-  //     }
-  //   });
-  //   setPlayList(tempArray);
-  // };
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -264,7 +128,6 @@ const Playlist = ({navigation}) => {
                               style={s.playbutton}
                               onPress={() => {
                                 setPlayButton(item);
-                                // playSong(item);
                               }}
                             >
                               {item.play ? (

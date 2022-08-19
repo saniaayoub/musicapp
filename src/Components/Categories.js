@@ -91,5 +91,13 @@ const Categories = [
     url: 'https://pagaliworld.com/files/download/id/3260',
     fav: false,
   },
+  {
+    id: 12,
+    image: require('../assets/images/healing12.jpg'),
+    category: '30 Minute Healing',
+    description: 'Billie Eilish, Khalid',
+    url: 'https://pagaliworld.com/files/download/id/3260',
+    fav: false,
+  },
 ];
 export default Categories;

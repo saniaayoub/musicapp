@@ -14,13 +14,16 @@ import s from './style';
 import homeback from '../../assets/images/homeback.png';
 import AppContext from '../../Providers/AppContext';
 import Categories from '../../Components/Categories';
+import Songs from '../../Components/songs';
+
 const UserHome = ({navigation}) => {
   const context = useContext(AppContext);
-  const [featured, setFeatured] = useState(context.songs);
+  const [featured, setFeatured] = useState(Songs);
 
   useEffect(() => {
-    setFeatured(context.songs);
-  }, [context.songs]);
+    // console.log(context.songs);
+    // setFeatured(context.songs);
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1}}>

@@ -27,6 +27,9 @@ const GetStarted = ({navigation}) => {
         <View style={[s.container, {width: width, height: height}]}>
           <View></View>
           <View>
+            <View>
+              <Text style={s.topHeading}>E N E R G Y {'  '}H E A L E R</Text>
+            </View>
             <View style={s.heading}>
               <Image
                 source={title}

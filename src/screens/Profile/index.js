@@ -130,7 +130,6 @@ const Playlist = ({navigation}) => {
                 }
                 placeholder="Full Name"
                 placeholderTextColor={'#3E3E3E'}
-                ke
               />
             </View>
             <View style={s.input}>
