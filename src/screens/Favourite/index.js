@@ -34,11 +34,12 @@ import TrackPlayer, {
   useTrackPlayerEvents,
 } from 'react-native-track-player';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
+import Songs from '../../Components/songs';
 
 const Favorite = ({navigation}) => {
   const context = useContext(AppContext);
 
-  const [favList, setFavList] = useState(context.songs);
+  const [favList, setFavList] = useState(Songs);
   const [loader, setLoader] = useState(false);
 
   const setPlayButton = item => {
