@@ -11,21 +11,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     height: '100%',
+    position:'relative',
   },
   empty: {
     position: 'relative',
-    marginRight: moderateScale(100, 0.1),
-    marginTop: moderateScale(150, 0.1),
+    // marginRight: moderateScale(100, 0.1),
+    // marginTop: moderateScale(150, 0.1),
     width: moderateScale(350, 0.1),
     height: moderateScale(47, 0.1),
     backgroundColor: 'rgba(194, 106, 248, 0.36)',
     borderTopRightRadius: moderateScale(25, 0.1),
-    marginBottom: moderateScale(15, 0.1),
+    // marginBottom: moderateScale(15, 0.1),
   },
 
   bottomContainer: {
     paddingLeft: moderateScale(70, 0.1),
-    marginRight: moderateScale(100, 0.1),
+    // marginRight: moderateScale(100, 0.1),
     width: moderateScale(350, 0.1),
     height: moderateScale(500, 0.1),
     backgroundColor: 'rgba(194, 106, 248, 0.36)',
@@ -33,6 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     flexDirection: 'column',
+    marginTop:moderateScale(20, 0.1)
     // paddingVertical: moderateScale(50, 0.1),
   },
   button: {
@@ -93,6 +95,12 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(18, 0.1),
     marginTop: moderateScale(15, 0.1),
   },
+  splender:{
+    position:'absolute',
+    // backgroundColor:'#000',
+    bottom:0,
+    left:moderateScale(-30, 0.1)
+  }
 });
 
 export default styles;
