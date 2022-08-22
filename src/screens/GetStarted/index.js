@@ -6,8 +6,9 @@ import {
   View,
   Dimensions,
   Image,
+  Animated,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
 import {LinearTextGradient} from 'react-native-text-gradient';
@@ -21,15 +22,69 @@ import title from '../../assets/images/title.png';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 const GetStarted = ({navigation}) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const transAnim = useRef(new Animated.Value(-100)).current;
+
+  useEffect(() => {
+    fadeIn();
+    translate();
+    // fadeOut();
+  }, []);
+
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 2000,
+    }).start();
+  };
+
+  const fadeOut = () => {
+    // Will change fadeAnim value to 0 in 3 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 3000,
+    }).start();
+  };
+
+  const translate = () => {
+    Animated.timing(transAnim, {
+      toValue: 0,
+      duration: 2000,
+    }).start();
+  };
   return (
     <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
         <View style={[s.container, {width: width, height: height}]}>
           <View></View>
           <View>
-            <View>
-              <Text style={s.topHeading}>E N E R G Y {'  '}H E A L E R</Text>
-            </View>
+            <Animated.View
+              style={[
+                s.fadingContainer,
+                {
+                  // Bind opacity to animated value
+                  opacity: fadeAnim,
+                  position: 'relative',
+                  transform: [
+                    {
+                      translateY: transAnim,
+                    },
+                  ],
+                },
+              ]}
+            >
+              <LinearTextGradient
+                locations={[0, 1]}
+                colors={['blue', 'purple']}
+                start={{x: 0, y: 0}}
+                end={{x: 0, y: 1}}
+                style={s.topHeading}
+              >
+                <Text style={s.fadingText}>Energy Healer</Text>
+              </LinearTextGradient>
+            </Animated.View>
+
             <View style={s.heading}>
               <Image
                 source={title}

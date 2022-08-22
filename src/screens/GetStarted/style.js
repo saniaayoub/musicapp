@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
   headingText: {
     fontFamily: Imperial,
-    // color: '#fff',
+    color: '#fff',
     fontSize: moderateScale(55, 0.1),
     lineHeight: moderateScale(70, 0.1),
     borderWidth: 1,
@@ -28,12 +28,31 @@ const styles = StyleSheet.create({
       height: 1,
     },
   },
+  // fadingContainer: {
+  //   padding: 20,
+  //   // backgroundColor: 'powderblue',
+  // },
+  // fadingText: {
+  //   fontSize: 28,
+  // },
+  // buttonRow: {
+  //   flexBasis: 100,
+  //   justifyContent: 'space-evenly',
+  //   marginVertical: 16,
+  // },
   topHeading: {
+    fontFamily: Imperial,
     color: '#fff',
-    fontSize: moderateScale(26, 0.1),
-    fontWeight: '700',
+    fontSize: moderateScale(45, 0.1),
+    color: '#000',
+    // fontWeight: '700',
     textAlign: 'center',
-    paddingBottom: moderateScale(10, 0.1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: moderateScale(5, 0.1),
+    marginBottom: moderateScale(5, 0.1),
+    // backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: moderateScale(15, 0.1),
   },
   para: {
     marginVertical: moderateScale(5, 0.1),

@@ -9,15 +9,16 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import s from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Input, Button, Box } from 'native-base';
-import { moderateScale } from 'react-native-size-matters';
+import {Input, Button, Box} from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
 import AppContext from '../../Providers/AppContext';
 import Slider from 'react-native-slider';
 import backarrow from '../../assets/images/backarrow.png';
@@ -37,85 +38,109 @@ import TrackPlayer, {
 import styles from './style';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
 
-const NowPlaying = ({ navigation, route }) => {
+const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
   const progress = useProgress();
   const state = TrackPlayer.getState();
-  const [playPause, setPlayPause] = useState('pause')
-  const [playObject, setPlayObject] = useState()
+  const [playPause, setPlayPause] = useState('pause');
+  const [playObject, setPlayObject] = useState();
   const [repeat, setRepeat] = useState('off');
   const [shuffle, setShuffle] = useState(false);
 
   useEffect(() => {
-    console.log(route.params.data)
+    TrackPlayer.setRepeatMode(RepeatMode.Off);
+    console.log(route.params.data);
     if (route.params.index) {
       TrackPlayer.skip(route.params.index);
-      play('play')
+      play('play');
     }
-  }, [])
+  }, []);
+
+  const showToast = msg => {
+    ToastAndroid.show(msg, ToastAndroid.SHORT);
+  };
 
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
     if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
-      const { title } = track || {};
-      console.log(track,'track')
+      trackObject();
+      const {title} = track || {};
+      console.log(track, 'track');
+    } else {
+      setPlayPause('pause');
     }
   });
 
   const next = async () => {
-    await TrackPlayer.skipToNext();
-    trackObject()
-  }
+    await TrackPlayer.skipToNext()
+      .then(() => {
+        TrackPlayer.play();
+        setPlayPause('play');
+        trackObject();
+      })
+      .catch(err => {
+        showToast(err.toString().substring(6, 40));
+      });
+  };
 
   const previous = async () => {
-    await TrackPlayer.skipToPrevious();
-    trackObject()
-  }
+    await TrackPlayer.skipToPrevious()
+      .then(() => {
+        TrackPlayer.play();
+        setPlayPause('play');
+        trackObject();
+      })
+      .catch(err => {
+        showToast(err.toString().substring(6, 40));
+      });
+  };
 
-  const play = async (c) => {
+  const play = async c => {
     if (c == 'play') {
       await TrackPlayer.play();
     } else {
       await TrackPlayer.pause();
     }
-    trackObject()
-    setPlayPause(c)
-    await TrackPlayer.setRepeatMode(RepeatMode.Queue);
-  }
+    trackObject();
+    setPlayPause(c);
+    // await TrackPlayer.setRepeatMode(RepeatMode.Queue);
+  };
 
   const trackObject = async () => {
     let trackIndex = await TrackPlayer.getCurrentTrack();
     let trackObject = await TrackPlayer.getTrack(trackIndex);
-    console.log(trackObject)
-    setPlayObject(trackObject)
-  }
+    // if (!trackObject) {
+    //   showToast('hi');
+    // }
+    console.log(trackObject);
+    setPlayObject(trackObject);
+  };
 
   const changeRepeatMode = () => {
-    TrackPlayer.pause()
     if (repeat == 'off') {
-     
+      TrackPlayer.setRepeatMode(RepeatMode.Track);
       setRepeat('track');
     }
     if (repeat == 'track') {
-     
+      TrackPlayer.setRepeatMode(RepeatMode.Queue);
       setRepeat('repeat');
     }
     if (repeat == 'repeat') {
-      
+      TrackPlayer.setRepeatMode(RepeatMode.Off);
       setRepeat('off');
     }
   };
 
   const shuffleSings = () => {
-    setShuffle(!shuffle)
-  }
+    setShuffle(!shuffle);
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
         <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
           colors={['rgba(0,0,0,0)', 'rgba(194, 106, 248, 0.5)']}
         >
           <View style={[s.container]}>
@@ -133,12 +158,12 @@ const NowPlaying = ({ navigation, route }) => {
                     width={'100%'}
                     height={'100%'}
                     resizeMode={'cover'}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{width: '100%', height: '100%'}}
                   />
                   <View style={s.descriptionViewTop}>
                     <LinearGradient
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
+                      start={{x: 0, y: 0}}
+                      end={{x: 0, y: 1}}
                       colors={['rgba(0, 0, 0, 0)', 'rgba(194, 106, 248, 0.5))']}
                     >
                       <Text style={s.text1Top}>{playObject?.title}</Text>
@@ -154,11 +179,7 @@ const NowPlaying = ({ navigation, route }) => {
                     <Text style={s.text1}>{playObject?.title}</Text>
                   </View>
                   <View style={s.heart}>
-                    <Button
-                      size="sm"
-                      variant={'link'}
-                      zIndex={1000}
-                    >
+                    <Button size="sm" variant={'link'} zIndex={1000}>
                       <Icon
                         name={'heart-o'}
                         color={'#fff'}
@@ -179,12 +200,12 @@ const NowPlaying = ({ navigation, route }) => {
                   trackStyle={s.track}
                 />
                 <View style={s.timer}>
-                  <Text style={[s.text2, { fontSize: 12 }]}>
+                  <Text style={[s.text2, {fontSize: 12}]}>
                     {new Date(progress.position * 1000)
                       .toString()
                       .substring(19, 24)}
                   </Text>
-                  <Text style={[s.text2, { fontSize: 12 }]}>
+                  <Text style={[s.text2, {fontSize: 12}]}>
                     {new Date(progress.duration * 1000)
                       .toString()
                       .substring(19, 24)}
@@ -194,7 +215,7 @@ const NowPlaying = ({ navigation, route }) => {
 
               <View style={[s.centerView1, s.row]}>
                 <TouchableOpacity onPress={() => shuffleSings()}>
-                <MaterialIcon
+                  <MaterialIcon
                     name={shuffle ? 'shuffle-variant' : 'shuffle-disabled'}
                     color={'#fff'}
                     size={moderateScale(30, 0.1)}
@@ -209,11 +230,11 @@ const NowPlaying = ({ navigation, route }) => {
                   />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => play(playPause == 'play' ? 'pause' : 'play')}>
+                <TouchableOpacity
+                  onPress={() => play(playPause == 'play' ? 'pause' : 'play')}
+                >
                   <Icon
-                    name={
-                      playPause == 'play' ? 'pause-circle' : 'play-circle'
-                    }
+                    name={playPause == 'play' ? 'pause-circle' : 'play-circle'}
                     color={'#fff'}
                     size={moderateScale(59, 0.1)}
                   />
@@ -229,8 +250,11 @@ const NowPlaying = ({ navigation, route }) => {
                 <TouchableOpacity onPress={() => changeRepeatMode()}>
                   <MaterialIcon
                     name={
-                      repeat == 'off' ? 'repeat-off' :
-                        repeat == 'track' ? 'repeat-once' : 'repeat'
+                      repeat == 'off'
+                        ? 'repeat-off'
+                        : repeat == 'track'
+                        ? 'repeat-once'
+                        : 'repeat'
                     }
                     color={'#fff'}
                     size={moderateScale(30, 0.1)}
