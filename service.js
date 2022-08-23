@@ -1,41 +1,58 @@
 // service.js
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, { Event, State } from 'react-native-track-player';
+
+let wasPausedByDuck = false;
 // service.js
 module.exports = async function () {
-  TrackPlayer.addEventListener(
-    'remote-play',
-    async () => await TrackPlayer.play(),
-  );
-
-  TrackPlayer.addEventListener(
-    'remote-pause',
-    async () => await TrackPlayer.pause(),
-  );
-
-  TrackPlayer.addEventListener(
-    'remote-stop',
-    async () => await TrackPlayer.stop(),
-  );
-
-  TrackPlayer.addEventListener('remote-jump-backward', async () => {
-    TrackPlayer.seekTo((await TrackPlayer.getPosition()) - 15);
+  TrackPlayer.addEventListener(Event.RemotePause, () => {
+    TrackPlayer.pause();
   });
 
-  TrackPlayer.addEventListener('remote-jump-forward', async () => {
-    TrackPlayer.seekTo((await TrackPlayer.getPosition()) + 15);
+  TrackPlayer.addEventListener(Event.RemotePlay, () => {
+    TrackPlayer.play();
+  });
+
+  TrackPlayer.addEventListener(Event.RemoteNext, () => {
+    TrackPlayer.skipToNext();
+  });
+
+  TrackPlayer.addEventListener(Event.RemotePrevious, () => {
+    TrackPlayer.skipToPrevious();
   });
 
   TrackPlayer.addEventListener(
-    'remote-next',
-    async () => await TrackPlayer.skipToNext(),
+    Event.RemoteDuck,
+    async ({permanent, paused}) => {
+      if (permanent) {
+        TrackPlayer.pause();
+        return;
+      }
+      if (paused) {
+        const playerState = await TrackPlayer.getState();
+        wasPausedByDuck = playerState !== State.Paused;
+        TrackPlayer.pause();
+      } else {
+        if (wasPausedByDuck) {
+          TrackPlayer.play();
+          wasPausedByDuck = false;
+        }
+      }
+    },
   );
 
-  TrackPlayer.addEventListener(
-    'remote-previous',
-    async () => await TrackPlayer.skipToPrevious(),
-  );
-
-  TrackPlayer.addEventListener('remote-seek', ({position}) => {
-    TrackPlayer.seekTo(position);
+  TrackPlayer.addEventListener(Event.PlaybackQueueEnded, event => {
+    console.log('Event.PlaybackQueueEnded', event);
   });
+
+  TrackPlayer.addEventListener(Event.PlaybackTrackChanged, event => {
+    console.log('Event.PlaybackTrackChanged', event);
+  });
+
+  TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, event => {
+    console.log('Event.PlaybackProgressUpdated', event);
+  });
+
+  TrackPlayer.addEventListener(Event.RemoteSeek, event =>
+    console.log('Event.RemoteSeek', event),
+  );
 };
