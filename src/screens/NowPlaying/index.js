@@ -61,61 +61,42 @@ const NowPlaying = ({navigation, route}) => {
   };
 
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-    // if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
-    //   const track = await TrackPlayer.getTrack(event.nextTrack);
-    //   trackObject();
-    //   const {title} = track || {};
-    //   console.log(track, 'track');
-    // } else {
-    //   setPlayPause('pause');
-    // }
-
-    if (
-      event.type === Event.PlaybackTrackChanged &&
-      event.nextTrack != null &&
-      !shuffle
-    ) {
+    if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
       trackObject();
       const {title} = track || {};
       console.log(track, 'track');
-    } else if (shuffle) {
-      let randomIndex = Math.floor(Math.random() * 8);
-      TrackPlayer.skip(randomIndex);
-      TrackPlayer.play();
-      trackObject();
     } else {
       setPlayPause('pause');
     }
   });
 
   const next = async () => {
-    await TrackPlayer.pause().then((res)=>{
-       TrackPlayer.skipToNext()
-      .then(() => {
-        TrackPlayer.play();
-        setPlayPause('play');
-        trackObject();
-      })
-      .catch(err => {
-        showToast(err.toString().substring(6, 40));
-      });
-    })
-    
+    await TrackPlayer.pause().then(res => {
+      TrackPlayer.skipToNext()
+        .then(() => {
+          TrackPlayer.play();
+          setPlayPause('play');
+          trackObject();
+        })
+        .catch(err => {
+          showToast(err.toString().substring(6, 40));
+        });
+    });
   };
 
   const previous = async () => {
-    await TrackPlayer.pause().then((res)=>{
+    await TrackPlayer.pause().then(res => {
       TrackPlayer.skipToPrevious()
-      .then(() => {
-        TrackPlayer.play();
-        setPlayPause('play');
-        trackObject();
-      })
-      .catch(err => {
-        showToast(err.toString().substring(6, 40));
-      });
-    })
+        .then(() => {
+          TrackPlayer.play();
+          setPlayPause('play');
+          trackObject();
+        })
+        .catch(err => {
+          showToast(err.toString().substring(6, 40));
+        });
+    });
   };
 
   const play = async c => {
