@@ -35,25 +35,22 @@ const UserHome = ({ navigation }) => {
     TrackPlayer.setupPlayer()
     TrackPlayer.add(Songs);
     TrackPlayer.updateOptions({
-      // Media controls capabilities
+      stoppingAppPausesPlayback: true,
       capabilities: [
         Capability.Play,
         Capability.Pause,
         Capability.SkipToNext,
         Capability.SkipToPrevious,
         Capability.Stop,
+        Capability.SeekTo,
       ],
-
-      // Capabilities that will show up when the notification is in the compact form on Android
-      compactCapabilities: [Capability.Play, Capability.Pause],
-
-      // Icons for the notification on Android (if you don't like the default ones)
-      playIcon: 'https://img.icons8.com/ios-glyphs/344/play--v1.png 2x',
-      pauseIcon: 'https://img.icons8.com/ios-glyphs/344/pause--v1.png 2x',
-      stopIcon: 'https://img.icons8.com/ios-glyphs/344/stop--v1.png 2x',
-      previousIcon: 'https://img.icons8.com/ios-glyphs/344/prevoius--v1.png 2x',
-      nextIcon: 'https://img.icons8.com/ios-glyphs/344/next--v1.png 2x',
-      icon: 'https://img.icons8.com/ios-glyphs/344/notification--v1.png 2x'
+      compactCapabilities: [
+        Capability.Play,
+        Capability.Pause,
+        Capability.SkipToNext,
+        Capability.SeekTo,
+      ],
+      progressUpdateEventInterval: 2,
     });
   }, []);
 

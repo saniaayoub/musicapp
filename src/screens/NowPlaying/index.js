@@ -72,7 +72,8 @@ const NowPlaying = ({navigation, route}) => {
   });
 
   const next = async () => {
-    await TrackPlayer.skipToNext()
+    await TrackPlayer.pause().then((res)=>{
+       TrackPlayer.skipToNext()
       .then(() => {
         TrackPlayer.play();
         setPlayPause('play');
@@ -81,10 +82,13 @@ const NowPlaying = ({navigation, route}) => {
       .catch(err => {
         showToast(err.toString().substring(6, 40));
       });
+    })
+    
   };
 
   const previous = async () => {
-    await TrackPlayer.skipToPrevious()
+    await TrackPlayer.pause().then((res)=>{
+      TrackPlayer.skipToPrevious()
       .then(() => {
         TrackPlayer.play();
         setPlayPause('play');
@@ -93,6 +97,7 @@ const NowPlaying = ({navigation, route}) => {
       .catch(err => {
         showToast(err.toString().substring(6, 40));
       });
+    })
   };
 
   const play = async c => {

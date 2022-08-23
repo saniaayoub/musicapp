@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 const InterLight = 'Inter-Light';
 const InterRegular = 'Inter-Medium';
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   splender:{
     position:'absolute',
     // backgroundColor:'#000',
-    bottom:0,
+    bottom:Platform.OS == 'ios' ? moderateScale(80,0.1) : 0,
     left:moderateScale(-30, 0.1)
   }
 });
