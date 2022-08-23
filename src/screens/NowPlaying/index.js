@@ -47,6 +47,7 @@ const NowPlaying = ({navigation, route}) => {
   const [repeat, setRepeat] = useState('off');
   const [shuffle, setShuffle] = useState(false);
   const [shuffleArr, setShuffleArr] = useState();
+
   useEffect(() => {
     TrackPlayer.setRepeatMode(RepeatMode.Off);
     console.log(route.params.data);
@@ -60,16 +61,23 @@ const NowPlaying = ({navigation, route}) => {
     ToastAndroid.show(msg, ToastAndroid.SHORT);
   };
 
-  useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-    if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
-      const track = await TrackPlayer.getTrack(event.nextTrack);
-      trackObject();
-      const {title} = track || {};
-      console.log(track, 'track');
-    } else {
-      setPlayPause('pause');
-    }
-  });
+  useTrackPlayerEvents(
+    [Event.PlaybackTrackChanged, Event.PlaybackQueueEnded],
+    async event => {
+      if (
+        event.type === Event.PlaybackTrackChanged &&
+        event.nextTrack != null
+      ) {
+        const track = await TrackPlayer.getTrack(event.nextTrack);
+        trackObject();
+        const {title} = track || {};
+        console.log(track, 'track');
+      } else if (event.type === Event.PlaybackQueueEnded) {
+        TrackPlayer.seekTo(0);
+        play('pause');
+      }
+    },
+  );
 
   const next = async () => {
     await TrackPlayer.pause().then(res => {
@@ -138,22 +146,58 @@ const NowPlaying = ({navigation, route}) => {
   const shuffleSings = async () => {
     if (shuffle) {
       setShuffle(false);
-      TrackPlayer.remove([0, 1, 2, 3, 4, 5, 6, 8]);
-      TrackPlayer.add(Songs);
-      let queue = await TrackPlayer.getQueue();
-      console.log(queue);
+      let trackIndex = await TrackPlayer.getCurrentTrack();
+      let filtered;
+
+      await TrackPlayer.getTrack(trackIndex)
+        .then(trackObject => {
+          filtered = Songs.filter((item, i) => {
+            if (item.id != trackObject.id) {
+              console.log(item.id, trackObject.id);
+            }
+          });
+        })
+        .then(async () => {
+          console.log('hi');
+
+          await TrackPlayer.removeUpcomingTracks();
+          TrackPlayer.add(filtered);
+        });
     } else {
-      console.log('hi'); //shuffle true
       setShuffle(true);
       let temp = [...Songs];
-      let shuffled = shuffleArray(temp);
-      await TrackPlayer.remove([0, 1, 2, 3, 4, 5, 6, 8]);
-      TrackPlayer.add(shuffled);
+      let trackIndex = await TrackPlayer.getCurrentTrack();
+      let filtered, shuffled;
+
+      await TrackPlayer.getTrack(trackIndex)
+        .then(trackObject => {
+          filtered = temp.filter((item, i) => {
+            if (item.id !== trackObject.id) {
+              console.log(item.id, trackObject.id);
+              return item;
+            }
+          });
+        })
+        .then(async () => {
+          console.log(filtered);
+          shuffled = shuffleArray(filtered);
+          await TrackPlayer.removeUpcomingTracks();
+        })
+        .then(() => {
+          TrackPlayer.add(shuffled);
+        });
+
       let queue = await TrackPlayer.getQueue();
-      console.log(queue);
+      console.log(queue, 'queue');
     }
   };
 
+  const trackToExclude = async () => {
+    let trackIndex = await TrackPlayer.getCurrentTrack();
+    let trackObject = await TrackPlayer.getTrack(trackIndex);
+    console.log(trackIndex);
+    return trackIndex;
+  };
   const shuffleArray = array => {
     let currentIndex = array.length - 1,
       temporaryValue,
