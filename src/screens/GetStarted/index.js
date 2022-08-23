@@ -28,7 +28,6 @@ const GetStarted = ({navigation}) => {
   useEffect(() => {
     fadeIn();
     translate();
-    // fadeOut();
   }, []);
 
   const fadeIn = () => {
@@ -53,6 +52,7 @@ const GetStarted = ({navigation}) => {
       duration: 2000,
     }).start();
   };
+
   return (
     <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
@@ -81,7 +81,7 @@ const GetStarted = ({navigation}) => {
                 end={{x: 0, y: 1}}
                 style={s.topHeading}
               >
-                <Text style={s.fadingText}>Energy Healer</Text>
+                <Text>Energy Healer</Text>
               </LinearTextGradient>
             </Animated.View>
 

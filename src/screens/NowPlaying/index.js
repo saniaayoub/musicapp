@@ -46,7 +46,7 @@ const NowPlaying = ({navigation, route}) => {
   const [playObject, setPlayObject] = useState();
   const [repeat, setRepeat] = useState('off');
   const [shuffle, setShuffle] = useState(false);
-
+  const [shuffleArr, setShuffleArr] = useState();
   useEffect(() => {
     TrackPlayer.setRepeatMode(RepeatMode.Off);
     console.log(route.params.data);
@@ -61,11 +61,29 @@ const NowPlaying = ({navigation, route}) => {
   };
 
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-    if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
+    // if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
+    //   const track = await TrackPlayer.getTrack(event.nextTrack);
+    //   trackObject();
+    //   const {title} = track || {};
+    //   console.log(track, 'track');
+    // } else {
+    //   setPlayPause('pause');
+    // }
+
+    if (
+      event.type === Event.PlaybackTrackChanged &&
+      event.nextTrack != null &&
+      !shuffle
+    ) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
       trackObject();
       const {title} = track || {};
       console.log(track, 'track');
+    } else if (shuffle) {
+      let randomIndex = Math.floor(Math.random() * 8);
+      TrackPlayer.skip(randomIndex);
+      TrackPlayer.play();
+      trackObject();
     } else {
       setPlayPause('pause');
     }
@@ -131,8 +149,41 @@ const NowPlaying = ({navigation, route}) => {
     }
   };
 
-  const shuffleSings = () => {
-    setShuffle(!shuffle);
+  const shuffleSings = async () => {
+    if (shuffle) {
+      setShuffle(false);
+      TrackPlayer.remove([0, 1, 2, 3, 4, 5, 6, 8]);
+      TrackPlayer.add(Songs);
+      let queue = await TrackPlayer.getQueue();
+      console.log(queue);
+    } else {
+      console.log('hi'); //shuffle true
+      setShuffle(true);
+      let temp = [...Songs];
+      let shuffled = shuffleArray(temp);
+      await TrackPlayer.remove([0, 1, 2, 3, 4, 5, 6, 8]);
+      TrackPlayer.add(shuffled);
+      let queue = await TrackPlayer.getQueue();
+      console.log(queue);
+    }
+  };
+
+  const shuffleArray = array => {
+    let currentIndex = array.length - 1,
+      temporaryValue,
+      randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+      currentIndex -= 1;
+    }
+    return array;
   };
 
   return (
@@ -214,7 +265,11 @@ const NowPlaying = ({navigation, route}) => {
               </View>
 
               <View style={[s.centerView1, s.row]}>
-                <TouchableOpacity onPress={() => shuffleSings()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    shuffleSings();
+                  }}
+                >
                   <MaterialIcon
                     name={shuffle ? 'shuffle-variant' : 'shuffle-disabled'}
                     color={'#fff'}

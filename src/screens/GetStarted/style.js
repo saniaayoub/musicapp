@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   topHeading: {
     fontFamily: Imperial,
     color: '#fff',
-    fontSize: moderateScale(45, 0.1),
+    fontSize: moderateScale(40, 0.1),
     color: '#000',
     // fontWeight: '700',
     textAlign: 'center',
