@@ -41,14 +41,13 @@ import Backarrowsvg from '../../assets/images/backarrow.svg';
 const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
   const progress = useProgress();
-  const playerState = usePlaybackState();
 
-  const state = TrackPlayer.getState();
+  const [oldShuffle, setOldShuffle] = useState(0);
+  const [newShuffle, setNewShuffle] = useState(0);
   const [playPause, setPlayPause] = useState('pause');
   const [playObject, setPlayObject] = useState();
   const [repeat, setRepeat] = useState('off');
   const [shuffle, setShuffle] = useState(false);
-  const [shuffleArr, setShuffleArr] = useState();
 
   useEffect(() => {
     TrackPlayer.setRepeatMode(RepeatMode.Off);
@@ -70,6 +69,7 @@ const NowPlaying = ({navigation, route}) => {
         event.type === Event.PlaybackTrackChanged &&
         event.nextTrack != null
       ) {
+        removeExtraTrack();
         const track = await TrackPlayer.getTrack(event.nextTrack);
         trackObject();
         const {title} = track || {};
@@ -80,6 +80,17 @@ const NowPlaying = ({navigation, route}) => {
       }
     },
   );
+
+  const removeExtraTrack = async () => {
+    if (oldShuffle < newShuffle) {
+      //right after shuffle pressed
+      //on song change the extra song in the queue is removed
+      TrackPlayer.remove(0);
+      setOldShuffle(newShuffle);
+      let queue = await TrackPlayer.getQueue();
+      console.log(queue, 'queue');
+    }
+  };
 
   const next = async () => {
     await TrackPlayer.pause().then(res => {
@@ -123,9 +134,6 @@ const NowPlaying = ({navigation, route}) => {
   const trackObject = async () => {
     let trackIndex = await TrackPlayer.getCurrentTrack();
     let trackObject = await TrackPlayer.getTrack(trackIndex);
-    // if (!trackObject) {
-    //   showToast('hi');
-    // }
     console.log(trackObject);
     setPlayObject(trackObject);
   };
@@ -148,37 +156,27 @@ const NowPlaying = ({navigation, route}) => {
   const shuffleSings = async () => {
     if (shuffle) {
       setShuffle(false);
-      let trackIndex = await TrackPlayer.getCurrentTrack();
-
-      let indexArray = [];
-      let queue = await TrackPlayer.getQueue();
-      queue.forEach((item, i) => indexArray.push(i));
-      indexArray.push(trackIndex);
-      console.log(indexArray);
-      await TrackPlayer.remove(indexArray).then(async () => {
-        TrackPlayer.add(Songs);
-        let queue = await TrackPlayer.getQueue();
-        console.log(queue, 'queue');
-      });
+      setNewShuffle(oldShuffle + 1);
+      updateQueue(Songs);
     } else {
       setShuffle(true);
+      setIsOriginal(true);
       let temp = [...Songs];
-      let trackIndex = await TrackPlayer.getCurrentTrack();
-      let trackObject = await TrackPlayer.getTrack(trackIndex);
-      let filtered,
-        indexArray = [],
-        shuffled;
-      let queue = await TrackPlayer.getQueue();
-      queue.forEach((item, i) => indexArray.push(i));
-      shuffled = shuffleArray(temp);
-      indexArray.push(trackIndex);
-      console.log(indexArray);
-      await TrackPlayer.remove(indexArray).then(async () => {
-        TrackPlayer.add(shuffled);
-        let queue = await TrackPlayer.getQueue();
-        console.log(queue, 'queue');
-      });
+      let shuffled = shuffleArray(temp);
+      setNewShuffle(oldShuffle + 1);
+      updateQueue(shuffled);
     }
+  };
+
+  const updateQueue = async list => {
+    let indexArray = [];
+
+    let queue = await TrackPlayer.getQueue();
+    queue.forEach((item, i) => indexArray.push(i));
+
+    await TrackPlayer.remove(indexArray).then(async () => {
+      TrackPlayer.add(list);
+    });
   };
 
   const shuffleArray = array => {
