@@ -1,5 +1,5 @@
 // service.js
-import TrackPlayer, { Event, State } from 'react-native-track-player';
+import TrackPlayer, {Event, State} from 'react-native-track-player';
 
 let wasPausedByDuck = false;
 // service.js

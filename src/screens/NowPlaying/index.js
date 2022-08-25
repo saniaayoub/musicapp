@@ -41,6 +41,8 @@ import Backarrowsvg from '../../assets/images/backarrow.svg';
 const NowPlaying = ({navigation, route}) => {
   const context = useContext(AppContext);
   const progress = useProgress();
+  const playerState = usePlaybackState();
+
   const state = TrackPlayer.getState();
   const [playPause, setPlayPause] = useState('pause');
   const [playObject, setPlayObject] = useState();
@@ -160,6 +162,7 @@ const NowPlaying = ({navigation, route}) => {
       });
     } else {
       setShuffle(true);
+      let temp = [...Songs];
       let trackIndex = await TrackPlayer.getCurrentTrack();
       let trackObject = await TrackPlayer.getTrack(trackIndex);
       let filtered,
@@ -167,7 +170,7 @@ const NowPlaying = ({navigation, route}) => {
         shuffled;
       let queue = await TrackPlayer.getQueue();
       queue.forEach((item, i) => indexArray.push(i));
-      shuffled = shuffleArray(Songs);
+      shuffled = shuffleArray(temp);
       indexArray.push(trackIndex);
       console.log(indexArray);
       await TrackPlayer.remove(indexArray).then(async () => {

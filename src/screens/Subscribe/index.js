@@ -27,7 +27,7 @@ const Subscribe = () => {
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
         source={subcriptionBack}
-        blurRadius={10}
+        blurRadius={2.5}
         resizeMode={'cover'}
       >
         <View style={[s.container, {width: width, height: height}]}>
