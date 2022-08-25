@@ -6,7 +6,7 @@ export default Songs = [
     title: 'See you Again',
     artist: 'Wiz Khalifa',
     artwork: require('../assets/images/healing1.png'),
-    fav: false,
+    rating: false,
     // duration: 200,
   },
   {
@@ -15,7 +15,7 @@ export default Songs = [
     title: 'Lovely',
     artist: 'Billie Eilish, Khalid',
     artwork: require('../assets/images/healing2.png'),
-    fav: false,
+    rating: false,
     // duration: 230,
   },
   {
@@ -26,7 +26,7 @@ export default Songs = [
     artwork: require('../assets/images/healing3.png'),
     title: 'Shape of you',
     artist: 'Ed Sheeran',
-    fav: false,
+    rating: false,
     // duration: 180,
   },
   {
@@ -35,7 +35,7 @@ export default Songs = [
     title: 'Play Date',
     artist: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
-    fav: false,
+    rating: false,
     // duration: 150,
   },
   {
@@ -44,7 +44,7 @@ export default Songs = [
     title: 'Peaches',
     artist: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
-    fav: false,
+    rating: false,
     // duration: 240,
   },
   {
@@ -54,7 +54,7 @@ export default Songs = [
     artist: 'Alec Benjamin',
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
-    fav: false,
+    rating: false,
     // duration: 200,
   },
   {
@@ -63,7 +63,7 @@ export default Songs = [
     title: 'Play Date',
     artist: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
-    fav: false,
+    rating: false,
     // duration: 230,
   },
   {
@@ -72,7 +72,7 @@ export default Songs = [
     title: 'Peaches',
     artist: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
-    fav: false,
+    rating: false,
     // duration: 160,
   },
   {
@@ -82,7 +82,7 @@ export default Songs = [
     artist: 'Alec Benjamin',
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
-    fav: false,
+    rating: false,
     // duration: 180,
   },
 ];

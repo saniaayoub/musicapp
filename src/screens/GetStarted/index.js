@@ -74,7 +74,7 @@ const GetStarted = ({navigation}) => {
                 },
               ]}
             >
-              <Text style={s.topHeading}>E N E R G Y{'  '} H E A L E R</Text>
+              <Text style={s.topHeading}>ENERGY HEALER</Text>
             </Animated.View>
 
             <View style={s.heading}>
