@@ -74,15 +74,7 @@ const GetStarted = ({navigation}) => {
                 },
               ]}
             >
-              <LinearTextGradient
-                locations={[0, 1]}
-                colors={['blue', 'purple']}
-                start={{x: 0, y: 0}}
-                end={{x: 0, y: 1}}
-                style={s.topHeading}
-              >
-                <Text>Energy Healer</Text>
-              </LinearTextGradient>
+              <Text style={s.topHeading}>E N E R G Y{'  '} H E A L E R</Text>
             </Animated.View>
 
             <View style={s.heading}>

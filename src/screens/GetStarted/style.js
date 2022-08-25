@@ -28,30 +28,17 @@ const styles = StyleSheet.create({
       height: 1,
     },
   },
-  // fadingContainer: {
-  //   padding: 20,
-  //   // backgroundColor: 'powderblue',
-  // },
-  // fadingText: {
-  //   fontSize: 28,
-  // },
-  // buttonRow: {
-  //   flexBasis: 100,
-  //   justifyContent: 'space-evenly',
-  //   marginVertical: 16,
-  // },
+
   topHeading: {
-    fontFamily: Imperial,
+    fontFamily: InterBold,
     color: '#fff',
-    fontSize: moderateScale(40, 0.1),
-    color: '#000',
-    // fontWeight: '700',
+    fontSize: moderateScale(26, 0.1),
+    color: '#fff',
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: moderateScale(5, 0.1),
     marginBottom: moderateScale(5, 0.1),
-    // backgroundColor: 'rgba(0,0,0,0.2)',
     borderRadius: moderateScale(15, 0.1),
   },
   para: {

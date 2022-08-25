@@ -147,57 +147,37 @@ const NowPlaying = ({navigation, route}) => {
     if (shuffle) {
       setShuffle(false);
       let trackIndex = await TrackPlayer.getCurrentTrack();
-      let filtered;
 
-      await TrackPlayer.getTrack(trackIndex)
-        .then(trackObject => {
-          filtered = Songs.filter((item, i) => {
-            if (item.id != trackObject.id) {
-              console.log(item.id, trackObject.id);
-            }
-          });
-        })
-        .then(async () => {
-          console.log('hi');
-
-          await TrackPlayer.removeUpcomingTracks();
-          TrackPlayer.add(filtered);
-        });
+      let indexArray = [];
+      let queue = await TrackPlayer.getQueue();
+      queue.forEach((item, i) => indexArray.push(i));
+      indexArray.push(trackIndex);
+      console.log(indexArray);
+      await TrackPlayer.remove(indexArray).then(async () => {
+        TrackPlayer.add(Songs);
+        let queue = await TrackPlayer.getQueue();
+        console.log(queue, 'queue');
+      });
     } else {
       setShuffle(true);
-      let temp = [...Songs];
       let trackIndex = await TrackPlayer.getCurrentTrack();
-      let filtered, shuffled;
-
-      await TrackPlayer.getTrack(trackIndex)
-        .then(trackObject => {
-          filtered = temp.filter((item, i) => {
-            if (item.id !== trackObject.id) {
-              console.log(item.id, trackObject.id);
-              return item;
-            }
-          });
-        })
-        .then(async () => {
-          console.log(filtered);
-          shuffled = shuffleArray(filtered);
-          await TrackPlayer.removeUpcomingTracks();
-        })
-        .then(() => {
-          TrackPlayer.add(shuffled);
-        });
-
+      let trackObject = await TrackPlayer.getTrack(trackIndex);
+      let filtered,
+        indexArray = [],
+        shuffled;
       let queue = await TrackPlayer.getQueue();
-      console.log(queue, 'queue');
+      queue.forEach((item, i) => indexArray.push(i));
+      shuffled = shuffleArray(Songs);
+      indexArray.push(trackIndex);
+      console.log(indexArray);
+      await TrackPlayer.remove(indexArray).then(async () => {
+        TrackPlayer.add(shuffled);
+        let queue = await TrackPlayer.getQueue();
+        console.log(queue, 'queue');
+      });
     }
   };
 
-  const trackToExclude = async () => {
-    let trackIndex = await TrackPlayer.getCurrentTrack();
-    let trackObject = await TrackPlayer.getTrack(trackIndex);
-    console.log(trackIndex);
-    return trackIndex;
-  };
   const shuffleArray = array => {
     let currentIndex = array.length - 1,
       temporaryValue,

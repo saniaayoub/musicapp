@@ -7,13 +7,13 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, {useContext, useState} from 'react';
 import s from './style';
 import spiralback from '../../assets/images/spiralback.png';
-import subcriptionBack from '../../assets/images/subsback.jpg';
+import subcriptionBack from '../../assets/images/subsback.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Input, Button } from 'native-base';
-import { moderateScale } from 'react-native-size-matters';
+import {Input, Button} from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
 import AppContext from '../../Providers/AppContext';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -24,19 +24,19 @@ const Subscribe = () => {
     context.setUserToken('1');
   };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <ImageBackground
         source={subcriptionBack}
-        blurRadius={2.5}
+        blurRadius={10}
         resizeMode={'cover'}
       >
-        <View style={[s.container, { width: width, height: height }]}>
+        <View style={[s.container, {width: width, height: height}]}>
           <View style={s.splender}>
             <View style={s.empty}></View>
             <View style={s.bottomContainer}>
               <View style={s.heading}>
                 <Text style={[s.text, s.headingText]}>
-                  All You Need Is Music That Heal Your Mood
+                  All You Need Is Energy for Mind, Body and Soul
                 </Text>
               </View>
               <View style={s.para}>

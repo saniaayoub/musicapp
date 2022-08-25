@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     height: '100%',
-    position:'relative',
+    position: 'relative',
   },
   empty: {
     position: 'relative',
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
-    paddingLeft: moderateScale(70, 0.1),
+    paddingLeft: moderateScale(80, 0.1),
     // marginRight: moderateScale(100, 0.1),
     width: moderateScale(350, 0.1),
     height: moderateScale(500, 0.1),
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     flexDirection: 'column',
-    marginTop:moderateScale(20, 0.1)
+    marginTop: moderateScale(20, 0.1),
     // paddingVertical: moderateScale(50, 0.1),
   },
   button: {
@@ -53,12 +53,13 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   heading: {
-    width: moderateScale(200, 0.1),
+    width: moderateScale(180, 0.1),
     // marginTop: moderateScale(0, 0.1),
   },
   headingText: {
-    fontSize: moderateScale(36, 0.1),
+    fontSize: moderateScale(34, 0.1),
     fontFamily: InterBold,
+    fontWeight: '900',
   },
   headingText2: {
     fontSize: moderateScale(32, 0.1),
@@ -95,12 +96,12 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(18, 0.1),
     marginTop: moderateScale(15, 0.1),
   },
-  splender:{
-    position:'absolute',
+  splender: {
+    position: 'absolute',
     // backgroundColor:'#000',
-    bottom:Platform.OS == 'ios' ? moderateScale(80,0.1) : 0,
-    left:moderateScale(-30, 0.1)
-  }
+    bottom: Platform.OS == 'ios' ? moderateScale(80, 0.1) : 0,
+    left: moderateScale(-30, 0.1),
+  },
 });
 
 export default styles;
