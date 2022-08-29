@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     // marginTop: moderateScale(0, 0.1),
   },
   headingText: {
-    fontSize: moderateScale(34, 0.1),
+    fontSize: moderateScale(33, 0.1),
     fontFamily: InterBold,
     fontWeight: '900',
   },

@@ -64,13 +64,13 @@ const App = () => {
               {userToken == null ? (
                 <Stack.Navigator screenOptions={{headerShown: false}}>
                   <Stack.Screen name="GetStarted" component={GetStarted} />
+                  <Stack.Screen name="Subscribe" component={Subscribe} />
                   <Stack.Screen name="SignIn" component={SignIn} />
                   <Stack.Screen name="SignUp" component={SignUp} />
                   <Stack.Screen
                     name="ForgetPassword"
                     component={ForgetPassword}
                   />
-                  <Stack.Screen name="Subscribe" component={Subscribe} />
                 </Stack.Navigator>
               ) : (
                 <BottomTabs />

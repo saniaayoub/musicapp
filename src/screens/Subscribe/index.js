@@ -18,11 +18,9 @@ import AppContext from '../../Providers/AppContext';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Subscribe = () => {
+const Subscribe = ({navigation}) => {
   const context = useContext(AppContext);
-  const subscribe = () => {
-    context.setUserToken('1');
-  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -36,7 +34,7 @@ const Subscribe = () => {
             <View style={s.bottomContainer}>
               <View style={s.heading}>
                 <Text style={[s.text, s.headingText]}>
-                  All You Need Is Energy for Mind, Body and Soul
+                  Healing Energy for Mind, Body and Soul 💜
                 </Text>
               </View>
               <View style={s.para}>
@@ -56,7 +54,7 @@ const Subscribe = () => {
               <View style={s.button}>
                 <Button
                   size="sm"
-                  onPress={() => subscribe()}
+                  onPress={() => navigation.navigate('SignIn')}
                   variant={'solid'}
                   _text={{
                     color: '#6627EC',

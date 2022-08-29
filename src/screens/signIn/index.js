@@ -7,7 +7,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -16,7 +16,13 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+import AppContext from '../../Providers/AppContext';
+
 const SignIn = ({navigation}) => {
+  const context = useContext(AppContext);
+  const login = () => {
+    context.setUserToken('1');
+  };
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
@@ -69,7 +75,7 @@ const SignIn = ({navigation}) => {
             <View style={s.button}>
               <Button
                 size="sm"
-                onPress={() => navigation.navigate('Subscribe')}
+                onPress={() => login()}
                 variant={'solid'}
                 _text={{
                   color: '#6627EC',
