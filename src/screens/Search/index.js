@@ -1,28 +1,18 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
-  Image,
   TouchableOpacity,
-  FlatList,
   ActivityIndicator,
-  BackHandler,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import {Box} from 'native-base';
 import s from './style';
-import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button, ScrollView} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Slider from 'react-native-slider';
-import healing1 from '../../assets/images/healing1.png';
-import play from '../../assets/images/play.png';
-import Playbutton from '../../assets/images/playbutton.svg';
-import backarrow from '../../assets/images/backarrow.png';
 import AppContext from '../../Providers/AppContext';
 import SearchIcon from '../../assets/images/search1.svg';
 

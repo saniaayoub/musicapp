@@ -24,10 +24,9 @@ import Slider from 'react-native-slider';
 import backarrow from '../../assets/images/backarrow.png';
 import nowplay from '../../assets/images/nowplay.png';
 import Songs from '../../Components/songs';
-import moment from 'moment';
+import {useDispatch, useSelector} from 'react-redux';
 
 import TrackPlayer, {
-  Capability,
   Event,
   RepeatMode,
   State,
@@ -37,23 +36,29 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import styles from './style';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
+import {
+  playPause,
+  setPlayObject,
+  setShuffle,
+  setRepeat,
+} from '../../Redux/actions';
 
 const NowPlaying = ({navigation, route}) => {
-  const context = useContext(AppContext);
   const progress = useProgress();
+  const playerState = usePlaybackState();
+  const dispatch = useDispatch();
+
+  let play_Pause = useSelector(state => state.reducer.play_pause);
+  let playObject = useSelector(state => state.reducer.play_object);
+  let shuffle = useSelector(state => state.reducer.shuffle);
+  let repeat = useSelector(state => state.reducer.repeat);
 
   const [oldShuffle, setOldShuffle] = useState(0);
   const [newShuffle, setNewShuffle] = useState(0);
-  const [playPause, setPlayPause] = useState('pause');
-  const [playObject, setPlayObject] = useState();
-  const [repeat, setRepeat] = useState('off');
-  const [shuffle, setShuffle] = useState(false);
 
   useEffect(() => {
-    TrackPlayer.setRepeatMode(RepeatMode.Off);
-    console.log(route.params.data);
-    if (route.params.index) {
-      TrackPlayer.skip(route.params.index);
+    console.log(route);
+    if (route.params.data == 'home') {
       play('play');
     }
   }, []);
@@ -92,75 +97,92 @@ const NowPlaying = ({navigation, route}) => {
     }
   };
 
-  const next = async () => {
+  const randomSong = async () => {
+    let randomIndex = Math.abs(Math.floor(Math.random() * Songs.length - 1));
+    console.log(randomIndex);
     await TrackPlayer.pause().then(res => {
-      TrackPlayer.skipToNext()
-        .then(() => {
-          TrackPlayer.play();
-          setPlayPause('play');
-          trackObject();
-        })
-        .catch(err => {
-          showToast(err.toString().substring(6, 40));
-        });
+      TrackPlayer.skip(randomIndex).then(() => {
+        TrackPlayer.play();
+        dispatch(playPause('play'));
+      });
     });
   };
 
+  const next = async () => {
+    if (shuffle) {
+      randomSong();
+    } else {
+      await TrackPlayer.pause().then(res => {
+        TrackPlayer.skipToNext()
+          .then(() => {
+            TrackPlayer.play();
+            dispatch(playPause('play'));
+          })
+          .catch(err => {
+            showToast(err.toString().substring(6, 40));
+            dispatch(playPause('pause'));
+          });
+      });
+    }
+  };
+
   const previous = async () => {
-    await TrackPlayer.pause().then(res => {
-      TrackPlayer.skipToPrevious()
-        .then(() => {
-          TrackPlayer.play();
-          setPlayPause('play');
-          trackObject();
-        })
-        .catch(err => {
-          showToast(err.toString().substring(6, 40));
-        });
-    });
+    if (shuffle) {
+      randomSong();
+    } else {
+      await TrackPlayer.pause().then(res => {
+        TrackPlayer.skipToPrevious()
+          .then(() => {
+            TrackPlayer.play();
+            dispatch(playPause('play'));
+          })
+          .catch(err => {
+            showToast(err.toString().substring(6, 40));
+            dispatch(playPause('pause'));
+          });
+      });
+    }
   };
 
   const play = async c => {
     if (c == 'play') {
+      trackObject();
       await TrackPlayer.play();
     } else {
       await TrackPlayer.pause();
     }
-    trackObject();
-    setPlayPause(c);
-    // await TrackPlayer.setRepeatMode(RepeatMode.Queue);
+    dispatch(playPause(c));
   };
 
   const trackObject = async () => {
     let trackIndex = await TrackPlayer.getCurrentTrack();
     let trackObject = await TrackPlayer.getTrack(trackIndex);
     console.log(trackObject);
-    setPlayObject(trackObject);
+    dispatch(setPlayObject(trackObject));
   };
 
   const changeRepeatMode = () => {
     if (repeat == 'off') {
       TrackPlayer.setRepeatMode(RepeatMode.Track);
-      setRepeat('track');
+      dispatch(setRepeat('track'));
     }
     if (repeat == 'track') {
       TrackPlayer.setRepeatMode(RepeatMode.Queue);
-      setRepeat('repeat');
+      dispatch(setRepeat('repeat'));
     }
     if (repeat == 'repeat') {
       TrackPlayer.setRepeatMode(RepeatMode.Off);
-      setRepeat('off');
+      dispatch(setRepeat('off'));
     }
   };
 
   const shuffleSings = async () => {
     if (shuffle) {
-      setShuffle(false);
+      dispatch(setShuffle(false));
       setNewShuffle(oldShuffle + 1);
       updateQueue(Songs);
     } else {
-      setShuffle(true);
-      setIsOriginal(true);
+      dispatch(setShuffle(true));
       let temp = [...Songs];
       let shuffled = shuffleArray(temp);
       setNewShuffle(oldShuffle + 1);
@@ -170,10 +192,8 @@ const NowPlaying = ({navigation, route}) => {
 
   const updateQueue = async list => {
     let indexArray = [];
-
     let queue = await TrackPlayer.getQueue();
     queue.forEach((item, i) => indexArray.push(i));
-
     await TrackPlayer.remove(indexArray).then(async () => {
       TrackPlayer.add(list);
     });
@@ -297,10 +317,16 @@ const NowPlaying = ({navigation, route}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => play(playPause == 'play' ? 'pause' : 'play')}
+                  onPress={() => {
+                    play(playerState === State.Playing ? 'pause' : 'play');
+                  }}
                 >
                   <Icon
-                    name={playPause == 'play' ? 'pause-circle' : 'play-circle'}
+                    name={
+                      playerState === State.Playing
+                        ? 'pause-circle'
+                        : 'play-circle'
+                    }
                     color={'#fff'}
                     size={moderateScale(59, 0.1)}
                   />

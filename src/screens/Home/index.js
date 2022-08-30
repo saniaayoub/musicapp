@@ -8,8 +8,8 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import React, { useContext, useState, useEffect } from 'react';
-import { Box } from 'native-base';
+import React, {useContext, useState, useEffect} from 'react';
+import {Box} from 'native-base';
 import s from './style';
 import homeback from '../../assets/images/homeback.png';
 import AppContext from '../../Providers/AppContext';
@@ -24,16 +24,20 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from 'react-native-track-player';
+import {useDispatch, useSelector} from 'react-redux';
+import Player from '../../Components/player';
+import {setPlayObject} from '../../Redux/actions';
+import {moderateScale} from 'react-native-size-matters';
 
-const UserHome = ({ navigation }) => {
+const UserHome = ({navigation}) => {
   const context = useContext(AppContext);
+  const dispatch = useDispatch();
   const [featured, setFeatured] = useState(Songs);
 
   useEffect(() => {
-    // console.log(context.songs);
-    // setFeatured(context.songs);
-    TrackPlayer.setupPlayer()
+    TrackPlayer.setupPlayer();
     TrackPlayer.add(Songs);
+    TrackPlayer.setRepeatMode(RepeatMode.Off);
     TrackPlayer.updateOptions({
       stoppingAppPausesPlayback: true,
       capabilities: [
@@ -54,9 +58,21 @@ const UserHome = ({ navigation }) => {
     });
   }, []);
 
+  const getIndexFromQueue = async song => {
+    let queue = await TrackPlayer.getQueue();
+    queue.forEach((item, i) => {
+      if (song.id == item.id) {
+        TrackPlayer.skip(i);
+        dispatch(setPlayObject(item));
+        navigation.navigate('NowPlaying', {data: 'home'});
+        return;
+      }
+    });
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={{ width: '100%' }}>
+    <SafeAreaView style={{flex: 1}}>
+      <ScrollView style={{width: '100%'}}>
         <Box
           bg={{
             linearGradient: {
@@ -85,7 +101,7 @@ const UserHome = ({ navigation }) => {
               <FlatList
                 data={Categories}
                 numColumns={3}
-                renderItem={({ item, index, separators }) => (
+                renderItem={({item, index, separators}) => (
                   <>
                     <TouchableOpacity
                       style={s.item}
@@ -113,13 +129,13 @@ const UserHome = ({ navigation }) => {
                 <FlatList
                   data={featured}
                   numColumns={3}
-                  renderItem={({ item, index, separators }) => (
+                  renderItem={({item, index, separators}) => (
                     <>
                       <TouchableOpacity
                         style={s.item}
-                        onPress={() =>
-                          navigation.navigate('NowPlaying', { data: item, index: index })
-                        }
+                        onPress={() => {
+                          getIndexFromQueue(item);
+                        }}
                       >
                         <ImageBackground
                           source={item.artwork}
@@ -141,6 +157,7 @@ const UserHome = ({ navigation }) => {
           </View>
         </Box>
       </ScrollView>
+      <Player navigationProp={navigation} />
     </SafeAreaView>
   );
 };

@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   FeaturedSection: {
     marginTop: moderateScale(25, 0.1),
-    marginBottom: moderateScale(70, 0.1),
+    marginBottom: moderateScale(130, 0.1),
   },
   collection2: {
     marginTop: moderateScale(5, 0.1),

@@ -9,30 +9,24 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
-import s from './style';
+import React, {useContext, useEffect, useState} from 'react';
+
 import LinearGradient from 'react-native-linear-gradient';
-import profileimg from '../../assets/images/profileimg.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-import AppContext from '../../Providers/AppContext';
-import Slider from 'react-native-slider';
+import s from './style';
+import profileimg from '../../assets/images/profileimg.png';
 import Phone from '../../assets/images/phone.svg';
 import User from '../../assets/images/user.svg';
 import Edit1 from '../../assets/images/edit2.svg';
 import Edit from '../../assets/images/edit.svg';
-import backarrow from '../../assets/images/backarrow.png';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
-
-import Lock from '../../assets/images/lock.svg';
 import RadioButton from '../../Components/radio';
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+const Profile = ({navigation}) => {
+  useEffect(() => {});
 
-const Playlist = ({navigation}) => {
-  const context = useContext(AppContext);
   const [isSelected, setIsSelected] = useState([
     {id: 1, value: true, name: 'Male', selected: true},
     {id: 2, value: false, name: 'Female', selected: false},
@@ -59,12 +53,10 @@ const Playlist = ({navigation}) => {
             padding={moderateScale(7, 0.1)}
             zIndex={1000}
           >
-            {/* <Image source={backarrow} resizeMode="contain" /> */}
             <Backarrowsvg
               width={moderateScale(14, 0.1)}
               height={moderateScale(14, 0.1)}
             />
-            {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
           </Button>
         </View>
         {/******** Head *********/}
@@ -88,7 +80,6 @@ const Playlist = ({navigation}) => {
             </View>
 
             <TouchableOpacity style={s.edit}>
-              {/* <Icon name={'pencil'} size={10} color={'#fff'} /> */}
               <Edit
                 width={moderateScale(24, 0.1)}
                 height={moderateScale(24, 0.1)}
@@ -112,7 +103,6 @@ const Playlist = ({navigation}) => {
                 fontSize={moderateScale(12, 0.1)}
                 InputLeftElement={
                   <View style={s.icon}>
-                    {/* <Icon name={'user'} color="#C8C4C4" size={20} /> */}
                     <User
                       width={moderateScale(30, 0.1)}
                       height={moderateScale(30, 0.1)}
@@ -121,7 +111,6 @@ const Playlist = ({navigation}) => {
                 }
                 InputRightElement={
                   <TouchableOpacity style={s.icon}>
-                    {/* <Icon name={'pencil'} size={10} color={'#fff'} /> */}
                     <Edit1
                       width={moderateScale(28, 0.1)}
                       height={moderateScale(28, 0.1)}
@@ -146,7 +135,6 @@ const Playlist = ({navigation}) => {
                 }
                 InputRightElement={
                   <TouchableOpacity style={s.icon}>
-                    {/* <Icon name={'pencil'} size={10} color={'#fff'} /> */}
                     <Edit1
                       width={moderateScale(28, 0.1)}
                       height={moderateScale(28, 0.1)}
@@ -168,7 +156,6 @@ const Playlist = ({navigation}) => {
                 variant="underlined"
                 InputLeftElement={
                   <View style={s.icon}>
-                    {/* <Icon name={'phone'} color="#C8C4C4" size={20} /> */}
                     <Phone
                       width={moderateScale(30, 0.1)}
                       height={moderateScale(30, 0.1)}
@@ -177,7 +164,6 @@ const Playlist = ({navigation}) => {
                 }
                 InputRightElement={
                   <TouchableOpacity style={s.icon}>
-                    {/* <Icon name={'pencil'} size={10} color={'#fff'} /> */}
                     <Edit1
                       width={moderateScale(28, 0.1)}
                       height={moderateScale(28, 0.1)}
@@ -193,8 +179,8 @@ const Playlist = ({navigation}) => {
             </View>
             <View style={s.radioInput}>
               <Text style={s.text}>Gender</Text>
-              {isSelected.map(item => (
-                <View style={s.radio}>
+              {isSelected.map((item, i) => (
+                <View style={s.radio} key={i}>
                   <RadioButton
                     onPress={() => onRadioBtnClick(item)}
                     selected={item.selected}
@@ -231,4 +217,4 @@ const Playlist = ({navigation}) => {
   );
 };
 
-export default Playlist;
+export default Profile;
