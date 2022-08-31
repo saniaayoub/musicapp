@@ -39,7 +39,9 @@ const UserHome = ({navigation}) => {
     TrackPlayer.add(Songs);
     TrackPlayer.setRepeatMode(RepeatMode.Off);
     TrackPlayer.updateOptions({
+      stopWithApp: true,
       stoppingAppPausesPlayback: true,
+      alwaysPauseOnInterruption: true,
       capabilities: [
         Capability.Play,
         Capability.Pause,

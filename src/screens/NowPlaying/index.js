@@ -19,13 +19,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-import AppContext from '../../Providers/AppContext';
 import Slider from 'react-native-slider';
 import backarrow from '../../assets/images/backarrow.png';
 import nowplay from '../../assets/images/nowplay.png';
 import Songs from '../../Components/songs';
 import {useDispatch, useSelector} from 'react-redux';
-
 import TrackPlayer, {
   Event,
   RepeatMode,
@@ -34,8 +32,6 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from 'react-native-track-player';
-import styles from './style';
-import Backarrowsvg from '../../assets/images/backarrow.svg';
 import {
   playPause,
   setPlayObject,
@@ -55,13 +51,6 @@ const NowPlaying = ({navigation, route}) => {
 
   const [oldShuffle, setOldShuffle] = useState(0);
   const [newShuffle, setNewShuffle] = useState(0);
-
-  useEffect(() => {
-    // console.log(route);
-    // if (route.params.data == 'home') {
-    //   play('play');
-    // }
-  }, []);
 
   const showToast = msg => {
     ToastAndroid.show(msg, ToastAndroid.SHORT);
@@ -88,7 +77,7 @@ const NowPlaying = ({navigation, route}) => {
 
   const removeExtraTrack = async () => {
     if (oldShuffle < newShuffle) {
-      //right after shuffle pressed
+      //when shuffle pressed
       //on song change the extra song in the queue is removed
       TrackPlayer.remove(0);
       setOldShuffle(newShuffle);
