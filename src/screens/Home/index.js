@@ -60,12 +60,14 @@ const UserHome = ({navigation}) => {
 
   const getIndexFromQueue = async song => {
     let queue = await TrackPlayer.getQueue();
-    queue.forEach((item, i) => {
+    queue.forEach(async (item, i) => {
       if (song.id == item.id) {
-        TrackPlayer.skip(i);
-        dispatch(setPlayObject(item));
-        navigation.navigate('NowPlaying', {data: 'home'});
-        return;
+        await TrackPlayer.skip(i).then(res => {
+          TrackPlayer.play();
+          dispatch(setPlayObject(item));
+          navigation.navigate('NowPlaying');
+          return;
+        });
       }
     });
   };

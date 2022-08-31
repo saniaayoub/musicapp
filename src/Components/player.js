@@ -57,47 +57,41 @@ const Player = ({navigationProp}) => {
   };
 
   const next = async () => {
-    await TrackPlayer.pause().then(res => {
-      TrackPlayer.skipToNext()
-        .then(() => {
-          TrackPlayer.play();
-          dispatch(playPause('play'));
-        })
-        .catch(err => {
-          showToast(err.toString().substring(6, 40));
-          dispatch(playPause('pause'));
-        });
-    });
+    await TrackPlayer.skipToNext()
+      .then(() => {
+        play('play');
+      })
+      .catch(err => {
+        showToast(err.toString().substring(6, 40));
+        dispatch(playPause('pause'));
+      });
   };
 
   const previous = async () => {
-    await TrackPlayer.pause().then(res => {
-      TrackPlayer.skipToPrevious()
-        .then(() => {
-          TrackPlayer.play();
-          dispatch(playPause('play'));
-        })
-        .catch(err => {
-          showToast(err.toString().substring(6, 40));
-          dispatch(playPause('pause'));
-        });
-    });
+    await TrackPlayer.skipToPrevious()
+      .then(() => {
+        play('play');
+      })
+      .catch(err => {
+        showToast(err.toString().substring(6, 40));
+        dispatch(playPause('pause'));
+      });
   };
 
   const play = async c => {
     if (c == 'play') {
-      trackObject();
       await TrackPlayer.play();
     } else {
       await TrackPlayer.pause();
     }
     dispatch(playPause(c));
+    trackObject();
     // await TrackPlayer.setRepeatMode(RepeatMode.Queue);
   };
 
   return (
     <TouchableOpacity
-      onPress={() => navigationProp.navigate('NowPlaying', {data: 'player'})}
+      onPress={() => navigationProp.navigate('NowPlaying')}
       style={styles.container}
     >
       <LinearGradient
@@ -129,7 +123,9 @@ const Player = ({navigationProp}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => play(play_Pause == 'play' ? 'pause' : 'play')}
+            onPress={() =>
+              play(playerState === State.Playing ? 'pause' : 'play')
+            }
           >
             <Icon
               name={
@@ -171,7 +167,7 @@ const styles = StyleSheet.create({
   },
   music: {
     paddingVertical: moderateScale(10, 0.1),
-    paddingHorizontal: moderateScale(20, 0.1),
+    paddingHorizontal: moderateScale(15, 0.1),
   },
   row: {
     flexDirection: 'row',

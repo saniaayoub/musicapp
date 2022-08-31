@@ -10,7 +10,7 @@ import {
 import React, {useContext, useState} from 'react';
 import s from './style';
 import spiralback from '../../assets/images/spiralback.png';
-import subcriptionBack from '../../assets/images/subsback.png';
+import subcriptionBack from '../../assets/images/subsback.jpg';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
@@ -25,7 +25,7 @@ const Subscribe = ({navigation}) => {
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
         source={subcriptionBack}
-        blurRadius={2.5}
+        // blurRadius={1}
         resizeMode={'cover'}
       >
         <View style={[s.container, {width: width, height: height}]}>

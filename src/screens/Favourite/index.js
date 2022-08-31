@@ -35,23 +35,48 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
 import Songs from '../../Components/songs';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  playPause,
+  setPlayObject,
+  setShuffle,
+  setRepeat,
+} from '../../Redux/actions';
 
 const Favorite = ({navigation}) => {
-  const context = useContext(AppContext);
-
+  const progress = useProgress();
+  const playerState = usePlaybackState();
+  const dispatch = useDispatch();
   const [favList, setFavList] = useState(Songs);
+  const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
+  let playObject = useSelector(state => state.reducer.play_object);
 
-  const setPlayButton = item => {
-    let tempArray;
-    tempArray = favList.map((elem, i) => {
-      if (elem.id == item.id) {
-        return {...elem, play: !elem.play};
+  const play = async (song, i) => {
+    if (i == index) {
+      if (playerState === State.Paused) {
+        await TrackPlayer.play();
       } else {
-        return {...elem, play: false};
+        await TrackPlayer.pause();
+      }
+    } else {
+      getIndexFromQueue(song);
+    }
+  };
+
+  const getIndexFromQueue = async song => {
+    let queue = await TrackPlayer.getQueue();
+    queue.forEach((item, i) => {
+      if (song.id == item.id) {
+        TrackPlayer.skip(i).then(() => {
+          TrackPlayer.play();
+          setIndex(i);
+          dispatch(setPlayObject(item));
+        });
+
+        return;
       }
     });
-    setFavList(tempArray);
   };
 
   return (
@@ -139,10 +164,11 @@ const Favorite = ({navigation}) => {
                               <TouchableOpacity
                                 style={s.playbutton}
                                 onPress={() => {
-                                  setPlayButton(item);
+                                  play(item, i);
                                 }}
                               >
-                                {item.play ? (
+                                {item.id == playObject.id &&
+                                playerState == State.Playing ? (
                                   <Icon
                                     name={'pause-circle'}
                                     color={'#fff'}
@@ -160,10 +186,35 @@ const Favorite = ({navigation}) => {
                           </View>
 
                           <View style={s.slider}>
-                            <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                            <Slider
+                              value={
+                                item.id == playObject.id ? progress.position : 0
+                              }
+                              minimumValue={0}
+                              maximumValue={
+                                item.id == playObject.id ? progress.duration : 0
+                              }
+                              onSlidingComplete={async value => {
+                                await TrackPlayer.seekTo(value);
+                              }}
+                              thumbStyle={s.thumb}
+                              trackStyle={s.track}
+                            />
                             <View style={s.timer}>
-                              <Text style={s.text2}>00:00</Text>
-                              <Text style={s.text2}>00:30</Text>
+                              <Text style={s.text2}>
+                                {item.id == playObject.id
+                                  ? new Date(progress.position * 1000)
+                                      .toString()
+                                      .substring(19, 24)
+                                  : `00:00`}
+                              </Text>
+                              <Text style={s.text2}>
+                                {item.id == playObject.id
+                                  ? new Date(progress.duration * 1000)
+                                      .toString()
+                                      .substring(19, 24)
+                                  : `00:00`}
+                              </Text>
                             </View>
                           </View>
                         </View>

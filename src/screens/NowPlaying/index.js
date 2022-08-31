@@ -57,10 +57,10 @@ const NowPlaying = ({navigation, route}) => {
   const [newShuffle, setNewShuffle] = useState(0);
 
   useEffect(() => {
-    console.log(route);
-    if (route.params.data == 'home') {
-      play('play');
-    }
+    // console.log(route);
+    // if (route.params.data == 'home') {
+    //   play('play');
+    // }
   }, []);
 
   const showToast = msg => {
@@ -109,49 +109,43 @@ const NowPlaying = ({navigation, route}) => {
   };
 
   const next = async () => {
-    if (shuffle) {
-      randomSong();
+    if (!shuffle) {
+      await TrackPlayer.skipToNext()
+        .then(() => {
+          play('play');
+        })
+        .catch(err => {
+          showToast(err.toString().substring(6, 40));
+          dispatch(playPause('pause'));
+        });
     } else {
-      await TrackPlayer.pause().then(res => {
-        TrackPlayer.skipToNext()
-          .then(() => {
-            TrackPlayer.play();
-            dispatch(playPause('play'));
-          })
-          .catch(err => {
-            showToast(err.toString().substring(6, 40));
-            dispatch(playPause('pause'));
-          });
-      });
+      randomSong();
     }
   };
 
   const previous = async () => {
-    if (shuffle) {
-      randomSong();
+    if (!shuffle) {
+      await TrackPlayer.skipToPrevious()
+        .then(() => {
+          play('play');
+        })
+        .catch(err => {
+          showToast(err.toString().substring(6, 40));
+          dispatch(playPause('pause'));
+        });
     } else {
-      await TrackPlayer.pause().then(res => {
-        TrackPlayer.skipToPrevious()
-          .then(() => {
-            TrackPlayer.play();
-            dispatch(playPause('play'));
-          })
-          .catch(err => {
-            showToast(err.toString().substring(6, 40));
-            dispatch(playPause('pause'));
-          });
-      });
+      randomSong();
     }
   };
 
   const play = async c => {
     if (c == 'play') {
-      trackObject();
       await TrackPlayer.play();
     } else {
       await TrackPlayer.pause();
     }
     dispatch(playPause(c));
+    trackObject();
   };
 
   const trackObject = async () => {
@@ -318,12 +312,12 @@ const NowPlaying = ({navigation, route}) => {
 
                 <TouchableOpacity
                   onPress={() => {
-                    play(playerState === State.Playing ? 'pause' : 'play');
+                    play(playerState == State.Playing ? 'pause' : 'play');
                   }}
                 >
                   <Icon
                     name={
-                      playerState === State.Playing
+                      playerState == State.Playing
                         ? 'pause-circle'
                         : 'play-circle'
                     }
