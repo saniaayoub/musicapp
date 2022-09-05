@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    marginBottom: moderateScale(50, 0.1),
   },
   image: {
     justifyContent: 'center',

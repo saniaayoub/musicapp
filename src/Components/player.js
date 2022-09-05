@@ -52,14 +52,14 @@ const Player = ({navigationProp}) => {
   const trackObject = async () => {
     let trackIndex = await TrackPlayer.getCurrentTrack();
     let trackObject = await TrackPlayer.getTrack(trackIndex);
-    console.log(trackObject);
     dispatch(setPlayObject(trackObject));
   };
 
   const next = async () => {
     await TrackPlayer.skipToNext()
       .then(() => {
-        play('play');
+        trackObject();
+        TrackPlayer.play();
       })
       .catch(err => {
         showToast(err.toString().substring(6, 40));
@@ -70,7 +70,8 @@ const Player = ({navigationProp}) => {
   const previous = async () => {
     await TrackPlayer.skipToPrevious()
       .then(() => {
-        play('play');
+        trackObject();
+        TrackPlayer.play();
       })
       .catch(err => {
         showToast(err.toString().substring(6, 40));
@@ -97,7 +98,7 @@ const Player = ({navigationProp}) => {
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
-        colors={['rgba(84, 58, 66,1)', 'rgba(0, 0, 0, 1)']}
+        colors={['rgba(70, 12, 66,1)', 'rgba(0, 0, 0, 1)']}
         style={[styles.gradient, styles.row]}
       >
         <View style={[styles.music, styles.center, styles.row]}>

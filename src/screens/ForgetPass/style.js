@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(110, 46, 149, 0.375)',
+    height: '100%',
   },
   heading: {
     marginTop: moderateScale(-90, 0.1),
@@ -57,7 +58,27 @@ const styles = StyleSheet.create({
   },
   bottomLink: {
     position: 'absolute',
-    bottom: moderateScale(50, 0.1),
+    bottom:
+      Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),
+  },
+  borderStyleBase: {
+    width: 30,
+    height: 45,
+  },
+
+  borderStyleHighLighted: {
+    borderColor: '#03DAC6',
+  },
+
+  underlineStyleBase: {
+    width: 30,
+    height: 45,
+    borderWidth: 0,
+    borderBottomWidth: 1,
+  },
+
+  underlineStyleHighLighted: {
+    borderColor: '#03DAC6',
   },
 });
 

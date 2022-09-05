@@ -6,12 +6,14 @@ const Poppins = 'Poppins-Regular';
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(110, 46, 149, 0.375)',
   },
   heading: {
-    marginTop: moderateScale(-50, 0.1),
+    marginTop: moderateScale(-90, 0.1),
     marginBottom: moderateScale(30, 0.1),
   },
   headingText: {
@@ -42,7 +44,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(12, 0.1),
     color: '#C26AF8',
   },
-  forgetPass: {
+  signInNow: {
     color: '#fff',
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
@@ -50,7 +52,28 @@ const styles = StyleSheet.create({
   },
   bottomLink: {
     position: 'absolute',
-    bottom: Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(50, 0.1),
+    bottom:
+      Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),
+  },
+  inputStyle: {
+    fontSize: moderateScale(14, 0.1),
+    fontFamily: 'Gilroy-Medium',
+    color: '#fff',
+  },
+  inputContainerStyle: {
+    width: '75%',
+    paddingVertical: moderateScale(10, 0.1),
+    borderBottomColor: '#fff',
+    borderBottomWidth: 1,
+  },
+  eye: {
+    position: 'absolute',
+    top: moderateScale(13),
+    right: moderateScale(13),
+  },
+  error: {
+    color: 'red',
+    fontSize: moderateScale(12, 0.1),
   },
 });
 

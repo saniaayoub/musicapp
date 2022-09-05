@@ -42,6 +42,7 @@ import {
   setShuffle,
   setRepeat,
 } from '../../Redux/actions';
+import Player from '../../Components/player';
 
 const Favorite = ({navigation}) => {
   const progress = useProgress();
@@ -50,8 +51,12 @@ const Favorite = ({navigation}) => {
   const [favList, setFavList] = useState(Songs);
   const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
+  const [queue, setQueue] = useState([]);
   let playObject = useSelector(state => state.reducer.play_object);
 
+  useEffect(() => {
+    getQueue();
+  }, []);
   const play = async (song, i) => {
     if (i == index) {
       if (playerState === State.Paused) {
@@ -61,24 +66,33 @@ const Favorite = ({navigation}) => {
       }
     } else {
       getIndexFromQueue(song);
+      setIndex(i);
     }
   };
 
   const getIndexFromQueue = async song => {
-    let queue = await TrackPlayer.getQueue();
-    queue.forEach((item, i) => {
+    console.log(progress.position);
+    queue.every(async (item, i) => {
       if (song.id == item.id) {
-        TrackPlayer.skip(i).then(() => {
-          TrackPlayer.play();
-          setIndex(i);
-          dispatch(setPlayObject(item));
+        await TrackPlayer.pause().then(async () => {
+          await TrackPlayer.seekTo(0).then(async () => {
+            await TrackPlayer.skip(i).then(async () => {
+              await TrackPlayer.play().then(() => {
+                dispatch(setPlayObject(item));
+              });
+            });
+          });
         });
-
-        return;
+        return false;
       }
+      return true;
     });
   };
 
+  const getQueue = async () => {
+    let queue = await TrackPlayer.getQueue();
+    setQueue(queue);
+  };
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -124,7 +138,7 @@ const Favorite = ({navigation}) => {
             <ActivityIndicator />
           ) : favList.length ? (
             <ScrollView
-              style={{marginBottom: moderateScale(20, 0.1)}}
+              style={{marginBottom: moderateScale(160, 0.1)}}
               contentContainerStyle={{flexGrow: 1}}
             >
               <View style={s.collection}>

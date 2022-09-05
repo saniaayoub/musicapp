@@ -24,6 +24,7 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from 'react-native-track-player';
+import axiosconfig from '../../Providers/axios';
 import {useDispatch, useSelector} from 'react-redux';
 import Player from '../../Components/player';
 import {setPlayObject} from '../../Redux/actions';
@@ -35,6 +36,7 @@ const UserHome = ({navigation}) => {
   const [featured, setFeatured] = useState(Songs);
 
   useEffect(() => {
+    // getCategories()
     TrackPlayer.setupPlayer();
     TrackPlayer.add(Songs);
     TrackPlayer.setRepeatMode(RepeatMode.Off);
@@ -60,17 +62,22 @@ const UserHome = ({navigation}) => {
     });
   }, []);
 
+  //   const getCategories = async() => {
+  // await axiosconfig.get('')
+  //   }
+
   const getIndexFromQueue = async song => {
     let queue = await TrackPlayer.getQueue();
-    queue.forEach(async (item, i) => {
+    queue.every(async (item, i) => {
       if (song.id == item.id) {
-        await TrackPlayer.skip(i).then(res => {
+        await TrackPlayer.skip(i).then(async res => {
           TrackPlayer.play();
           dispatch(setPlayObject(item));
           navigation.navigate('NowPlaying');
-          return;
         });
+        return false;
       }
+      return true;
     });
   };
 

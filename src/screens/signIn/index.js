@@ -1,33 +1,104 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
   Dimensions,
-  Image,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Input, Button} from 'native-base';
+import {Input, FormControl, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
-import AppContext from '../../Providers/AppContext';
+
+import axiosconfig from '../../Providers/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useSelector, useDispatch} from 'react-redux';
+import {setUserToken} from '../../Redux/actions';
+
+const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const passRegex = new RegExp(
+  '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
+);
 
 const SignIn = ({navigation}) => {
-  const context = useContext(AppContext);
-  const login = () => {
-    context.setUserToken('1');
+  const dispatch = useDispatch();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [validEmail, setValidEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [loader, setLoader] = useState(false);
+
+  const showToast = msg => {
+    ToastAndroid.show(msg, ToastAndroid.LONG);
   };
+
+  const validate = async () => {
+    setLoader(true);
+    if (email && password) {
+      {
+        !validEmail
+          ? (setEmailError('Please enter a valid email'), setLoader(false))
+          : login();
+      }
+    } else {
+      {
+        !email && !password
+          ? (setEmailError('Email is required'),
+            setPasswordError('Password is required'))
+          : !email
+          ? setEmailError('Email is required')
+          : !validEmail
+          ? setEmailError('Please enter a valid email')
+          : setPasswordError('Password is required');
+      }
+      setLoader(false);
+      return;
+    }
+  };
+
+  const login = () => {
+    const data = {
+      email: email,
+      password: password,
+      type: 'user',
+    };
+    axiosconfig
+      .post('login', data)
+      .then(res => {
+        const data = res?.data;
+        if (data.access_token) {
+          setLoader(false);
+          console.log(data.access_token);
+          dispatch(setUserToken(data.access_token));
+          AsyncStorage.setItem('@auth_token', data.access_token);
+          showToast('Successfully Logged in!');
+          setEmail('');
+          setPassword('');
+        } else {
+          console.log('here2');
+          console.log(data);
+          setLoader(false);
+          showToast(data.message);
+        }
+      })
+      .catch(err => {
+        console.log(err, 'error');
+        setLoader(false);
+        showToast(err.message);
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
-        <View style={[s.container, {width: width, height: height}]}>
-          <View></View>
+        <View style={[s.container]}>
           <View style={{width: '100%', alignItems: 'center'}}>
             <View style={s.heading}>
               <Text style={s.headingText}>Sign In</Text>
@@ -46,9 +117,21 @@ const SignIn = ({navigation}) => {
                 }
                 placeholder="Email"
                 placeholderTextColor={'#fff'}
+                value={email}
+                onChangeText={email => {
+                  setEmail(email);
+                  let valid = emailReg.test(email);
+                  setEmailError('');
+                  setValidEmail(valid);
+                }}
                 color={'#fff'}
                 fontSize={moderateScale(14, 0.1)}
               />
+              {emailError ? (
+                <Text style={s.error}>{emailError}</Text>
+              ) : (
+                <Text> </Text>
+              )}
             </View>
             <View style={s.input}>
               <Input
@@ -67,15 +150,26 @@ const SignIn = ({navigation}) => {
                 }
                 placeholder="Password"
                 placeholderTextColor={'#fff'}
+                value={password}
+                onChangeText={password => {
+                  setPassword(password);
+                  setPasswordError('');
+                }}
+                errorMessage={passwordError}
                 color={'#fff'}
                 fontSize={moderateScale(14, 0.1)}
                 secureTextEntry={true}
               />
+              {passwordError ? (
+                <Text style={s.error}>{passwordError}</Text>
+              ) : (
+                <Text> </Text>
+              )}
             </View>
             <View style={s.button}>
               <Button
                 size="sm"
-                onPress={() => login()}
+                onPress={() => validate()}
                 variant={'solid'}
                 _text={{
                   color: '#6627EC',
@@ -87,7 +181,9 @@ const SignIn = ({navigation}) => {
                 alignItems={'center'}
                 style={s.shadow}
               >
-                <Text style={s.btnText}>Login</Text>
+                <Text style={s.btnText}>
+                  {loader ? <ActivityIndicator /> : `Login`}
+                </Text>
               </Button>
             </View>
             <View>
@@ -96,7 +192,7 @@ const SignIn = ({navigation}) => {
                 onPress={() => navigation.navigate('ForgetPassword')}
                 variant={'link'}
               >
-                <Text style={s.forgetPass}> Forgot Password?</Text>
+                <Text style={s.forgetPass}>Forgot Password?</Text>
               </Button>
             </View>
           </View>

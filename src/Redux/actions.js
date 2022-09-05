@@ -3,7 +3,15 @@ import {
   SET_PLAY_OBJECT,
   SET_SHUFFLE,
   SET_REPEAT,
+  SET_USER_TOKEN,
 } from './Constants';
+
+export const setUserToken = value => {
+  return {
+    type: SET_USER_TOKEN,
+    payload: value,
+  };
+};
 
 export const playPause = value => {
   return {

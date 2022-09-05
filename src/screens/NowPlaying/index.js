@@ -42,6 +42,8 @@ import {
 const NowPlaying = ({navigation, route}) => {
   const progress = useProgress();
   const playerState = usePlaybackState();
+  const isPlaying = playerState === State.Playing;
+
   const dispatch = useDispatch();
 
   let play_Pause = useSelector(state => state.reducer.play_pause);
@@ -101,6 +103,7 @@ const NowPlaying = ({navigation, route}) => {
     if (!shuffle) {
       await TrackPlayer.skipToNext()
         .then(() => {
+          trackObject();
           play('play');
         })
         .catch(err => {
@@ -116,6 +119,7 @@ const NowPlaying = ({navigation, route}) => {
     if (!shuffle) {
       await TrackPlayer.skipToPrevious()
         .then(() => {
+          trackObject();
           play('play');
         })
         .catch(err => {
@@ -301,15 +305,11 @@ const NowPlaying = ({navigation, route}) => {
 
                 <TouchableOpacity
                   onPress={() => {
-                    play(playerState == State.Playing ? 'pause' : 'play');
+                    play(isPlaying ? 'pause' : 'play');
                   }}
                 >
                   <Icon
-                    name={
-                      playerState == State.Playing
-                        ? 'pause-circle'
-                        : 'play-circle'
-                    }
+                    name={isPlaying ? 'pause-circle' : 'play-circle'}
                     color={'#fff'}
                     size={moderateScale(59, 0.1)}
                   />

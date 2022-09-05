@@ -1,3 +1,4 @@
+export const SET_USER_TOKEN = 'SET_USER_TOKEN';
 export const PLAY_PAUSE = 'PLAY_PAUSE';
 export const SET_PLAY_OBJECT = 'SET_PLAY_OBJECT';
 export const SET_SHUFFLE = 'SET_SHUFFLE';

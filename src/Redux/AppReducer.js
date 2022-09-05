@@ -3,9 +3,11 @@ import {
   SET_PLAY_OBJECT,
   SET_SHUFFLE,
   SET_REPEAT,
+  SET_USER_TOKEN,
 } from './Constants';
 
 const initialState = {
+  userToken: null,
   play_pause: 'pause',
   play_object: {},
   shuffle: false,
@@ -14,6 +16,13 @@ const initialState = {
 
 const AppReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_USER_TOKEN:
+      console.log('setToken');
+      return {
+        ...state,
+        userToken: action.payload,
+      };
+
     case PLAY_PAUSE:
       return {
         ...state,
