@@ -15,6 +15,8 @@ import homeback from '../../assets/images/homeback.png';
 import AppContext from '../../Providers/AppContext';
 import Categories from '../../Components/Categories';
 import Songs from '../../Components/songs';
+import OTPInputView from '@twotalltotems/react-native-otp-input'
+
 import TrackPlayer, {
   Capability,
   Event,

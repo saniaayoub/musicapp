@@ -43,6 +43,7 @@ const Search = ({navigation}) => {
   const [songList, setSongList] = useState([]);
   const [index, setIndex] = useState();
   const [queue, setQueue] = useState([]);
+  
   useEffect(() => {
     clearData();
     getQueue();

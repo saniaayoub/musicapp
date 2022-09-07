@@ -23,6 +23,7 @@ import {setUserToken} from './src/Redux/actions';
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
 import ForgetPassword from './src/screens/ForgetPass';
+import PassReset from './src/screens/PassReset';
 import GetStarted from './src/screens/GetStarted';
 import Subscribe from './src/screens/Subscribe';
 
@@ -43,7 +44,6 @@ const App = () => {
     favList,
     setFavList,
   };
-
   useEffect(() => {
     // getData();
   }, []);
@@ -92,6 +92,7 @@ const App = () => {
                     name="ForgetPassword"
                     component={ForgetPassword}
                   />
+                  <Stack.Screen name="PassReset" component={PassReset} />
                 </Stack.Navigator>
               )}
             </NavigationContainer>

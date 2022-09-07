@@ -8,8 +8,10 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -23,14 +25,43 @@ import Edit1 from '../../assets/images/edit2.svg';
 import Edit from '../../assets/images/edit.svg';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
 import RadioButton from '../../Components/radio';
+import RawBottomSheet from '../../Components/rawBottomSheet';
+import {useSelector} from 'react-redux';
+import axiosconfig from '../../Providers/axios';
+import RNFS from 'react-native-fs';
 
 const Profile = ({navigation}) => {
-  useEffect(() => {});
+  let token = useSelector(state => state.reducer.userToken);
+
+  const [fname, setFname] = useState('');
+  const [email, setEmail] = useState('');
+  const [phNumber, setPhNumber] = useState('');
+  const [field, setField] = useState('');
+  const [title, setTitle] = useState('');
+  const [gender, setGender] = useState('Female');
+  const [image, setImage] = useState('');
+  const [openSheet, setOpenSheet] = useState(false);
+  const [loader, setLoader] = useState(false);
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const [isSelected, setIsSelected] = useState([
-    {id: 1, value: true, name: 'Male', selected: true},
-    {id: 2, value: false, name: 'Female', selected: false},
+    {
+      id: 1,
+      value: true,
+      name: 'Male',
+      selected: gender == 'Male' ? true : false,
+    },
+    {
+      id: 2,
+      value: false,
+      name: 'Female',
+      selected: gender == 'Female' ? true : false,
+    },
   ]);
+
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
       isSelectedItem.id === item.id
@@ -38,6 +69,75 @@ const Profile = ({navigation}) => {
         : {...isSelectedItem, selected: false},
     );
     setIsSelected(updatedState);
+    setGender(item.name);
+    console.log(gender);
+  };
+  const showToast = msg => {
+    ToastAndroid.show(msg, ToastAndroid.LONG);
+  };
+
+  const getData = async () => {
+    setLoader(true);
+    axiosconfig
+      .get('user_view', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+
+        setLoader(false);
+        if (res.data) {
+          setData(res.data);
+        }
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err.response);
+      });
+  };
+  const setData = data => {
+    setFname(data?.name);
+    setEmail(data?.email);
+    setPhNumber(data?.phone_number);
+    setGender(data?.gender);
+  };
+
+  const save = async () => {
+    const body = {
+      name: fname,
+      email: email,
+      phone_number: phNumber,
+      gender: gender,
+      image: image,
+    };
+    await axiosconfig
+      .post('user_update', body, {
+        headers: {Authorization: `Bearer ${token}`},
+      })
+      .then(res => {
+        console.log(res.data);
+        let message = res?.data?.messsage;
+        showToast(message);
+        setLoader(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoader(false);
+        showToast(err.message);
+      });
+  };
+
+  const convertImage = () => {
+    setLoader(true);
+    RNFS.readFile(
+      'https://lh3.googleusercontent.com/i7cTyGnCwLIJhT1t2YpLW-zHt8ZKalgQiqfrYnZQl975-ygD_0mOXaYZMzekfKW_ydHRutDbNzeqpWoLkFR4Yx2Z2bgNj2XskKJrfw8',
+      'base64',
+    ).then(res => {
+      setImage(res);
+      save();
+    });
   };
 
   return (
@@ -98,6 +198,7 @@ const Profile = ({navigation}) => {
                   base: '85%',
                   md: '15%',
                 }}
+                isReadOnly={true}
                 variant="underlined"
                 color={'#000'}
                 fontSize={moderateScale(12, 0.1)}
@@ -110,13 +211,23 @@ const Profile = ({navigation}) => {
                   </View>
                 }
                 InputRightElement={
-                  <TouchableOpacity style={s.icon}>
+                  <TouchableOpacity
+                    style={s.icon}
+                    onPress={() => {
+                      setTitle('Full Name');
+                      setField(fname);
+                      setTimeout(() => {
+                        setOpenSheet(true);
+                      }, 100);
+                    }}
+                  >
                     <Edit1
                       width={moderateScale(28, 0.1)}
                       height={moderateScale(28, 0.1)}
                     />
                   </TouchableOpacity>
                 }
+                value={fname}
                 placeholder="Full Name"
                 placeholderTextColor={'#3E3E3E'}
               />
@@ -133,14 +244,25 @@ const Profile = ({navigation}) => {
                     <Icon name={'envelope'} color="#C8C4C4" size={18} />
                   </View>
                 }
+                isReadOnly={true}
                 InputRightElement={
-                  <TouchableOpacity style={s.icon}>
+                  <TouchableOpacity
+                    style={s.icon}
+                    onPress={() => {
+                      setTitle('Email');
+                      setField(email);
+                      setTimeout(() => {
+                        setOpenSheet(true);
+                      }, 100);
+                    }}
+                  >
                     <Edit1
                       width={moderateScale(28, 0.1)}
                       height={moderateScale(28, 0.1)}
                     />
                   </TouchableOpacity>
                 }
+                value={email}
                 placeholder="Email"
                 placeholderTextColor={'#3E3E3E'}
                 color={'#000'}
@@ -153,6 +275,7 @@ const Profile = ({navigation}) => {
                   base: '85%',
                   md: '15%',
                 }}
+                isReadOnly={true}
                 variant="underlined"
                 InputLeftElement={
                   <View style={s.icon}>
@@ -162,8 +285,18 @@ const Profile = ({navigation}) => {
                     />
                   </View>
                 }
+                value={phNumber}
                 InputRightElement={
-                  <TouchableOpacity style={s.icon}>
+                  <TouchableOpacity
+                    style={s.icon}
+                    onPress={() => {
+                      setTitle('Phone Number');
+                      setField(phNumber);
+                      setTimeout(() => {
+                        setOpenSheet(true);
+                      }, 100);
+                    }}
+                  >
                     <Edit1
                       width={moderateScale(28, 0.1)}
                       height={moderateScale(28, 0.1)}
@@ -195,21 +328,38 @@ const Profile = ({navigation}) => {
             <View style={s.button}>
               <Button
                 size="sm"
-                onPress={() => navigation.navigate('Subscribe')}
+                onPress={() => convertImage()}
                 variant={'solid'}
-                _text={{
-                  color: '#6627EC',
-                }}
                 backgroundColor={'#C26AF8'}
                 borderRadius={50}
                 w={moderateScale(140, 0.1)}
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
-                style={s.shadow}
               >
-                <Text style={s.btnText}>Save</Text>
+                <Text style={s.btnText}>
+                  {loader ? <ActivityIndicator /> : `Save`}
+                </Text>
               </Button>
             </View>
+            {openSheet ? (
+              <RawBottomSheet
+                title={title}
+                field={field}
+                setValue={
+                  title == 'Full Name'
+                    ? setFname
+                    : title == 'Email'
+                    ? setEmail
+                    : title == 'Phone Number'
+                    ? setPhNumber
+                    : null
+                }
+                openSheet={openSheet}
+                setOpenSheet={setOpenSheet}
+              />
+            ) : (
+              <></>
+            )}
           </View>
         </ScrollView>
       </View>

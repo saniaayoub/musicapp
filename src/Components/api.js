@@ -15,7 +15,7 @@ class ApiCaller extends React.Component {
       .post(api, data)
       .then(res => {
         const data = res?.data;
-        return data;
+        return data.access_token;
       })
       .catch(err => {
         return err.message;

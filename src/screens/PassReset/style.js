@@ -13,7 +13,9 @@ const styles = StyleSheet.create({
   },
   heading: {
     marginTop: moderateScale(-90, 0.1),
-    marginBottom: moderateScale(60, 0.1),
+    marginBottom: moderateScale(50, 0.1),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backbutton: {
     position: 'absolute',
@@ -27,6 +29,15 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(25, 0.1),
     lineHeight: moderateScale(30, 0.1),
   },
+  verifyText: {
+    marginVertical: moderateScale(10, 0.1),
+    textAlign: 'center',
+    width: moderateScale(280, 0.1),
+    color: '#fff',
+    fontSize: moderateScale(11, 0.1),
+    lineHeight: moderateScale(15, 0.1),
+    fontFamily: InterRegular,
+  },
   iconCircle: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -35,8 +46,6 @@ const styles = StyleSheet.create({
     // marginBottom: moderateScale(5, 0.1),
   },
   input: {
-    justifyContent: 'center',
-    alignItems: 'center',
     marginVertical: moderateScale(20, 0.1),
   },
   button: {
@@ -56,32 +65,21 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(15, 0.1),
     fontFamily: Poppins,
   },
-  verifyHeading: {
-    color: '#000',
-    fontSize: moderateScale(22, 0.1),
-    marginBottom: moderateScale(10, 0.1),
-    lineHeight: moderateScale(26, 0.1),
-    fontFamily: InterBold,
-  },
-  verifyText: {
-    color: 'grey',
-    fontSize: moderateScale(11, 0.1),
-    width: moderateScale(180, 0.1),
-    lineHeight: moderateScale(15, 0.1),
-    textAlign: 'center',
-    fontFamily: InterRegular,
-  },
-  otpView: {
-    height: moderateScale(130, 0.1),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   bottomLink: {
     position: 'absolute',
     bottom:
       Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),
   },
- 
+  error: {
+    color: 'red',
+    fontSize: moderateScale(12, 0.1),
+    textAlign: 'left',
+  },
+  eye: {
+    position: 'absolute',
+    top: moderateScale(13),
+    right: moderateScale(13),
+  },
 });
 
 export default styles;

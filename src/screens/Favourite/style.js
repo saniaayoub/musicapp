@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginBottom: moderateScale(50, 0.1),
+    
   },
   image: {
     justifyContent: 'center',
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(29, 0.1),
     marginLeft: moderateScale(35, 0.1),
   },
+  
 });
 
 export default styles;

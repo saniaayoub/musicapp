@@ -179,7 +179,6 @@ const SignIn = ({navigation}) => {
                 w={moderateScale(140, 0.1)}
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
-                style={s.shadow}
               >
                 <Text style={s.btnText}>
                   {loader ? <ActivityIndicator /> : `Login`}
