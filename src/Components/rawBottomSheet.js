@@ -8,10 +8,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {useState} from 'react';
 import {useEffect} from 'react';
 
-const InterMedium = 'Inter-Medium';
-const InterRegular = 'Inter-Regular';
 const InterBold = 'Inter-ExtraBold';
-const Poppins = 'Poppins-Regular';
 
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 

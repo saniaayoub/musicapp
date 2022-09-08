@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import {Box} from 'native-base';
@@ -15,30 +16,25 @@ import homeback from '../../assets/images/homeback.png';
 import AppContext from '../../Providers/AppContext';
 import Categories from '../../Components/Categories';
 import Songs from '../../Components/songs';
-import OTPInputView from '@twotalltotems/react-native-otp-input'
-
-import TrackPlayer, {
-  Capability,
-  Event,
-  RepeatMode,
-  State,
-  usePlaybackState,
-  useProgress,
-  useTrackPlayerEvents,
-} from 'react-native-track-player';
+import TrackPlayer, {Capability, RepeatMode} from 'react-native-track-player';
 import axiosconfig from '../../Providers/axios';
 import {useDispatch, useSelector} from 'react-redux';
 import Player from '../../Components/player';
 import {setPlayObject} from '../../Redux/actions';
-import {moderateScale} from 'react-native-size-matters';
 
 const UserHome = ({navigation}) => {
   const context = useContext(AppContext);
   const dispatch = useDispatch();
+  let token = useSelector(state => state.reducer.userToken);
+  // let featured = useSelector(state => state.reducer.featured);
+
   const [featured, setFeatured] = useState(Songs);
+  const [categories, setCategories] = useState();
+  const [loader, setLoader] = useState();
 
   useEffect(() => {
-    // getCategories()
+    // getCategoryList();
+    // getFeaturedList();
     TrackPlayer.setupPlayer();
     TrackPlayer.add(Songs);
     TrackPlayer.setRepeatMode(RepeatMode.Off);
@@ -64,13 +60,54 @@ const UserHome = ({navigation}) => {
     });
   }, []);
 
-  //   const getCategories = async() => {
-  // await axiosconfig.get('')
-  //   }
+  const getCategoryList = async () => {
+    setLoader(true);
+    axiosconfig
+      .get('user_all', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        setLoader(false);
+        if (res.data) {
+          console.log(res?.data);
+          setCategories(res?.data);
+        }
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err.response);
+      });
+  };
+
+  const getFeaturedList = () => {
+    setLoader(true);
+    axiosconfig
+      .get('feature_music_show/1', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        setLoader(false);
+        if (res.data) {
+          console.log(res?.data);
+          setFeatured();
+        }
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err.response);
+      });
+  };
 
   const getIndexFromQueue = async song => {
     let queue = await TrackPlayer.getQueue();
     queue.every(async (item, i) => {
+      console.log(item);
       if (song.id == item.id) {
         await TrackPlayer.skip(i).then(async res => {
           TrackPlayer.play();
@@ -118,7 +155,9 @@ const UserHome = ({navigation}) => {
                   <>
                     <TouchableOpacity
                       style={s.item}
-                      onPress={() => navigation.navigate('Playlist')}
+                      onPress={() =>
+                        navigation.navigate('Playlist', {data: item})
+                      }
                     >
                       <ImageBackground
                         source={item.image}

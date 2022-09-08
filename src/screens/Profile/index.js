@@ -1,17 +1,14 @@
 import {
-  ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
   Image,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
   ToastAndroid,
 } from 'react-native';
-import React, {useContext, useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -29,8 +26,11 @@ import RawBottomSheet from '../../Components/rawBottomSheet';
 import {useSelector} from 'react-redux';
 import axiosconfig from '../../Providers/axios';
 import RNFS from 'react-native-fs';
+import CameraOpt from '../../Components/CameraOpt';
 
+import RBSheet from 'react-native-raw-bottom-sheet';
 const Profile = ({navigation}) => {
+  const refRBSheet = useRef();
   let token = useSelector(state => state.reducer.userToken);
 
   const [fname, setFname] = useState('');
@@ -39,7 +39,7 @@ const Profile = ({navigation}) => {
   const [field, setField] = useState('');
   const [title, setTitle] = useState('');
   const [gender, setGender] = useState('Female');
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState();
   const [openSheet, setOpenSheet] = useState(false);
   const [loader, setLoader] = useState(false);
 
@@ -70,7 +70,6 @@ const Profile = ({navigation}) => {
     );
     setIsSelected(updatedState);
     setGender(item.name);
-    console.log(gender);
   };
   const showToast = msg => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
@@ -102,9 +101,12 @@ const Profile = ({navigation}) => {
     setEmail(data?.email);
     setPhNumber(data?.phone_number);
     setGender(data?.gender);
+    setImage(data?.image);
   };
 
   const save = async () => {
+    setLoader(true);
+    console.log(image, 'image');
     const body = {
       name: fname,
       email: email,
@@ -131,13 +133,13 @@ const Profile = ({navigation}) => {
 
   const convertImage = () => {
     setLoader(true);
-    RNFS.readFile(
-      'https://lh3.googleusercontent.com/i7cTyGnCwLIJhT1t2YpLW-zHt8ZKalgQiqfrYnZQl975-ygD_0mOXaYZMzekfKW_ydHRutDbNzeqpWoLkFR4Yx2Z2bgNj2XskKJrfw8',
-      'base64',
-    ).then(res => {
-      setImage(res);
-      save();
-    });
+    RNFS.readFile(image, 'base64')
+      .then(res => {
+        setImage(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   return (
@@ -172,14 +174,15 @@ const Profile = ({navigation}) => {
           <View style={s.profileSection}>
             <View style={s.profileimg}>
               <Image
-                source={profileimg}
-                width={undefined}
-                height={undefined}
-                resizeMode={'contain'}
+                source={image ? {uri: image} : profileimg}
+                style={s.imageStyle}
               />
             </View>
 
-            <TouchableOpacity style={s.edit}>
+            <TouchableOpacity
+              style={s.edit}
+              onPress={() => refRBSheet.current.open()}
+            >
               <Edit
                 width={moderateScale(24, 0.1)}
                 height={moderateScale(24, 0.1)}
@@ -328,7 +331,7 @@ const Profile = ({navigation}) => {
             <View style={s.button}>
               <Button
                 size="sm"
-                onPress={() => convertImage()}
+                onPress={() => save()}
                 variant={'solid'}
                 backgroundColor={'#C26AF8'}
                 borderRadius={50}
@@ -360,6 +363,26 @@ const Profile = ({navigation}) => {
             ) : (
               <></>
             )}
+            <RBSheet
+              ref={refRBSheet}
+              closeOnDragDown={true}
+              closeOnPressMask={false}
+              customStyles={{
+                wrapper: {
+                  backgroundColor: '#0000007a',
+                },
+                draggableIcon: {
+                  backgroundColor: '#000',
+                },
+                container: {
+                  borderTopLeftRadius: moderateScale(20, 0.1),
+                  borderTopRightRadius: moderateScale(20, 0.1),
+                  height: 120,
+                },
+              }}
+            >
+              <CameraOpt setImage={setImage} refRBSheet={refRBSheet} />
+            </RBSheet>
           </View>
         </ScrollView>
       </View>

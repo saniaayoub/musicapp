@@ -107,26 +107,6 @@ const Favorite = ({navigation}) => {
       >
         <View style={s.container}>
           <View style={s.fixed}>
-            {/* <View style={s.backbutton}>
-              <Button
-                size="sm"
-                onPress={() =>
-                  navigation.navigate('Home', {screen: 'UserHome'})
-                }
-                variant={'link'}
-                backgroundColor={'#fff'}
-                borderRadius={moderateScale(14, 0.1)}
-                padding={moderateScale(7, 0.1)}
-                zIndex={1000}
-              >
-                <Backarrowsvg
-                  width={moderateScale(14, 0.1)}
-                  height={moderateScale(14, 0.1)}
-                />
-                <Image source={backarrow} resizeMode="contain" />
-                <Icon name={'arrow-circle-left'} color={'#fff'} size={25} />
-              </Button>
-            </View> */}
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>

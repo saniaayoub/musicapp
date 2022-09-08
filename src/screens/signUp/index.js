@@ -35,6 +35,7 @@ const SignUp = ({navigation}) => {
   const phonenum = useRef();
   const [fname, setFname] = useState('');
   const [email, setEmail] = useState('');
+  const [disable, setDisable] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPass, setshowPass] = useState(true);
@@ -51,6 +52,7 @@ const SignUp = ({navigation}) => {
   };
 
   const validate = () => {
+    setDisable(true);
     setLoader(true);
     if (
       !fname ||
@@ -83,13 +85,15 @@ const SignUp = ({navigation}) => {
       if (!phonenum.current.isValidNumber()) {
         setPhNumErr('*');
       }
-      Alert.alert('Please fill in all required fields');
+      setDisable(false);
+      showToast('Please enter details');
       return;
     }
     if (conPassErr) {
       setLoader(false);
       setPassErr('');
       showToast('Confirm password mismatch');
+      setDisable(false);
       return;
     }
     let t = {
@@ -103,6 +107,7 @@ const SignUp = ({navigation}) => {
     } else {
       setLoader(false);
       setPhNumErr('*');
+      setDisable(false);
       showToast('Phone Number Invalid!');
       // Alert.alert('Phone Number Invalid!');
     }
@@ -132,12 +137,14 @@ const SignUp = ({navigation}) => {
           showToast('Successfully Logged in!');
         } else {
           setLoader(false);
+          setDisable(false);
           console.log('data', data);
           showToast(data.email[0]);
         }
       })
       .catch(err => {
         setLoader(false);
+        setDisable(false);
         showToast(err.response.message);
         console.log(err.response.message);
       });
@@ -162,6 +169,7 @@ const SignUp = ({navigation}) => {
               color={'#fff'}
               fontSize={moderateScale(14, 0.1)}
               value={fname}
+              isReadOnly={disable}
               onChangeText={text => {
                 setFname(text);
                 setFnameErr('');
@@ -178,6 +186,7 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Email"
               placeholderTextColor={'#fff'}
+              isReadOnly={disable}
               color={'#fff'}
               fontSize={moderateScale(14, 0.1)}
               value={email}
@@ -200,6 +209,7 @@ const SignUp = ({navigation}) => {
                 placeholder: 'Enter Phone Number',
                 placeholderTextColor: '#fff',
               }}
+              isReadOnly={disable}
               autoFormat={true}
               textStyle={s.inputStyle}
               isValidNumber={e => console.log(e)}
@@ -224,6 +234,7 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Create Password"
               placeholderTextColor={'#fff'}
+              isReadOnly={disable}
               value={password}
               onChangeText={text => {
                 setPassword(text);
@@ -264,6 +275,7 @@ const SignUp = ({navigation}) => {
                 md: '25%',
               }}
               variant="underlined"
+              isReadOnly={disable}
               placeholder="Confirm Password"
               placeholderTextColor={'#fff'}
               color={'#fff'}

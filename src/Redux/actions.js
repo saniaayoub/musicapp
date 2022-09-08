@@ -4,11 +4,19 @@ import {
   SET_SHUFFLE,
   SET_REPEAT,
   SET_USER_TOKEN,
+  SET_FEATURED,
 } from './Constants';
 
 export const setUserToken = value => {
   return {
     type: SET_USER_TOKEN,
+    payload: value,
+  };
+};
+
+export const setFeatured = value => {
+  return {
+    type: SET_FEATURED,
     payload: value,
   };
 };

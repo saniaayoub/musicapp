@@ -102,7 +102,7 @@ const GetStarted = ({navigation}) => {
       <View style={s.button}>
         <Button
           size="sm"
-          onPress={() => navigation.navigate('Subscribe')}
+          onPress={() => navigation.navigate('SignIn')}
           variant={'solid'}
           _text={{
             color: '#6627EC',

@@ -4,6 +4,7 @@ import {
   SET_SHUFFLE,
   SET_REPEAT,
   SET_USER_TOKEN,
+  SET_FEATURED,
 } from './Constants';
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   play_object: {},
   shuffle: false,
   repeat: 'off',
+  featured: [],
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -21,6 +23,13 @@ const AppReducer = (state = initialState, action) => {
       return {
         ...state,
         userToken: action.payload,
+      };
+
+    case SET_FEATURED:
+      console.log('setToken');
+      return {
+        ...state,
+        featured: action.payload,
       };
 
     case PLAY_PAUSE:
