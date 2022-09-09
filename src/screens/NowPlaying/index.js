@@ -23,7 +23,9 @@ import Slider from 'react-native-slider';
 import backarrow from '../../assets/images/backarrow.png';
 import nowplay from '../../assets/images/nowplay.png';
 import Songs from '../../Components/songs';
+import axiosconfig from '../../Providers/axios';
 import {useDispatch, useSelector} from 'react-redux';
+
 import TrackPlayer, {
   Event,
   RepeatMode,
@@ -37,6 +39,7 @@ import {
   setPlayObject,
   setShuffle,
   setRepeat,
+  setFavorite,
 } from '../../Redux/actions';
 
 const NowPlaying = ({navigation, route}) => {
@@ -45,9 +48,12 @@ const NowPlaying = ({navigation, route}) => {
   const isPlaying = playerState === State.Playing;
 
   const dispatch = useDispatch();
+  let token = useSelector(state => state.reducer.userToken);
 
   let play_Pause = useSelector(state => state.reducer.play_pause);
   let playObject = useSelector(state => state.reducer.play_object);
+  let favorite = useSelector(state => state.reducer.favorite);
+
   let shuffle = useSelector(state => state.reducer.shuffle);
   let repeat = useSelector(state => state.reducer.repeat);
 
@@ -203,7 +209,36 @@ const NowPlaying = ({navigation, route}) => {
     }
     return array;
   };
+  const add = item => {
+    const data = {
+      rating: true,
+      music_id: item.id,
+    };
+    axiosconfig
+      .post('user_rating', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        if (res.data) {
+          console.log(res?.data);
+          addToList(item);
+          // dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  };
 
+  const addToList = item => {
+    let temp;
+    temp = [...favorite, item];
+    console.log(temp);
+    dispatch(setFavorite(temp));
+  };
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
@@ -248,7 +283,12 @@ const NowPlaying = ({navigation, route}) => {
                     <Text style={s.text1}>{playObject?.title}</Text>
                   </View>
                   <View style={s.heart}>
-                    <Button size="sm" variant={'link'} zIndex={1000}>
+                    <Button
+                      onPress={() => add(playObject)}
+                      size="sm"
+                      variant={'link'}
+                      zIndex={1000}
+                    >
                       <Icon
                         name={'heart-o'}
                         color={'#fff'}

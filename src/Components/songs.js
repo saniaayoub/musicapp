@@ -7,7 +7,7 @@ export default Songs = [
     artist: 'Wiz Khalifa',
     artwork: require('../assets/images/healing1.png'),
     rating: false,
-    // duration: 200,
+    duration: 232,
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ export default Songs = [
     artist: 'Billie Eilish, Khalid',
     artwork: require('../assets/images/healing2.png'),
     rating: false,
-    // duration: 230,
+    duration: 200,
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ export default Songs = [
     title: 'Shape of you',
     artist: 'Ed Sheeran',
     rating: false,
-    // duration: 180,
+    duration: 239,
   },
   {
     id: 4,
@@ -36,7 +36,7 @@ export default Songs = [
     artist: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
     rating: false,
-    // duration: 150,
+    duration: 180,
   },
   {
     id: 5,
@@ -45,7 +45,7 @@ export default Songs = [
     artist: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
     rating: false,
-    // duration: 240,
+    duration: 197,
   },
   {
     id: 6,
@@ -55,7 +55,7 @@ export default Songs = [
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
     rating: false,
-    // duration: 200,
+    duration: 169,
   },
   {
     id: 7,
@@ -64,7 +64,7 @@ export default Songs = [
     artist: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
     rating: false,
-    // duration: 230,
+    duration: 180,
   },
   {
     id: 8,
@@ -73,7 +73,7 @@ export default Songs = [
     artist: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
     rating: false,
-    // duration: 160,
+    duration: 197,
   },
   {
     id: 9,
@@ -83,6 +83,6 @@ export default Songs = [
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
     rating: false,
-    // duration: 180,
+    duration: 169,
   },
 ];

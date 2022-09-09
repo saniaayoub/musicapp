@@ -42,6 +42,7 @@ const ForgetPassword = ({navigation}) => {
       setLoader(false);
       return;
     }
+    console.log(email);
     const data = {
       email: email,
     };
@@ -52,7 +53,6 @@ const ForgetPassword = ({navigation}) => {
         console.log('data', data);
         if (res) {
           setLoader(false);
-          setEmail('');
           showToast(data.message);
           setModalVisible(true);
         } else {
@@ -71,6 +71,7 @@ const ForgetPassword = ({navigation}) => {
 
   const submit = async () => {
     setLoader(true);
+    console.log(otp, email, 'email');
     const data = {
       token: otp,
       email: email,
@@ -79,7 +80,7 @@ const ForgetPassword = ({navigation}) => {
       .post('otp_password', data)
       .then(res => {
         if (res) {
-          console.log(res);
+          console.log(res.data);
           setLoader(false);
           setModalVisible(false);
           navigation.navigate('PassReset', {email: email});
@@ -94,10 +95,9 @@ const ForgetPassword = ({navigation}) => {
         let error = err?.response?.data;
         setLoader(false);
         showToast(error.message);
-        setModalVisible(false);
-        navigation.navigate('PassReset', {email: email});
       });
   };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>

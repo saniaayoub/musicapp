@@ -70,6 +70,7 @@ const Profile = ({navigation}) => {
     );
     setIsSelected(updatedState);
     setGender(item.name);
+    console.log(item.name);
   };
   const showToast = msg => {
     ToastAndroid.show(msg, ToastAndroid.LONG);

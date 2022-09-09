@@ -5,6 +5,7 @@ import {
   SET_REPEAT,
   SET_USER_TOKEN,
   SET_FEATURED,
+  SET_FAVORITE,
 } from './Constants';
 
 const initialState = {
@@ -14,22 +15,28 @@ const initialState = {
   shuffle: false,
   repeat: 'off',
   featured: [],
+  favorite: [],
 };
 
 const AppReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER_TOKEN:
-      console.log('setToken');
       return {
         ...state,
         userToken: action.payload,
       };
 
     case SET_FEATURED:
-      console.log('setToken');
       return {
         ...state,
         featured: action.payload,
+      };
+
+    case SET_FAVORITE:
+      console.log(action.payload, 'd');
+      return {
+        ...state,
+        favorite: action.payload,
       };
 
     case PLAY_PAUSE:

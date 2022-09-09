@@ -51,6 +51,7 @@ const PassReset = ({navigation, route}) => {
       .post('reset', data)
       .then(res => {
         const data = res?.data;
+        console.log(data);
         if (data.message == 'success') {
           setLoader(false);
           showToast('Password changed Successfully');
@@ -63,6 +64,7 @@ const PassReset = ({navigation, route}) => {
         }
       })
       .catch(err => {
+        console.log(err);
         setLoader(false);
         setPassword('');
         setConfirmPassword('');

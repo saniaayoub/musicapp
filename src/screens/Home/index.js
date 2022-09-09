@@ -33,7 +33,7 @@ const UserHome = ({navigation}) => {
   const [loader, setLoader] = useState();
 
   useEffect(() => {
-    // getCategoryList();
+    getCategoryList();
     // getFeaturedList();
     TrackPlayer.setupPlayer();
     TrackPlayer.add(Songs);
@@ -63,7 +63,7 @@ const UserHome = ({navigation}) => {
   const getCategoryList = async () => {
     setLoader(true);
     axiosconfig
-      .get('user_all', {
+      .get('categary_list', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -149,7 +149,7 @@ const UserHome = ({navigation}) => {
             {/**** Collection *****/}
             <View style={s.collection}>
               <FlatList
-                data={Categories}
+                data={categories}
                 numColumns={3}
                 renderItem={({item, index, separators}) => (
                   <>
@@ -160,13 +160,13 @@ const UserHome = ({navigation}) => {
                       }
                     >
                       <ImageBackground
-                        source={item.image}
+                        source={{uri: item.image}}
                         resizeMode="contain"
                         width={undefined}
                         height={undefined}
                       >
                         <View style={s.innerView}>
-                          <Text style={s.imgtext}>{item.category}</Text>
+                          <Text style={s.imgtext}>{item.name}</Text>
                         </View>
                       </ImageBackground>
                     </TouchableOpacity>

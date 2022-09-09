@@ -85,13 +85,13 @@ const Playlist = ({navigation, route}) => {
               <View style={s.section}>
                 <View style={s.imageTop}>
                   <Image
-                    source={data.image}
+                    source={{uri: data.image}}
                     resizeMode={'cover'}
                     style={{width: '100%', height: '100%'}}
                   />
                 </View>
                 <View style={s.descriptionViewTop}>
-                  <Text style={s.text1Top}>{data.category}</Text>
+                  <Text style={s.text1Top}>{data.name}</Text>
                   <Text style={s.text2Top}>Julie Watson And John Smith</Text>
                 </View>
               </View>

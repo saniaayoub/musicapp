@@ -1,54 +1,39 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
-  Image,
   TouchableOpacity,
-  FlatList,
   ActivityIndicator,
-  BackHandler,
+  ScrollView,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import {Box} from 'native-base';
 import s from './style';
-import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Input, Button, ScrollView} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Slider from 'react-native-slider';
-import healing1 from '../../assets/images/healing1.png';
-import play from '../../assets/images/play.png';
-import Playbutton from '../../assets/images/playbutton.svg';
-import backarrow from '../../assets/images/backarrow.png';
-import AppContext from '../../Providers/AppContext';
 import TrackPlayer, {
-  Capability,
-  Event,
-  RepeatMode,
   State,
   usePlaybackState,
   useProgress,
-  useTrackPlayerEvents,
 } from 'react-native-track-player';
-import Backarrowsvg from '../../assets/images/backarrow.svg';
 import Songs from '../../Components/songs';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  playPause,
-  setPlayObject,
-  setShuffle,
-  setRepeat,
-} from '../../Redux/actions';
+import {setPlayObject, setFavorite} from '../../Redux/actions';
 import Player from '../../Components/player';
+import axiosconfig from '../../Providers/axios';
+import {useIsFocused} from '@react-navigation/native';
 
 const Favorite = ({navigation}) => {
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch();
+  let token = useSelector(state => state.reducer.userToken);
+  let favorite = useSelector(state => state.reducer.favorite);
   const progress = useProgress();
   const playerState = usePlaybackState();
-  const dispatch = useDispatch();
-  const [favList, setFavList] = useState(Songs);
+
+  // const [favList, setFavList] = useState(Songs);
   const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
   const [queue, setQueue] = useState([]);
@@ -56,7 +41,9 @@ const Favorite = ({navigation}) => {
 
   useEffect(() => {
     getQueue();
-  }, []);
+    getList();
+  }, [isFocused]);
+
   const play = async (song, i) => {
     if (i == index) {
       if (playerState === State.Paused) {
@@ -93,6 +80,59 @@ const Favorite = ({navigation}) => {
     let queue = await TrackPlayer.getQueue();
     setQueue(queue);
   };
+
+  const getList = async () => {
+    setLoader(true);
+    axiosconfig
+      .get('favorate_list', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        setLoader(false);
+        if (res.data) {
+          dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err.response);
+      });
+  };
+
+  const remove = item => {
+    const data = {
+      rating: true,
+      music_id: item.id,
+    };
+    axiosconfig
+      .post('user_rating', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        if (res.data) {
+          console.log(res?.data);
+          removeFromList(item);
+          // dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  };
+
+  const removeFromList = item => {
+    let temp = [];
+    temp = favorite.filter(elem => item.id !== elem.id);
+    console.log(temp);
+    dispatch(setFavorite(temp));
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <Box
@@ -116,17 +156,17 @@ const Favorite = ({navigation}) => {
           </View>
           {loader ? (
             <ActivityIndicator />
-          ) : favList.length ? (
+          ) : favorite.length ? (
             <ScrollView
               style={{marginBottom: moderateScale(160, 0.1)}}
               contentContainerStyle={{flexGrow: 1}}
             >
               <View style={s.collection}>
-                {favList.map((item, i) => {
+                {favorite.map((item, i) => {
                   return (
                     <>
                       <View style={s.item} key={i}>
-                        <TouchableOpacity style={s.image}>
+                        <TouchableOpacity style={s.image} key={i}>
                           <ImageBackground
                             source={item.artwork}
                             resizeMode={'cover'}
@@ -147,14 +187,15 @@ const Favorite = ({navigation}) => {
                                 flexDirection: 'row',
                               }}
                             >
-                              <View
+                              <TouchableOpacity
+                                onPress={() => remove(item)}
                                 style={{
                                   marginRight: moderateScale(10, 0.1),
                                   marginTop: moderateScale(23, 0.1),
                                 }}
                               >
                                 <Icon name={'heart'} color={'#fff'} size={25} />
-                              </View>
+                              </TouchableOpacity>
                               <TouchableOpacity
                                 style={s.playbutton}
                                 onPress={() => {

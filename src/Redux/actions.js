@@ -5,6 +5,7 @@ import {
   SET_REPEAT,
   SET_USER_TOKEN,
   SET_FEATURED,
+  SET_FAVORITE,
 } from './Constants';
 
 export const setUserToken = value => {
@@ -21,6 +22,12 @@ export const setFeatured = value => {
   };
 };
 
+export const setFavorite = value => {
+  return {
+    type: SET_FAVORITE,
+    payload: value,
+  };
+};
 export const playPause = value => {
   return {
     type: PLAY_PAUSE,
