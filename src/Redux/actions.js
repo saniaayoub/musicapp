@@ -6,6 +6,7 @@ import {
   SET_USER_TOKEN,
   SET_FEATURED,
   SET_FAVORITE,
+  SET_MUSIC,
 } from './Constants';
 
 export const setUserToken = value => {
@@ -18,6 +19,13 @@ export const setUserToken = value => {
 export const setFeatured = value => {
   return {
     type: SET_FEATURED,
+    payload: value,
+  };
+};
+
+export const setMusic = value => {
+  return {
+    type: SET_MUSIC,
     payload: value,
   };
 };

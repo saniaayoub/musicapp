@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(20, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
+
     width: '100%',
   },
   item: {

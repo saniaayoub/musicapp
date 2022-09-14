@@ -6,6 +6,7 @@ import {
   SET_USER_TOKEN,
   SET_FEATURED,
   SET_FAVORITE,
+  SET_MUSIC,
 } from './Constants';
 
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
   repeat: 'off',
   featured: [],
   favorite: [],
+  music: [],
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -33,10 +35,15 @@ const AppReducer = (state = initialState, action) => {
       };
 
     case SET_FAVORITE:
-      console.log(action.payload, 'd');
       return {
         ...state,
         favorite: action.payload,
+      };
+
+    case SET_MUSIC:
+      return {
+        ...state,
+        music: action.payload,
       };
 
     case PLAY_PAUSE:

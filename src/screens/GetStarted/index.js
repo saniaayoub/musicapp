@@ -35,14 +35,7 @@ const GetStarted = ({navigation}) => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 2000,
-    }).start();
-  };
-
-  const fadeOut = () => {
-    // Will change fadeAnim value to 0 in 3 seconds
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 3000,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -50,6 +43,7 @@ const GetStarted = ({navigation}) => {
     Animated.timing(transAnim, {
       toValue: 0,
       duration: 2000,
+      useNativeDriver: true,
     }).start();
   };
 

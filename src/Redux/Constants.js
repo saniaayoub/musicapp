@@ -5,3 +5,4 @@ export const SET_SHUFFLE = 'SET_SHUFFLE';
 export const SET_REPEAT = 'SET_REPEAT';
 export const SET_FEATURED = 'SET_FEATURED';
 export const SET_FAVORITE = 'SET_FAVORITE';
+export const SET_MUSIC = 'SET_MUSIC';

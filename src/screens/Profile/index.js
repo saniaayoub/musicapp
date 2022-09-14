@@ -9,9 +9,9 @@ import {
   ToastAndroid,
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
-
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import s from './style';
@@ -27,12 +27,17 @@ import {useSelector} from 'react-redux';
 import axiosconfig from '../../Providers/axios';
 import RNFS from 'react-native-fs';
 import CameraOpt from '../../Components/CameraOpt';
-
+import {useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import RBSheet from 'react-native-raw-bottom-sheet';
-const Profile = ({navigation}) => {
-  const refRBSheet = useRef();
-  let token = useSelector(state => state.reducer.userToken);
+import {setMusic, setUserToken} from '../../Redux/actions';
+import {useDispatch} from 'react-redux';
 
+const Profile = ({navigation}) => {
+  const dispatch = useDispatch();
+  const refRBSheet = useRef();
+  const isFocused = useIsFocused();
+  let token = useSelector(state => state.reducer.userToken);
   const [fname, setFname] = useState('');
   const [email, setEmail] = useState('');
   const [phNumber, setPhNumber] = useState('');
@@ -45,7 +50,7 @@ const Profile = ({navigation}) => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [isFocused]);
 
   const [isSelected, setIsSelected] = useState([
     {
@@ -98,6 +103,7 @@ const Profile = ({navigation}) => {
       });
   };
   const setData = data => {
+    console.log('calling');
     setFname(data?.name);
     setEmail(data?.email);
     setPhNumber(data?.phone_number);
@@ -105,22 +111,28 @@ const Profile = ({navigation}) => {
     setImage(data?.image);
   };
 
-  const save = async () => {
+  const save = async (i, base64) => {
     setLoader(true);
-    console.log(image, 'image');
-    const body = {
-      name: fname,
-      email: email,
-      phone_number: phNumber,
-      gender: gender,
-      image: image,
-    };
+    let body = {};
+    if (i == 'image') {
+      body = {
+        image: base64,
+      };
+    } else {
+      body = {
+        name: fname,
+        email: email,
+        phone_number: phNumber,
+        gender: gender,
+      };
+    }
+    console.log(body, 'body');
     await axiosconfig
       .post('user_update', body, {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
-        console.log(res.data);
+        console.log(res.data, 'message');
         let message = res?.data?.messsage;
         showToast(message);
         setLoader(false);
@@ -132,17 +144,28 @@ const Profile = ({navigation}) => {
       });
   };
 
-  const convertImage = () => {
-    setLoader(true);
-    RNFS.readFile(image, 'base64')
+  const convertImage = async image => {
+    await RNFS.readFile(image, 'base64')
       .then(res => {
-        setImage(res);
+        let base64 = `data:image/png;base64,${res}`;
+        setImage(base64);
+        save('image', base64);
       })
       .catch(err => {
         console.log(err);
+        showToast('Profile picture not updated');
+        setLoader(false);
       });
   };
 
+  const logout = async () => {
+    console.log('logout');
+    await AsyncStorage.removeItem('@auth_token');
+    await AsyncStorage.removeItem('music');
+    navigation.navigate('SignIn');
+    dispatch(setUserToken(null));
+    dispatch(setMusic([]));
+  };
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={[s.container]}>
@@ -162,6 +185,7 @@ const Profile = ({navigation}) => {
             />
           </Button>
         </View>
+
         {/******** Head *********/}
         <LinearGradient
           start={{x: 0, y: 0}}
@@ -169,6 +193,23 @@ const Profile = ({navigation}) => {
           colors={['rgba(0, 0, 0, 1)', 'rgba(194, 106, 248, 1)']}
           style={s.header}
         >
+          <View style={s.logout}>
+            <Button
+              size="md"
+              onPress={() => logout()}
+              variant={'link'}
+              zIndex={1000}
+              position={'absolute'}
+              right={moderateScale(5, 0.1)}
+              top={moderateScale(5, 0.1)}
+            >
+              <MaterialIcon
+                name={'logout'}
+                size={moderateScale(25, 0.1)}
+                color={'#fff'}
+              />
+            </Button>
+          </View>
           <View style={s.heading}>
             <Text style={s.headingText}>Profile</Text>
           </View>
@@ -190,7 +231,7 @@ const Profile = ({navigation}) => {
               />
             </TouchableOpacity>
             <View style={{marginTop: moderateScale(-15, 0.1)}}>
-              <Text style={s.profileName}>Aliya Smith</Text>
+              <Text style={s.profileName}>{fname ? fname : `user`}</Text>
             </View>
           </View>
         </LinearGradient>
@@ -332,7 +373,7 @@ const Profile = ({navigation}) => {
             <View style={s.button}>
               <Button
                 size="sm"
-                onPress={() => save()}
+                onPress={() => save('data')}
                 variant={'solid'}
                 backgroundColor={'#C26AF8'}
                 borderRadius={50}
@@ -382,7 +423,7 @@ const Profile = ({navigation}) => {
                 },
               }}
             >
-              <CameraOpt setImage={setImage} refRBSheet={refRBSheet} />
+              <CameraOpt convertImage={convertImage} refRBSheet={refRBSheet} />
             </RBSheet>
           </View>
         </ScrollView>

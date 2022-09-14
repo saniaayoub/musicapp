@@ -8,10 +8,7 @@ const Poppins = 'Poppins-Regular';
 
 const styles = StyleSheet.create({
   container: {
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // flexDirection: 'column',
-
+    height: '100%',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 
@@ -64,42 +61,23 @@ const styles = StyleSheet.create({
     fontFamily: InterRegular,
     // fontWeight: '700',
   },
-  bottomContainer: {
-    // marginRight: moderateScale(100, 0.1),
-    width: '100%',
-    // height: moderateScale(500, 0.1),
-    backgroundColor: 'rgba(194, 106, 248, 0.36)',
-    borderTopLeftRadius: moderateScale(25, 0.1),
-    borderTopRightRadius: moderateScale(25, 0.1),
-    borderColor: '#fff',
-    marginTop: moderateScale(20, 0.1),
-    borderWidth: moderateScale(1, 0.1),
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  button: {
-    marginTop: moderateScale(15, 0.1),
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: moderateScale(45, 0.1),
-  },
   btnText: {
     fontFamily: Poppins,
     lineHeight: moderateScale(18, 0.1),
     fontSize: moderateScale(12, 0.1),
     color: '#C26AF8',
   },
+
   collection: {
     width: '100%',
+    minHeight: moderateScale(400, 0.1),
+    flex: 1,
     backgroundColor: 'rgba(194, 106, 248, 0.36)',
     borderTopLeftRadius: moderateScale(25, 0.1),
     borderTopRightRadius: moderateScale(25, 0.1),
     borderColor: '#fff',
     marginTop: moderateScale(20, 0.1),
     borderWidth: moderateScale(1, 0.1),
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'column',
   },
   image: {
@@ -188,29 +166,6 @@ const styles = StyleSheet.create({
   },
   slider: {
     marginTop: moderateScale(-5, 0.1),
-  },
-  imgtext2: {
-    color: '#fff',
-    fontFamily: InterMedium,
-    fontSize: moderateScale(10, 0.1),
-    marginLeft: moderateScale(5, 0.1),
-  },
-  FeaturedSection: {
-    marginTop: moderateScale(25, 0.1),
-    marginBottom: moderateScale(70, 0.1),
-  },
-  collection2: {
-    marginTop: moderateScale(5, 0.1),
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  headingText2: {
-    fontFamily: InterBold,
-    fontSize: moderateScale(22, 0.1),
-    color: '#fff',
-    lineHeight: moderateScale(29, 0.1),
-    marginLeft: moderateScale(35, 0.1),
   },
 });
 

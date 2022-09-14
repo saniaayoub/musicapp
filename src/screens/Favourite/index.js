@@ -29,11 +29,9 @@ const Favorite = ({navigation}) => {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   let token = useSelector(state => state.reducer.userToken);
-  let favorite = useSelector(state => state.reducer.favorite);
+  const favorite = useSelector(state => state.reducer.favorite);
   const progress = useProgress();
   const playerState = usePlaybackState();
-
-  // const [favList, setFavList] = useState(Songs);
   const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
   const [queue, setQueue] = useState([]);
@@ -41,7 +39,8 @@ const Favorite = ({navigation}) => {
 
   useEffect(() => {
     getQueue();
-    getList();
+    getFavList();
+    console.log(favorite.length);
   }, [isFocused]);
 
   const play = async (song, i) => {
@@ -81,33 +80,12 @@ const Favorite = ({navigation}) => {
     setQueue(queue);
   };
 
-  const getList = async () => {
-    setLoader(true);
-    axiosconfig
-      .get('favorate_list', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(res => {
-        console.log('data', res.data);
-        setLoader(false);
-        if (res.data) {
-          dispatch(setFavorite(res?.data));
-        }
-      })
-      .catch(err => {
-        setLoader(false);
-        console.log(err.response);
-      });
-  };
-
-  const remove = item => {
+  const updateFavList = async item => {
     const data = {
       rating: true,
       music_id: item.id,
     };
-    axiosconfig
+    await axiosconfig
       .post('user_rating', data, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -117,20 +95,38 @@ const Favorite = ({navigation}) => {
         console.log('data', res.data);
         if (res.data) {
           console.log(res?.data);
-          removeFromList(item);
           // dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log('data', err.response);
+      });
+  };
+
+  const removeFromList = item => {
+    updateFavList(item);
+    let temp = [];
+    temp = favorite.filter(elem => item.id !== elem.id);
+    console.log(temp);
+    dispatch(setFavorite(temp));
+  };
+
+  const getFavList = async () => {
+    await axiosconfig
+      .get('favorate_list', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        if (res.data) {
+          dispatch(setFavorite(res?.data));
         }
       })
       .catch(err => {
         console.log(err.response);
       });
-  };
-
-  const removeFromList = item => {
-    let temp = [];
-    temp = favorite.filter(elem => item.id !== elem.id);
-    console.log(temp);
-    dispatch(setFavorite(temp));
   };
 
   return (
@@ -154,11 +150,10 @@ const Favorite = ({navigation}) => {
               </View>
             </View>
           </View>
-          {loader ? (
-            <ActivityIndicator />
-          ) : favorite.length ? (
+
+          {favorite.length ? (
             <ScrollView
-              style={{marginBottom: moderateScale(160, 0.1)}}
+              style={{marginBottom: moderateScale(140, 0.1)}}
               contentContainerStyle={{flexGrow: 1}}
             >
               <View style={s.collection}>
@@ -168,7 +163,7 @@ const Favorite = ({navigation}) => {
                       <View style={s.item} key={i}>
                         <TouchableOpacity style={s.image} key={i}>
                           <ImageBackground
-                            source={item.artwork}
+                            source={{uri: item.artwork}}
                             resizeMode={'cover'}
                             width={undefined}
                             height={undefined}
@@ -188,7 +183,7 @@ const Favorite = ({navigation}) => {
                               }}
                             >
                               <TouchableOpacity
-                                onPress={() => remove(item)}
+                                onPress={() => removeFromList(item)}
                                 style={{
                                   marginRight: moderateScale(10, 0.1),
                                   marginTop: moderateScale(23, 0.1),
@@ -261,7 +256,7 @@ const Favorite = ({navigation}) => {
             </ScrollView>
           ) : (
             <View>
-              <Text style={s.empty}>No Songs</Text>
+              <Text style={s.empty}>No Songs Added</Text>
             </View>
           )}
         </View>

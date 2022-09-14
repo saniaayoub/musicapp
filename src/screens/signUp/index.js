@@ -1,11 +1,8 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
-  Image,
   TouchableOpacity,
   Alert,
   ToastAndroid,
@@ -17,12 +14,11 @@ import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/Feather';
 import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-
 import PhoneInput from 'react-native-phone-input';
 import axiosconfig from '../../Providers/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector, useDispatch} from 'react-redux';
-import {setUserToken} from '../../Redux/actions';
+import {setUserToken, setMusic} from '../../Redux/actions';
 
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
@@ -127,14 +123,7 @@ const SignUp = ({navigation}) => {
 
         if (data.access_token) {
           console.log(data.access_token);
-          setFname('');
-          setPassword('');
-          setConfirmPassword('');
-          setEmail('');
-          setLoader(false);
-          dispatch(setUserToken(data.access_token));
-          AsyncStorage.setItem('@auth_token', data.access_token);
-          showToast('Successfully Logged in!');
+          getAllMusic(data.access_token);
         } else {
           setLoader(false);
           setDisable(false);
@@ -147,6 +136,29 @@ const SignUp = ({navigation}) => {
         setDisable(false);
         showToast(err.response.message);
         console.log(err.response.message);
+      });
+  };
+
+  const getAllMusic = async token => {
+    await axiosconfig
+      .get('music_all', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('All Music', JSON.stringify(res.data));
+        if (res.data) {
+          dispatch(setMusic(res?.data));
+          AsyncStorage.setItem('@auth_token', token);
+          AsyncStorage.setItem('music', JSON.stringify(res.data));
+          showToast('Successfully Logged in!');
+          setLoader(false);
+          dispatch(setUserToken(token));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
       });
   };
 

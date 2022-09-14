@@ -16,7 +16,7 @@ const InterRegular = 'Inter-Regular';
 const InterBold = 'Inter-ExtraBold';
 const Poppins = 'Poppins-Regular';
 
-const CameraOpt = ({setImage, refRBSheet}) => {
+const CameraOpt = ({convertImage, refRBSheet}) => {
   const requestExternalReadPermission = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -93,7 +93,7 @@ const CameraOpt = ({setImage, refRBSheet}) => {
           .then(image => {
             if (image.assets) {
               console.log(image.assets[0].uri);
-              setImage(image.assets[0].uri);
+              convertImage(image.assets[0].uri);
               refRBSheet.current.close();
             }
           })
@@ -110,7 +110,9 @@ const CameraOpt = ({setImage, refRBSheet}) => {
             .then(image => {
               if (image.assets) {
                 console.log(image?.assets[0]?.uri);
-                setImage(image?.assets[0]?.uri);
+                convertImage(image?.assets[0]?.uri);
+                // setImage(image?.assets[0]?.uri);
+
                 refRBSheet.current.close();
               }
             })

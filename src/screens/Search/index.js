@@ -17,7 +17,6 @@ import {moderateScale} from 'react-native-size-matters';
 import Slider from 'react-native-slider';
 import AppContext from '../../Providers/AppContext';
 import SearchIcon from '../../assets/images/search1.svg';
-import Songs from '../../Components/songs';
 import TrackPlayer, {
   Capability,
   Event,
@@ -38,12 +37,13 @@ const Search = ({navigation}) => {
   const progress = useProgress();
   const playerState = usePlaybackState();
   const dispatch = useDispatch();
+  const Songs = useSelector(state => state.reducer.music);
   let playObject = useSelector(state => state.reducer.play_object);
   const [searchText, setSearchText] = useState();
   const [songList, setSongList] = useState([]);
   const [index, setIndex] = useState();
   const [queue, setQueue] = useState([]);
-  
+
   useEffect(() => {
     clearData();
     getQueue();
@@ -174,7 +174,6 @@ const Search = ({navigation}) => {
           <ScrollView
             style={{
               marginTop: moderateScale(10, 0.1),
-              marginBottom: moderateScale(250, 0.1),
             }}
             contentContainerStyle={{flexGrow: 1}}
           >
@@ -185,7 +184,7 @@ const Search = ({navigation}) => {
                     <View style={s.item} key={i.toString()}>
                       <TouchableOpacity style={s.image}>
                         <ImageBackground
-                          source={item.artwork}
+                          source={{uri: item.artwork}}
                           resizeMode={'cover'}
                           width={undefined}
                           height={undefined}
@@ -202,7 +201,6 @@ const Search = ({navigation}) => {
                           <TouchableOpacity
                             style={s.playbutton}
                             onPress={() => {
-                              // console.log(i);
                               play(item, i);
                             }}
                           >

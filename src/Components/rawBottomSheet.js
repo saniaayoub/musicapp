@@ -14,6 +14,7 @@ const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 const RawBottomSheet = ({title, field, setValue, openSheet, setOpenSheet}) => {
   const refRBSheet = useRef();
+  const [input, setInput] = useState('');
   const [error, setError] = useState();
 
   setTimeout(() => {
@@ -44,7 +45,6 @@ const RawBottomSheet = ({title, field, setValue, openSheet, setOpenSheet}) => {
             borderWidth: 1,
             borderTopLeftRadius: moderateScale(25, 0.1),
             borderTopRightRadius: moderateScale(25, 0.1),
-
             borderColor: 'grey',
             height: moderateScale(150, 0.1),
           },
@@ -80,6 +80,7 @@ const RawBottomSheet = ({title, field, setValue, openSheet, setOpenSheet}) => {
               <TouchableOpacity
                 onPress={() => {
                   setOpenSheet(false);
+                  setValue(input);
                   refRBSheet.current.close();
                 }}
                 style={{marginLeft: moderateScale(10, 0.1)}}
@@ -91,10 +92,11 @@ const RawBottomSheet = ({title, field, setValue, openSheet, setOpenSheet}) => {
                 />
               </TouchableOpacity>
             }
+            value={input}
             placeholder={title}
             placeholderTextColor={'grey'}
             onChangeText={text => {
-              setValue(text);
+              setInput(text);
             }}
             color={'#000'}
             fontSize={moderateScale(14, 0.1)}

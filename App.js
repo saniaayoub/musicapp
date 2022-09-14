@@ -17,8 +17,8 @@ import AppContext from './src/Providers/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Songs from './src/Components/songs';
 import {useSelector, useDispatch} from 'react-redux';
-import {setUserToken} from './src/Redux/actions';
-
+import {setUserToken, setMusic} from './src/Redux/actions';
+import axiosconfig from './src/Providers/axios';
 // Auth Screens
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
@@ -31,21 +31,14 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const dispatch = useDispatch();
-
-  let userToken = useSelector(state => state.reducer.userToken);
+  const userToken = useSelector(state => state.reducer.userToken);
   const [songState, setSongState] = useState('stop');
   const [songs, setSongs] = useState(Songs);
   const [favList, setFavList] = useState([]);
-  const userSettings = {
-    songState,
-    setSongState,
-    songs,
-    setSongs,
-    favList,
-    setFavList,
-  };
+  const featured = useSelector(state => state.reducer.featured);
+
   useEffect(() => {
-    // getData();
+    getData();
   }, []);
 
   const config = {
@@ -56,9 +49,14 @@ const App = () => {
 
   const getData = async () => {
     const value = await AsyncStorage.getItem('@auth_token');
+    const music = await AsyncStorage.getItem('music');
+    const json = JSON.parse(music);
+    console.log(json);
     console.log(value, 'token');
     {
-      value ? dispatch(setUserToken(value)) : dispatch(setUserToken(null));
+      value
+        ? (dispatch(setMusic(json)), dispatch(setUserToken(value)))
+        : dispatch(setUserToken(null));
     }
   };
 
@@ -71,35 +69,33 @@ const App = () => {
   );
 
   return (
-    <AppContext.Provider value={userSettings}>
-      <NativeBaseProvider config={config}>
-        <SafeAreaProvider>
-          <MyStatusBar backgroundColor="#130a18" barStyle="light-content" />
-          <KeyboardAvoidingView
-            style={{flex: 1}}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          >
-            <NavigationContainer>
-              {userToken ? (
-                <BottomTabs />
-              ) : (
-                <Stack.Navigator screenOptions={{headerShown: false}}>
-                  <Stack.Screen name="GetStarted" component={GetStarted} />
-                  <Stack.Screen name="Subscribe" component={Subscribe} />
-                  <Stack.Screen name="SignIn" component={SignIn} />
-                  <Stack.Screen name="SignUp" component={SignUp} />
-                  <Stack.Screen
-                    name="ForgetPassword"
-                    component={ForgetPassword}
-                  />
-                  <Stack.Screen name="PassReset" component={PassReset} />
-                </Stack.Navigator>
-              )}
-            </NavigationContainer>
-          </KeyboardAvoidingView>
-        </SafeAreaProvider>
-      </NativeBaseProvider>
-    </AppContext.Provider>
+    <NativeBaseProvider config={config}>
+      <SafeAreaProvider>
+        <MyStatusBar backgroundColor="#130a18" barStyle="light-content" />
+        <KeyboardAvoidingView
+          style={{flex: 1}}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <NavigationContainer>
+            {userToken ? (
+              <BottomTabs />
+            ) : (
+              <Stack.Navigator screenOptions={{headerShown: false}}>
+                <Stack.Screen name="GetStarted" component={GetStarted} />
+                <Stack.Screen name="SignIn" component={SignIn} />
+                <Stack.Screen name="SignUp" component={SignUp} />
+                <Stack.Screen name="Subscribe" component={Subscribe} />
+                <Stack.Screen
+                  name="ForgetPassword"
+                  component={ForgetPassword}
+                />
+                <Stack.Screen name="PassReset" component={PassReset} />
+              </Stack.Navigator>
+            )}
+          </NavigationContainer>
+        </KeyboardAvoidingView>
+      </SafeAreaProvider>
+    </NativeBaseProvider>
   );
 };
 

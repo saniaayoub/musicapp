@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    
   },
   image: {
     justifyContent: 'center',
@@ -75,11 +74,7 @@ const styles = StyleSheet.create({
   slider: {
     marginTop: moderateScale(-5, 0.1),
   },
-  empty: {
-    color: '#fff',
-    textAlign: 'center',
-    fontFamily: InterRegular,
-  },
+
   timer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -96,17 +91,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.2)',
     zIndex: 1000,
   },
-  imgback: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  imgtext: {
-    color: '#fff',
-    fontFamily: InterRegular,
-    fontSize: moderateScale(10, 0.1),
-    marginBottom: moderateScale(5),
-    marginLeft: moderateScale(5, 0.1),
-  },
+
   centerView: {
     marginHorizontal: moderateScale(10, 0.1),
     width: moderateScale(200, 0.1),
@@ -127,30 +112,14 @@ const styles = StyleSheet.create({
     fontFamily: InterRegular,
     // fontWeight: '700',
   },
-  imgtext2: {
+  empty: {
     color: '#fff',
-    fontFamily: InterMedium,
-    fontSize: moderateScale(10, 0.1),
-    marginLeft: moderateScale(5, 0.1),
+    fontSize: moderateScale(12, 0.1),
+    fontFamily: InterRegular,
+
+    textAlign: 'center',
+    // fontWeight: '700',
   },
-  FeaturedSection: {
-    marginTop: moderateScale(25, 0.1),
-    marginBottom: moderateScale(70, 0.1),
-  },
-  collection2: {
-    marginTop: moderateScale(5, 0.1),
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  headingText2: {
-    fontFamily: InterBold,
-    fontSize: moderateScale(22, 0.1),
-    color: '#fff',
-    lineHeight: moderateScale(29, 0.1),
-    marginLeft: moderateScale(35, 0.1),
-  },
-  
 });
 
 export default styles;

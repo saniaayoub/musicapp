@@ -1,31 +1,25 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
   Image,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   ToastAndroid,
 } from 'react-native';
-
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import s from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Input, Button, Box} from 'native-base';
+import {Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Slider from 'react-native-slider';
 import backarrow from '../../assets/images/backarrow.png';
 import nowplay from '../../assets/images/nowplay.png';
-import Songs from '../../Components/songs';
 import axiosconfig from '../../Providers/axios';
 import {useDispatch, useSelector} from 'react-redux';
-
 import TrackPlayer, {
   Event,
   RepeatMode,
@@ -41,24 +35,27 @@ import {
   setRepeat,
   setFavorite,
 } from '../../Redux/actions';
+import {useIsFocused} from '@react-navigation/native';
 
-const NowPlaying = ({navigation, route}) => {
+const NowPlaying = ({navigation}) => {
+  const dispatch = useDispatch();
   const progress = useProgress();
+  const isFocused = useIsFocused();
   const playerState = usePlaybackState();
   const isPlaying = playerState === State.Playing;
-
-  const dispatch = useDispatch();
-  let token = useSelector(state => state.reducer.userToken);
-
-  let play_Pause = useSelector(state => state.reducer.play_pause);
-  let playObject = useSelector(state => state.reducer.play_object);
-  let favorite = useSelector(state => state.reducer.favorite);
-
-  let shuffle = useSelector(state => state.reducer.shuffle);
-  let repeat = useSelector(state => state.reducer.repeat);
-
+  const token = useSelector(state => state.reducer.userToken);
+  const playObject = useSelector(state => state.reducer.play_object);
+  const Songs = useSelector(state => state.reducer.music);
+  const [isFav, setIsFav] = useState();
+  const shuffle = useSelector(state => state.reducer.shuffle);
+  const repeat = useSelector(state => state.reducer.repeat);
   const [oldShuffle, setOldShuffle] = useState(0);
   const [newShuffle, setNewShuffle] = useState(0);
+
+  useEffect(() => {
+    console.log(playObject, 'here');
+    setFav(playObject);
+  }, [isFocused]);
 
   const showToast = msg => {
     ToastAndroid.show(msg, ToastAndroid.SHORT);
@@ -76,6 +73,7 @@ const NowPlaying = ({navigation, route}) => {
         trackObject();
         const {title} = track || {};
         console.log(track, 'track');
+        setFav(track);
       } else if (event.type === Event.PlaybackQueueEnded) {
         TrackPlayer.seekTo(0);
         play('pause');
@@ -85,8 +83,6 @@ const NowPlaying = ({navigation, route}) => {
 
   const removeExtraTrack = async () => {
     if (oldShuffle < newShuffle) {
-      //when shuffle pressed
-      //on song change the extra song in the queue is removed
       TrackPlayer.remove(0);
       setOldShuffle(newShuffle);
       let queue = await TrackPlayer.getQueue();
@@ -109,7 +105,6 @@ const NowPlaying = ({navigation, route}) => {
     if (!shuffle) {
       await TrackPlayer.skipToNext()
         .then(() => {
-          trackObject();
           play('play');
         })
         .catch(err => {
@@ -125,7 +120,6 @@ const NowPlaying = ({navigation, route}) => {
     if (!shuffle) {
       await TrackPlayer.skipToPrevious()
         .then(() => {
-          trackObject();
           play('play');
         })
         .catch(err => {
@@ -152,30 +146,37 @@ const NowPlaying = ({navigation, route}) => {
     let trackObject = await TrackPlayer.getTrack(trackIndex);
     console.log(trackObject);
     dispatch(setPlayObject(trackObject));
+    setFav(trackObject);
   };
 
   const changeRepeatMode = () => {
     if (repeat == 'off') {
       TrackPlayer.setRepeatMode(RepeatMode.Track);
       dispatch(setRepeat('track'));
+      showToast('Repeat track mode on');
     }
     if (repeat == 'track') {
       TrackPlayer.setRepeatMode(RepeatMode.Queue);
       dispatch(setRepeat('repeat'));
+      showToast('Repeat mode on');
     }
     if (repeat == 'repeat') {
       TrackPlayer.setRepeatMode(RepeatMode.Off);
       dispatch(setRepeat('off'));
+      showToast('Repeat mode off');
     }
   };
 
   const shuffleSings = async () => {
     if (shuffle) {
+      showToast('Shuffle mode off');
       dispatch(setShuffle(false));
       setNewShuffle(oldShuffle + 1);
       updateQueue(Songs);
     } else {
       dispatch(setShuffle(true));
+      showToast('Shuffle mode on');
+
       let temp = [...Songs];
       let shuffled = shuffleArray(temp);
       setNewShuffle(oldShuffle + 1);
@@ -209,7 +210,8 @@ const NowPlaying = ({navigation, route}) => {
     }
     return array;
   };
-  const add = item => {
+
+  const updateFav = item => {
     const data = {
       rating: true,
       music_id: item.id,
@@ -221,11 +223,15 @@ const NowPlaying = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', res.data);
         if (res.data) {
           console.log(res?.data);
-          addToList(item);
-          // dispatch(setFavorite(res?.data));
+          if (isFav) {
+            showToast('Removed From Favorites');
+          } else {
+            showToast('Added To Favorites');
+          }
+          getFavList();
+          setIsFav(!isFav);
         }
       })
       .catch(err => {
@@ -234,11 +240,56 @@ const NowPlaying = ({navigation, route}) => {
   };
 
   const addToList = item => {
-    let temp;
-    temp = [...favorite, item];
-    console.log(temp);
-    dispatch(setFavorite(temp));
+    updateFav(item);
   };
+
+  const removeFromList = item => {
+    updateFav(item);
+  };
+
+  const setFav = async track => {
+    let id = track?.id;
+    console.log(id, 'fav object id');
+    await axiosconfig
+      .get(`feature_music_show/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        if (res?.data?.favorate?.length) {
+          let data = res?.data?.favorate[0]?.rating;
+          console.log('data fav', data);
+          if (data == 'true') {
+            setIsFav(true);
+          } else {
+            setIsFav(false);
+          }
+        }
+      })
+      .catch(err => {
+        console.log('error', err);
+      });
+  };
+
+  const getFavList = async () => {
+    await axiosconfig
+      .get('favorate_list', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        if (res.data) {
+          dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={nowplay} resizeMode={'cover'}>
@@ -258,7 +309,7 @@ const NowPlaying = ({navigation, route}) => {
               <View style={s.section}>
                 <View style={s.imageTop}>
                   <Image
-                    source={playObject?.artwork}
+                    source={{uri: playObject?.artwork}}
                     width={'100%'}
                     height={'100%'}
                     resizeMode={'cover'}
@@ -284,15 +335,19 @@ const NowPlaying = ({navigation, route}) => {
                   </View>
                   <View style={s.heart}>
                     <Button
-                      onPress={() => add(playObject)}
+                      onPress={() => {
+                        isFav
+                          ? removeFromList(playObject)
+                          : addToList(playObject);
+                      }}
                       size="sm"
                       variant={'link'}
                       zIndex={1000}
                     >
                       <Icon
-                        name={'heart-o'}
+                        name={isFav ? 'heart' : 'heart-o'}
                         color={'#fff'}
-                        size={moderateScale(20, 0.1)}
+                        size={moderateScale(24, 0.1)}
                       />
                     </Button>
                   </View>
