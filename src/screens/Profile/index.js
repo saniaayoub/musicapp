@@ -162,10 +162,11 @@ const Profile = ({navigation}) => {
     console.log('logout');
     await AsyncStorage.removeItem('@auth_token');
     await AsyncStorage.removeItem('music');
-    navigation.navigate('SignIn');
     dispatch(setUserToken(null));
     dispatch(setMusic([]));
+    navigation.navigate('SignIn');
   };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={[s.container]}>

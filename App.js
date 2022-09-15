@@ -32,12 +32,9 @@ const Stack = createStackNavigator();
 const App = () => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
-  const [songState, setSongState] = useState('stop');
-  const [songs, setSongs] = useState(Songs);
-  const [favList, setFavList] = useState([]);
-  const featured = useSelector(state => state.reducer.featured);
 
   useEffect(() => {
+    console.log('here');
     getData();
   }, []);
 

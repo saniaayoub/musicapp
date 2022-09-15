@@ -7,6 +7,7 @@ import {
   Alert,
   ToastAndroid,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import React, {useContext, useRef, useState} from 'react';
 import s from './style';
@@ -27,7 +28,6 @@ const passRegex = new RegExp(
 
 const SignUp = ({navigation}) => {
   const dispatch = useDispatch();
-
   const phonenum = useRef();
   const [fname, setFname] = useState('');
   const [email, setEmail] = useState('');
@@ -45,6 +45,10 @@ const SignUp = ({navigation}) => {
 
   const showToast = msg => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
+  };
+
+  const openLink = async () => {
+    await Linking.openURL('https://github.com');
   };
 
   const validate = () => {
@@ -109,6 +113,32 @@ const SignUp = ({navigation}) => {
     }
   };
 
+  const OpenUrl = async () => {
+    setLoader(true);
+    // const data = {
+    //   name: fname,
+    //   email: email,
+    //   password: password,
+    //   phone_number: phonenum.current.getValue(),
+    // };
+    // await AsyncStorage.setItem('data', data);
+    await axiosconfig
+      .post('url', data)
+      .then(res => {
+        const data = res?.data;
+        openLink(data);
+      })
+      .then(() => {
+        signUp();
+      })
+      .catch(err => {
+        setLoader(false);
+        setDisable(false);
+        showToast(err.response.message);
+        console.log(err.response.message);
+      });
+  };
+
   const signUp = async () => {
     const data = {
       name: fname,
@@ -120,7 +150,6 @@ const SignUp = ({navigation}) => {
       .post('store', data)
       .then(res => {
         const data = res?.data;
-
         if (data.access_token) {
           console.log(data.access_token);
           getAllMusic(data.access_token);
@@ -326,7 +355,7 @@ const SignUp = ({navigation}) => {
           <View style={s.button}>
             <Button
               size="sm"
-              onPress={() => validate()}
+              onPress={() => openUrl()}
               variant={'solid'}
               _text={{
                 color: '#6627EC',

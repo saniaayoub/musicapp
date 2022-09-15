@@ -11,10 +11,7 @@ import {
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {moderateScale} from 'react-native-size-matters';
-const InterMedium = 'Inter-Medium';
-const InterRegular = 'Inter-Regular';
 const InterBold = 'Inter-ExtraBold';
-const Poppins = 'Poppins-Regular';
 
 const CameraOpt = ({convertImage, refRBSheet}) => {
   const requestExternalReadPermission = async () => {

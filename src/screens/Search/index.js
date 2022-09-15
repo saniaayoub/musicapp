@@ -15,16 +15,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import {Input, Button, ScrollView} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Slider from 'react-native-slider';
-import AppContext from '../../Providers/AppContext';
 import SearchIcon from '../../assets/images/search1.svg';
 import TrackPlayer, {
-  Capability,
-  Event,
-  RepeatMode,
   State,
   usePlaybackState,
   useProgress,
-  useTrackPlayerEvents,
 } from 'react-native-track-player';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
 import {useIsFocused} from '@react-navigation/native';

@@ -18,24 +18,22 @@ import TrackPlayer, {
   usePlaybackState,
   useProgress,
 } from 'react-native-track-player';
-import Songs from '../../Components/songs';
 import {useDispatch, useSelector} from 'react-redux';
 import {setPlayObject, setFavorite} from '../../Redux/actions';
-import Player from '../../Components/player';
 import axiosconfig from '../../Providers/axios';
 import {useIsFocused} from '@react-navigation/native';
 
 const Favorite = ({navigation}) => {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
-  let token = useSelector(state => state.reducer.userToken);
+  const token = useSelector(state => state.reducer.userToken);
   const favorite = useSelector(state => state.reducer.favorite);
   const progress = useProgress();
   const playerState = usePlaybackState();
   const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
   const [queue, setQueue] = useState([]);
-  let playObject = useSelector(state => state.reducer.play_object);
+  const playObject = useSelector(state => state.reducer.play_object);
 
   useEffect(() => {
     getQueue();
