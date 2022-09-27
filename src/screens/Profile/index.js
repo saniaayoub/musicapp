@@ -12,6 +12,8 @@ import React, {useEffect, useState, useRef} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import s from './style';
@@ -32,6 +34,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {setMusic, setUserToken} from '../../Redux/actions';
 import {useDispatch} from 'react-redux';
+import SubsModal from '../../Components/subsModal';
 
 const Profile = ({navigation}) => {
   const dispatch = useDispatch();
@@ -46,6 +49,7 @@ const Profile = ({navigation}) => {
   const [gender, setGender] = useState('Female');
   const [image, setImage] = useState();
   const [openSheet, setOpenSheet] = useState(false);
+  const [subModal, setSubModal] = useState(false);
   const [loader, setLoader] = useState(false);
 
   useEffect(() => {
@@ -167,6 +171,29 @@ const Profile = ({navigation}) => {
     navigation.navigate('SignIn');
   };
 
+  const cancelSubs = async () => {
+    setLoader(true);
+    let body = {
+      email: email,
+    };
+    console.log(body, 'body');
+    await axiosconfig
+      .post('cancel_subscription', body, {
+        headers: {Authorization: `Bearer ${token}`},
+      })
+      .then(res => {
+        console.log(res.data, 'message');
+        let message = res?.data?.messsage;
+        showToast(message);
+        setLoader(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoader(false);
+        showToast(err.message);
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={[s.container]}>
@@ -194,6 +221,23 @@ const Profile = ({navigation}) => {
           colors={['rgba(0, 0, 0, 1)', 'rgba(194, 106, 248, 1)']}
           style={s.header}
         >
+          <View style={s.logout}>
+            <Button
+              size="md"
+              onPress={() => setSubModal(true)}
+              variant={'link'}
+              zIndex={1000}
+              position={'absolute'}
+              right={moderateScale(45, 0.1)}
+              top={moderateScale(5, 0.1)}
+            >
+              <MaterialCommunityIcons
+                name={'tag-remove-outline'}
+                size={moderateScale(25, 0.1)}
+                color={'#fff'}
+              />
+            </Button>
+          </View>
           <View style={s.logout}>
             <Button
               size="md"
@@ -428,6 +472,16 @@ const Profile = ({navigation}) => {
             </RBSheet>
           </View>
         </ScrollView>
+        {subModal ? (
+          <SubsModal
+            loader={loader}
+            subModal={subModal}
+            setSubModal={setSubModal}
+            cancelSubs={cancelSubs}
+          />
+        ) : (
+          <></>
+        )}
       </View>
     </SafeAreaView>
   );

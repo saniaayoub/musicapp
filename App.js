@@ -34,7 +34,6 @@ const App = () => {
   const userToken = useSelector(state => state.reducer.userToken);
 
   useEffect(() => {
-    console.log('here');
     getData();
   }, []);
 
@@ -48,7 +47,7 @@ const App = () => {
     const value = await AsyncStorage.getItem('@auth_token');
     const music = await AsyncStorage.getItem('music');
     const json = JSON.parse(music);
-    console.log(json);
+    console.log(json, 'all music');
     console.log(value, 'token');
     {
       value

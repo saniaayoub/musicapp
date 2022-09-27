@@ -84,7 +84,7 @@ const UserHome = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        console.log('categories', JSON.stringify(res.data));
         setLoader(false);
         if (res.data) {
           console.log(res?.data);
@@ -106,7 +106,7 @@ const UserHome = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        console.log('featured', JSON.stringify(res.data));
         setLoader(false);
         if (res.data) {
           console.log(res?.data);
@@ -127,7 +127,7 @@ const UserHome = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', res.data);
+        console.log('fav list', res.data);
 
         if (res.data) {
           dispatch(setFavorite(res?.data));

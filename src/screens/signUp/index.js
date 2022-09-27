@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   Linking,
 } from 'react-native';
-import React, {useContext, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/Feather';
@@ -18,7 +18,7 @@ import {moderateScale} from 'react-native-size-matters';
 import PhoneInput from 'react-native-phone-input';
 import axiosconfig from '../../Providers/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {setUserToken, setMusic} from '../../Redux/actions';
 
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -103,7 +103,14 @@ const SignUp = ({navigation}) => {
     };
     if (t.valid) {
       setPhNumErr('');
-      signUp();
+      setFname('');
+      setEmail('');
+      setLoader(false);
+      setPassword('');
+      setConfirmPassword('');
+      setDisable(false);
+
+      subscribe();
     } else {
       setLoader(false);
       setPhNumErr('*');
@@ -113,15 +120,18 @@ const SignUp = ({navigation}) => {
     }
   };
 
+  const subscribe = async () => {
+    const data = {
+      name: fname,
+      email: email,
+      password: password,
+      phone_number: phonenum.current.getValue(),
+    };
+    navigation.navigate('Subscribe', {formData: data});
+  };
+
   const OpenUrl = async () => {
     setLoader(true);
-    // const data = {
-    //   name: fname,
-    //   email: email,
-    //   password: password,
-    //   phone_number: phonenum.current.getValue(),
-    // };
-    // await AsyncStorage.setItem('data', data);
     await axiosconfig
       .post('url', data)
       .then(res => {
@@ -245,7 +255,7 @@ const SignUp = ({navigation}) => {
           </View>
           <View style={[s.input, s.inputContainerStyle]}>
             <PhoneInput
-              initialCountry={'us'}
+              initialCountry={'gb'}
               textProps={{
                 placeholder: 'Enter Phone Number',
                 placeholderTextColor: '#fff',
@@ -253,7 +263,7 @@ const SignUp = ({navigation}) => {
               isReadOnly={disable}
               autoFormat={true}
               textStyle={s.inputStyle}
-              isValidNumber={e => console.log(e)}
+              isValidNumber={e => console.log(e, 'here')}
               ref={phonenum}
               onChangePhoneNumber={phNumber => {
                 if (phonenum.current.isValidNumber()) {
@@ -355,7 +365,7 @@ const SignUp = ({navigation}) => {
           <View style={s.button}>
             <Button
               size="sm"
-              onPress={() => openUrl()}
+              onPress={() => validate()}
               variant={'solid'}
               _text={{
                 color: '#6627EC',

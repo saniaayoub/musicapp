@@ -257,6 +257,7 @@ const NowPlaying = ({navigation}) => {
         },
       })
       .then(res => {
+        console.log('this', res.data);
         if (res?.data?.favorate?.length) {
           let data = res?.data?.favorate[0]?.rating;
           console.log('data fav', data);
@@ -265,6 +266,8 @@ const NowPlaying = ({navigation}) => {
           } else {
             setIsFav(false);
           }
+        } else {
+          setIsFav(false);
         }
       })
       .catch(err => {
@@ -280,7 +283,7 @@ const NowPlaying = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', res.data);
+        console.log('fav list', res.data);
         if (res.data) {
           dispatch(setFavorite(res?.data));
         }
