@@ -102,15 +102,9 @@ const SignUp = ({navigation}) => {
       value: phonenum.current.getValue(),
     };
     if (t.valid) {
-      setPhNumErr('');
-      setFname('');
-      setEmail('');
-      setLoader(false);
-      setPassword('');
-      setConfirmPassword('');
-      setDisable(false);
-
-      subscribe();
+      // setDisable(false);
+      signUp();
+      // subscribe();
     } else {
       setLoader(false);
       setPhNumErr('*');
@@ -161,8 +155,24 @@ const SignUp = ({navigation}) => {
       .then(res => {
         const data = res?.data;
         if (data.access_token) {
-          console.log(data.access_token);
+          setPhNumErr('');
+          setFname('');
+          setEmail('');
+          setPassword('');
+          setConfirmPassword('');
+
+          console.log(data, 'tokenn');
+          if (data.messsage) {
+            showToast(data.messsage);
+            //  showToast('Please Subscribe to activate your account');
+          }
+
           getAllMusic(data.access_token);
+        } else if (data.status === 'error') {
+          setLoader(false);
+          setDisable(false);
+          console.log('error', data);
+          showToast(data.messsage);
         } else {
           setLoader(false);
           setDisable(false);
@@ -173,8 +183,8 @@ const SignUp = ({navigation}) => {
       .catch(err => {
         setLoader(false);
         setDisable(false);
-        showToast(err.response.message);
-        console.log(err.response.message);
+        showToast(err);
+        console.log(err, 'error');
       });
   };
 
@@ -188,12 +198,23 @@ const SignUp = ({navigation}) => {
       .then(res => {
         console.log('All Music', JSON.stringify(res.data));
         if (res.data) {
-          dispatch(setMusic(res?.data));
-          AsyncStorage.setItem('@auth_token', token);
-          AsyncStorage.setItem('music', JSON.stringify(res.data));
-          showToast('Successfully Logged in!');
+          const data = {
+            name: fname,
+            email: email,
+            password: password,
+            phone_number: phonenum.current.getValue(),
+            token: token,
+          };
           setLoader(false);
-          dispatch(setUserToken(token));
+          setDisable(false);
+          AsyncStorage.setItem('music', JSON.stringify(res.data));
+          navigation.navigate('Subscribe', {formData: data});
+          // dispatch(setMusic(res?.data));
+          // AsyncStorage.setItem('@auth_token', token);
+          // showToast('Successfully Logged in!');
+          // setLoader(false);
+          // subscribe();
+          // dispatch(setUserToken(token));
         }
       })
       .catch(err => {

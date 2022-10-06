@@ -48,6 +48,8 @@ const Profile = ({navigation}) => {
   const [title, setTitle] = useState('');
   const [gender, setGender] = useState('Female');
   const [image, setImage] = useState();
+  const [id, setId] = useState();
+  const [subsStatus, setSubsStatus] = useState();
   const [openSheet, setOpenSheet] = useState(false);
   const [subModal, setSubModal] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -113,6 +115,8 @@ const Profile = ({navigation}) => {
     setPhNumber(data?.phone_number);
     setGender(data?.gender);
     setImage(data?.image);
+    setId(data?.id);
+    setSubsStatus(data?.subscriber_status);
   };
 
   const save = async (i, base64) => {
@@ -173,24 +177,28 @@ const Profile = ({navigation}) => {
 
   const cancelSubs = async () => {
     setLoader(true);
-    let body = {
-      email: email,
+    const body = {
+      userId: id,
     };
-    console.log(body, 'body');
     await axiosconfig
-      .post('cancel_subscription', body, {
-        headers: {Authorization: `Bearer ${token}`},
+      .post('subscription_cancel', body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then(res => {
-        console.log(res.data, 'message');
-        let message = res?.data?.messsage;
+        console.log('response', res.data);
+        const message = res?.data?.messsage;
+        setSubsStatus('0');
         showToast(message);
+        setSubModal(false);
         setLoader(false);
       })
       .catch(err => {
-        console.log(err);
         setLoader(false);
-        showToast(err.message);
+        console.log(err.response);
+        showToast('Cannot Unsubscribe');
+        setSubModal(false);
       });
   };
 
@@ -221,23 +229,26 @@ const Profile = ({navigation}) => {
           colors={['rgba(0, 0, 0, 1)', 'rgba(194, 106, 248, 1)']}
           style={s.header}
         >
-          <View style={s.logout}>
-            <Button
-              size="md"
-              onPress={() => setSubModal(true)}
-              variant={'link'}
-              zIndex={1000}
-              position={'absolute'}
-              right={moderateScale(45, 0.1)}
-              top={moderateScale(5, 0.1)}
-            >
-              <MaterialCommunityIcons
-                name={'tag-remove-outline'}
-                size={moderateScale(25, 0.1)}
-                color={'#fff'}
-              />
-            </Button>
-          </View>
+          {subsStatus !== '0' ? (
+            <View style={s.logout}>
+              <Button
+                size="md"
+                onPress={() => setSubModal(true)}
+                variant={'link'}
+                zIndex={1000}
+                position={'absolute'}
+                right={moderateScale(45, 0.1)}
+                top={moderateScale(5, 0.1)}
+              >
+                <MaterialCommunityIcons
+                  name={'tag-remove-outline'}
+                  size={moderateScale(25, 0.1)}
+                  color={'#fff'}
+                />
+              </Button>
+            </View>
+          ) : null}
+
           <View style={s.logout}>
             <Button
               size="md"

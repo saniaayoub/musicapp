@@ -58,6 +58,7 @@ const SubsModal = ({loader, subModal, setSubModal, cancelSubs}) => {
               <Text
                 style={{
                   color: '#000',
+
                   fontSize: moderateScale(14, 0.1),
                   marginRight: moderateScale(10, 0.1),
                 }}

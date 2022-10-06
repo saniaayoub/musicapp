@@ -15,7 +15,7 @@ const PaymentModal = ({
   setShowGateway,
   onMessage,
   handleMessage,
-  HTML,
+  uri,
 }) => {
   const [prog, setProg] = useState(false);
   const [progClr, setProgClr] = useState('#000');
@@ -51,7 +51,7 @@ const PaymentModal = ({
           </View>
         </View>
         <WebView
-          source={{html: HTML}}
+          source={{uri: uri}}
           style={{flex: 1}}
           onLoadStart={() => {
             setProg(true);

@@ -4,10 +4,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ActivityIndicator,
-  BackHandler,
 } from 'react-native';
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Box} from 'native-base';
 import s from './style';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -21,11 +19,9 @@ import TrackPlayer, {
   usePlaybackState,
   useProgress,
 } from 'react-native-track-player';
-import Backarrowsvg from '../../assets/images/backarrow.svg';
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {setPlayObject} from '../../Redux/actions';
-import Player from '../../Components/player';
 
 const Search = ({navigation}) => {
   const isFocused = useIsFocused();

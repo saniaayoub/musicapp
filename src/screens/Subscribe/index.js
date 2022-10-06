@@ -79,12 +79,45 @@ const Subscribe = ({navigation, route}) => {
     ) {
       setShowGateway(false);
       setLoader(true);
-      signUp();
+      sendLink();
+      // signUp();
+    } else if (
+      event.url.includes(
+        'https://www.sandbox.paypal.com/webapps/billing/subscriptions',
+      ) &&
+      event.loading === false
+    ) {
+      setUrl(event.url);
+      // setData({...data, url: event.url});
     }
   };
 
   const showToast = msg => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
+  };
+
+  const sendLink = async () => {
+    console.log('here', data.token);
+    const body = {
+      url: url,
+    };
+    await axiosconfig
+      .post('subscription_link', body, {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+      })
+      .then(res => {
+        // setLoader(false);
+        signUp();
+        console.log(JSON.stringify(res));
+        // showToast(res.data.message);
+      })
+      .catch(err => {
+        setLoader(false);
+        showToast(err.response.message);
+        console.log(err.response.message);
+      });
   };
 
   const getLink = async () => {
@@ -103,47 +136,39 @@ const Subscribe = ({navigation, route}) => {
   };
 
   const signUp = async () => {
-    await axiosconfig
-      .post('store', data)
-      .then(res => {
-        const data = res?.data;
-        if (data.access_token) {
-          console.log(data.access_token);
-          getAllMusic(data.access_token);
-        } else {
-          setLoader(false);
-          console.log('data', data);
-          showToast(data.email[0]);
-        }
-      })
-      .catch(err => {
-        setLoader(false);
-        showToast(err.response.message);
-        console.log(err.response.message);
-      });
-  };
+    // const value = await AsyncStorage.setItem('@auth_token');
+    AsyncStorage.setItem('@auth_token', data.token);
 
-  const getAllMusic = async token => {
-    await axiosconfig
-      .get('music_all', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(res => {
-        console.log('All Music', JSON.stringify(res.data));
-        if (res.data) {
-          dispatch(setMusic(res?.data));
-          AsyncStorage.setItem('@auth_token', token);
-          AsyncStorage.setItem('music', JSON.stringify(res.data));
-          showToast('Successfully Logged in!');
-          setLoader(false);
-          dispatch(setUserToken(token));
-        }
-      })
-      .catch(err => {
-        console.log(err.response);
-      });
+    const music = await AsyncStorage.getItem('music');
+    const json = JSON.parse(music);
+    console.log(json, 'all music');
+    console.log(data.token, 'token');
+    {
+      data.token
+        ? (dispatch(setMusic(json)), dispatch(setUserToken(data.token)))
+        : dispatch(setUserToken(null));
+    }
+    showToast('Successfully Logged in');
+    setLoader(false);
+    // console.log(data, 'upload');
+    // await axiosconfig
+    //   .post('store', data)
+    //   .then(res => {
+    //     const data = res?.data;
+    //     if (data.access_token) {
+    //       console.log(data.access_token);
+    //       getAllMusic(data.access_token);
+    //     } else {
+    //       setLoader(false);
+    //       console.log('data', data);
+    //       showToast(data.email[0]);
+    //     }
+    //   })
+    //   .catch(err => {
+    //     setLoader(false);
+    //     showToast(err.response.message);
+    //     console.log(err.response.message);
+    //   });
   };
 
   return (
@@ -205,7 +230,9 @@ const Subscribe = ({navigation, route}) => {
             setShowGateway={setShowGateway}
             onMessage={onMessage}
             handleMessage={handleMessage}
-            HTML={HTML}
+            uri={
+              'https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9CYTZ4HBHXQZ8'
+            }
           />
         ) : null}
       </ImageBackground>
