@@ -53,6 +53,7 @@ const Profile = ({navigation}) => {
   const [openSheet, setOpenSheet] = useState(false);
   const [subModal, setSubModal] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [loader2, setLoader2] = useState(false);
 
   useEffect(() => {
     getData();
@@ -108,6 +109,7 @@ const Profile = ({navigation}) => {
         console.log(err.response);
       });
   };
+
   const setData = data => {
     console.log('calling');
     setFname(data?.name);
@@ -148,6 +150,7 @@ const Profile = ({navigation}) => {
       .catch(err => {
         console.log(err);
         setLoader(false);
+        console.log(err);
         showToast(err.message);
       });
   };
@@ -172,11 +175,11 @@ const Profile = ({navigation}) => {
     await AsyncStorage.removeItem('music');
     dispatch(setUserToken(null));
     dispatch(setMusic([]));
-    navigation.navigate('SignIn');
+    // navigation.navigate('SignIn');
   };
 
   const cancelSubs = async () => {
-    setLoader(true);
+    setLoader2(true);
     const body = {
       userId: id,
     };
@@ -192,10 +195,10 @@ const Profile = ({navigation}) => {
         setSubsStatus('0');
         showToast(message);
         setSubModal(false);
-        setLoader(false);
+        setLoader2(false);
       })
       .catch(err => {
-        setLoader(false);
+        setLoader2(false);
         console.log(err.response);
         showToast('Cannot Unsubscribe');
         setSubModal(false);
@@ -485,7 +488,7 @@ const Profile = ({navigation}) => {
         </ScrollView>
         {subModal ? (
           <SubsModal
-            loader={loader}
+            loader={loader2}
             subModal={subModal}
             setSubModal={setSubModal}
             cancelSubs={cancelSubs}

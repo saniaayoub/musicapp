@@ -18,6 +18,7 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 import Title from '../../assets/images/title.svg';
 import title from '../../assets/images/title.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -96,7 +97,11 @@ const GetStarted = ({navigation}) => {
       <View style={s.button}>
         <Button
           size="sm"
-          onPress={() => navigation.navigate('SignIn')}
+          onPress={async () => {
+            let user = 'existing';
+            await AsyncStorage.setItem('user_text', 'user');
+            navigation.navigate('SignIn');
+          }}
           variant={'solid'}
           _text={{
             color: '#6627EC',

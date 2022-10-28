@@ -32,6 +32,7 @@ const Stack = createStackNavigator();
 const App = () => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
+  const [user, setUser] = useState();
 
   useEffect(() => {
     getData();
@@ -44,6 +45,9 @@ const App = () => {
   };
 
   const getData = async () => {
+    let user = await AsyncStorage.getItem('user_text');
+    setUser(user);
+    console.log(user, 'existing');
     const value = await AsyncStorage.getItem('@auth_token');
     const music = await AsyncStorage.getItem('music');
     const json = JSON.parse(music);
@@ -77,7 +81,10 @@ const App = () => {
               <BottomTabs />
             ) : (
               <Stack.Navigator screenOptions={{headerShown: false}}>
-                <Stack.Screen name="GetStarted" component={GetStarted} />
+                {!user ? (
+                  <Stack.Screen name="GetStarted" component={GetStarted} />
+                ) : null}
+
                 <Stack.Screen name="SignIn" component={SignIn} />
                 <Stack.Screen name="SignUp" component={SignUp} />
                 <Stack.Screen name="Subscribe" component={Subscribe} />

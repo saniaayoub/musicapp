@@ -7,6 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import s from './style';
@@ -17,6 +19,7 @@ import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Slider from 'react-native-slider';
 import {useDispatch, useSelector} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
 import {setPlayObject, setFavorite} from '../../Redux/actions';
 import backarrow from '../../assets/images/backarrow.png';
 import TrackPlayer, {
@@ -24,9 +27,12 @@ import TrackPlayer, {
   usePlaybackState,
   useProgress,
 } from 'react-native-track-player';
-
+import axiosconfig from '../../Providers/axios';
 const Playlist = ({navigation, route}) => {
+  const isFocused = useIsFocused();
+  const token = useSelector(state => state.reducer.userToken);
   let playObject = useSelector(state => state.reducer.play_object);
+  const favorite = useSelector(state => state.reducer.favorite);
   const progress = useProgress();
   const playerState = usePlaybackState();
   const dispatch = useDispatch();
@@ -34,12 +40,19 @@ const Playlist = ({navigation, route}) => {
   const [playList, setPlayList] = useState(data?.musics);
   const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
+  const [loadingSong, setLoadingSong] = useState(false);
+
   const [queue, setQueue] = useState([]);
+  const [isFav, setIsFav] = useState();
 
   useEffect(() => {
     getQueue();
-  }, []);
+    getFavList();
+  }, [isFocused]);
 
+  const showToast = msg => {
+    ToastAndroid.show(msg, ToastAndroid.SHORT);
+  };
   const play = async (song, i) => {
     if (i == index) {
       if (playerState === State.Paused) {
@@ -48,33 +61,114 @@ const Playlist = ({navigation, route}) => {
         await TrackPlayer.pause();
       }
     } else {
+      setLoader(true);
       getIndexFromQueue(song);
-      setIndex(i);
     }
   };
 
   const getIndexFromQueue = async song => {
-    console.log(index);
-    queue.every(async (item, i) => {
-      if (song.id == item.id) {
-        await TrackPlayer.pause().then(async () => {
-          await TrackPlayer.seekTo(0).then(async () => {
-            await TrackPlayer.skip(i).then(async () => {
-              await TrackPlayer.play().then(() => {
-                dispatch(setPlayObject(item));
-              });
+    for (let i = 0; i < queue.length; i++) {
+      if (queue[i].id == song.id) {
+        await TrackPlayer.skip(i).then(async () => {
+          await TrackPlayer.play()
+            .then(() => {
+              dispatch(setPlayObject(queue[i]));
+            })
+            .finally(() => {
+              setLoader(false);
             });
-          });
         });
-        return false;
+        break;
       }
-      return true;
-    });
+    }
   };
 
   const getQueue = async () => {
     let queue = await TrackPlayer.getQueue();
     setQueue(queue);
+  };
+
+  const updateFav = (item, text) => {
+    const data = {
+      rating: true,
+      music_id: item.id,
+    };
+    axiosconfig
+      .post('user_rating', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        if (res.data) {
+          console.log(res?.data);
+          getFavList();
+          showToast(text);
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  };
+
+  const addToList = item => {
+    updateFav(item, 'Added to favourites');
+  };
+
+  const removeFromList = item => {
+    updateFav(item, 'Removed from favourites');
+  };
+
+  const updateFavStatus = item => {
+    let isFound = favorite.some(element => {
+      if (element.id === item.id) {
+        return true;
+      }
+      return false;
+    });
+
+    if (!isFound) {
+      addToList(item);
+    } else {
+      removeFromList(item);
+    }
+  };
+
+  const getFavList = async () => {
+    await axiosconfig
+      .get('favorate_list', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('fav list', res.data);
+        if (res.data) {
+          dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  };
+
+  const IsSongFav = ({id}) => {
+    const isFound = favorite.some(element => {
+      if (element.id === id) {
+        return true;
+      }
+      return false;
+    });
+
+    if (isFound) {
+      return (
+        <Icon name={'heart'} color={'#fff'} size={moderateScale(26, 0.1)} />
+      );
+    } else {
+      return (
+        <Icon name={'heart-o'} color={'#fff'} size={moderateScale(26, 0.1)} />
+      );
+    }
   };
 
   return (
@@ -148,23 +242,52 @@ const Playlist = ({navigation, route}) => {
                               <Text style={s.text2}>{item.artist}</Text>
                             </View>
                             <TouchableOpacity
+                              onPress={() => {
+                                updateFavStatus(item);
+                              }}
+                              style={{
+                                position: 'absolute',
+                                right: 40,
+                                top: 23,
+                              }}
+                            >
+                              <IsSongFav id={item.id} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
                               style={s.playbutton}
                               onPress={() => {
+                                setLoadingSong(i);
                                 play(item, i);
                               }}
                             >
+                              {loadingSong === i && loader ? (
+                                <ActivityIndicator
+                                  size="large"
+                                  color="#fff"
+                                  style={{
+                                    position: 'absolute',
+                                    zIndex: 1000,
+                                    bottom: 1,
+                                    right: 1,
+                                    left: 1,
+                                    top: 1,
+                                    // color: 'red',
+                                  }}
+                                />
+                              ) : null}
                               {item.id == playObject.id &&
-                              playerState == State.Playing ? (
+                              playerState == State.Playing &&
+                              !loader ? (
                                 <Icon
                                   name={'pause-circle'}
                                   color={'#fff'}
-                                  size={moderateScale(32, 0.1)}
+                                  size={moderateScale(30, 0.1)}
                                 />
                               ) : (
                                 <Icon
                                   name={'play-circle'}
                                   color={'#fff'}
-                                  size={moderateScale(32, 0.1)}
+                                  size={moderateScale(30, 0.1)}
                                 />
                               )}
                             </TouchableOpacity>

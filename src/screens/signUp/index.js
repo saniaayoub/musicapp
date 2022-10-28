@@ -47,10 +47,6 @@ const SignUp = ({navigation}) => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   };
 
-  const openLink = async () => {
-    await Linking.openURL('https://github.com');
-  };
-
   const validate = () => {
     setDisable(true);
     setLoader(true);
@@ -102,9 +98,7 @@ const SignUp = ({navigation}) => {
       value: phonenum.current.getValue(),
     };
     if (t.valid) {
-      // setDisable(false);
       signUp();
-      // subscribe();
     } else {
       setLoader(false);
       setPhNumErr('*');
@@ -162,22 +156,20 @@ const SignUp = ({navigation}) => {
           setConfirmPassword('');
 
           console.log(data, 'tokenn');
-          if (data.messsage) {
-            showToast(data.messsage);
-            //  showToast('Please Subscribe to activate your account');
+          if (data.user_status === 'New User') {
+            // showToast(data.messsage);
+            showToast('Please Subscribe to activate your account');
+            getAllMusic(data.access_token, data.stripe_link);
+            // setUrl();
+          } else {
+            showToast('Please Subscribe to reactivate your account');
+            getAllMusic(data.access_token, data.stripe_link);
           }
-
-          getAllMusic(data.access_token);
-        } else if (data.status === 'error') {
-          setLoader(false);
-          setDisable(false);
-          console.log('error', data);
+        }
+        if (data.error === 404) {
           showToast(data.messsage);
-        } else {
           setLoader(false);
           setDisable(false);
-          console.log('data', data);
-          showToast(data.email[0]);
         }
       })
       .catch(err => {
@@ -188,7 +180,7 @@ const SignUp = ({navigation}) => {
       });
   };
 
-  const getAllMusic = async token => {
+  const getAllMusic = async (token, url) => {
     await axiosconfig
       .get('music_all', {
         headers: {
@@ -203,18 +195,13 @@ const SignUp = ({navigation}) => {
             email: email,
             password: password,
             phone_number: phonenum.current.getValue(),
+            url: url,
             token: token,
           };
           setLoader(false);
           setDisable(false);
           AsyncStorage.setItem('music', JSON.stringify(res.data));
           navigation.navigate('Subscribe', {formData: data});
-          // dispatch(setMusic(res?.data));
-          // AsyncStorage.setItem('@auth_token', token);
-          // showToast('Successfully Logged in!');
-          // setLoader(false);
-          // subscribe();
-          // dispatch(setUserToken(token));
         }
       })
       .catch(err => {

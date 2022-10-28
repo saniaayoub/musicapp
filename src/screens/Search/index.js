@@ -4,6 +4,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Box} from 'native-base';
@@ -34,6 +35,8 @@ const Search = ({navigation}) => {
   const [songList, setSongList] = useState([]);
   const [index, setIndex] = useState();
   const [queue, setQueue] = useState([]);
+  const [loader, setLoader] = useState(false);
+  const [loadingSong, setLoadingSong] = useState(false);
 
   useEffect(() => {
     clearData();
@@ -55,27 +58,41 @@ const Search = ({navigation}) => {
         await TrackPlayer.pause();
       }
     } else {
+      setLoader(true);
       getIndexFromQueue(song);
       setIndex(i);
     }
   };
 
   const getIndexFromQueue = async song => {
-    queue.every(async (item, i) => {
-      if (song.id == item.id) {
-        await TrackPlayer.pause().then(async () => {
-          await TrackPlayer.seekTo(0).then(async () => {
-            await TrackPlayer.skip(i).then(async () => {
-              await TrackPlayer.play().then(() => {
-                dispatch(setPlayObject(item));
-              });
+    for (let i = 0; i < queue.length; i++) {
+      if (queue[i].id == song.id) {
+        console.log(index);
+        await TrackPlayer.skip(i).then(async () => {
+          await TrackPlayer.play()
+            .then(() => {
+              dispatch(setPlayObject(queue[i]));
+            })
+            .finally(() => {
+              setLoader(false);
             });
-          });
         });
-        return false;
+        break;
       }
-      return true;
-    });
+    }
+    // queue.every(async (item, i) => {
+    //   if (song.id == item.id) {
+    //     await TrackPlayer.skip(i).then(async () => {
+    //       await TrackPlayer.play().then(() => {
+    //         dispatch(setPlayObject(item));
+    //         setLoader(false);
+    //       });
+    //     });
+
+    //     return false;
+    //   }
+    //   return true;
+    // });
   };
 
   const getQueue = async () => {
@@ -193,10 +210,27 @@ const Search = ({navigation}) => {
                             style={s.playbutton}
                             onPress={() => {
                               play(item, i);
+                              setLoadingSong(i);
                             }}
                           >
+                            {loadingSong === i && loader ? (
+                              <ActivityIndicator
+                                size="large"
+                                color="#fff"
+                                style={{
+                                  position: 'absolute',
+                                  zIndex: 1000,
+                                  bottom: 1,
+                                  right: 1,
+                                  left: 1,
+                                  top: 1,
+                                  // color: 'red',
+                                }}
+                              />
+                            ) : null}
                             {item.id == playObject.id &&
-                            playerState == State.Playing ? (
+                            playerState == State.Playing &&
+                            !loader ? (
                               <Icon
                                 name={'pause-circle'}
                                 color={'#fff'}

@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
 
   collection: {
     width: '100%',
-    minHeight: moderateScale(400, 0.1),
+    minHeight: moderateScale(500, 0.1),
     flex: 1,
     backgroundColor: 'rgba(194, 106, 248, 0.36)',
     borderTopLeftRadius: moderateScale(25, 0.1),

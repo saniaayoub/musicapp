@@ -32,6 +32,7 @@ const Favorite = ({navigation}) => {
   const playerState = usePlaybackState();
   const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
+  const [loadingSong, setLoadingSong] = useState(false);
   const [queue, setQueue] = useState([]);
   const playObject = useSelector(state => state.reducer.play_object);
 
@@ -55,22 +56,22 @@ const Favorite = ({navigation}) => {
   };
 
   const getIndexFromQueue = async song => {
-    console.log(progress.position);
-    queue.every(async (item, i) => {
-      if (song.id == item.id) {
-        await TrackPlayer.pause().then(async () => {
-          await TrackPlayer.seekTo(0).then(async () => {
-            await TrackPlayer.skip(i).then(async () => {
-              await TrackPlayer.play().then(() => {
-                dispatch(setPlayObject(item));
-              });
+    setLoader(true);
+    for (let i = 0; i < queue.length; i++) {
+      if (queue[i].id == song.id) {
+        console.log(index);
+        await TrackPlayer.skip(i).then(async () => {
+          await TrackPlayer.play()
+            .then(() => {
+              dispatch(setPlayObject(queue[i]));
+            })
+            .finally(() => {
+              setLoader(false);
             });
-          });
         });
-        return false;
+        break;
       }
-      return true;
-    });
+    }
   };
 
   const getQueue = async () => {
@@ -192,11 +193,28 @@ const Favorite = ({navigation}) => {
                               <TouchableOpacity
                                 style={s.playbutton}
                                 onPress={() => {
+                                  setLoadingSong(i);
                                   play(item, i);
                                 }}
                               >
+                                {loadingSong === i && loader ? (
+                                  <ActivityIndicator
+                                    size="large"
+                                    color="#fff"
+                                    style={{
+                                      position: 'absolute',
+                                      zIndex: 1000,
+                                      bottom: 1,
+                                      right: 1,
+                                      left: 1,
+                                      top: 1,
+                                      // color: 'red',
+                                    }}
+                                  />
+                                ) : null}
                                 {item.id == playObject.id &&
-                                playerState == State.Playing ? (
+                                playerState == State.Playing &&
+                                !loader ? (
                                   <Icon
                                     name={'pause-circle'}
                                     color={'#fff'}

@@ -5,25 +5,32 @@ import {
   Modal,
   TouchableOpacity,
   ActivityIndicator,
+  BackHandler,
 } from 'react-native';
 import {WebView} from 'react-native-webview';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Feather from 'react-native-vector-icons/Feather';
+import {moderateScale} from 'react-native-size-matters';
 
 const PaymentModal = ({
   showGateway,
   setShowGateway,
-  onMessage,
   handleMessage,
   uri,
+  checkPayment,
 }) => {
   const [prog, setProg] = useState(false);
   const [progClr, setProgClr] = useState('#000');
+
   return (
     <Modal
       visible={showGateway}
-      onDismiss={() => setShowGateway(false)}
-      onRequestClose={() => setShowGateway(false)}
+      onDismiss={() => {
+        setShowGateway(false);
+      }}
+      onRequestClose={() => {
+        checkPayment();
+      }}
       animationType={'fade'}
       transparent
     >
@@ -31,9 +38,13 @@ const PaymentModal = ({
         <View style={s.wbHead}>
           <TouchableOpacity
             style={{padding: 13}}
-            onPress={() => setShowGateway(false)}
+            onPress={() => {
+              checkPayment();
+            }}
           >
-            <Feather name={'x'} size={24} color={'#000'} />
+            <Text style={{color: '#000', fontSize: moderateScale(14, 0.1)}}>
+              Sign Up
+            </Text>
           </TouchableOpacity>
           <Text
             style={{
@@ -44,7 +55,7 @@ const PaymentModal = ({
               color: '#00457C',
             }}
           >
-            PayPal GateWay
+            Payment GateWay
           </Text>
           <View style={{padding: 13, opacity: prog ? 1 : 0}}>
             <ActivityIndicator size={24} color={progClr} />
@@ -67,7 +78,6 @@ const PaymentModal = ({
           onLoad={() => {
             setProg(false);
           }}
-          onMessage={onMessage}
           onNavigationStateChange={event => handleMessage(event)}
         />
       </View>
