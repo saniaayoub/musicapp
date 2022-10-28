@@ -53,16 +53,21 @@ const Playlist = ({navigation, route}) => {
   const showToast = msg => {
     ToastAndroid.show(msg, ToastAndroid.SHORT);
   };
+
   const play = async (song, i) => {
     if (i == index) {
       if (playerState === State.Paused) {
+        console.log('play');
         await TrackPlayer.play();
       } else {
+        console.log('pause');
         await TrackPlayer.pause();
       }
     } else {
       setLoader(true);
+      console.log('new');
       getIndexFromQueue(song);
+      setIndex(i);
     }
   };
 
