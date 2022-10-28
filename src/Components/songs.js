@@ -6,8 +6,8 @@ export default Songs = [
     title: 'See you Again',
     artist: 'Wiz Khalifa',
     artwork: require('../assets/images/healing1.png'),
-    fav: false,
-    // duration: 200,
+    rating: false,
+    duration: 232,
   },
   {
     id: 2,
@@ -15,8 +15,8 @@ export default Songs = [
     title: 'Lovely',
     artist: 'Billie Eilish, Khalid',
     artwork: require('../assets/images/healing2.png'),
-    fav: false,
-    // duration: 230,
+    rating: false,
+    duration: 200,
   },
   {
     id: 3,
@@ -26,8 +26,8 @@ export default Songs = [
     artwork: require('../assets/images/healing3.png'),
     title: 'Shape of you',
     artist: 'Ed Sheeran',
-    fav: false,
-    // duration: 180,
+    rating: false,
+    duration: 239,
   },
   {
     id: 4,
@@ -35,8 +35,8 @@ export default Songs = [
     title: 'Play Date',
     artist: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
-    fav: false,
-    // duration: 150,
+    rating: false,
+    duration: 180,
   },
   {
     id: 5,
@@ -44,8 +44,8 @@ export default Songs = [
     title: 'Peaches',
     artist: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
-    fav: false,
-    // duration: 240,
+    rating: false,
+    duration: 197,
   },
   {
     id: 6,
@@ -54,8 +54,8 @@ export default Songs = [
     artist: 'Alec Benjamin',
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
-    fav: false,
-    // duration: 200,
+    rating: false,
+    duration: 169,
   },
   {
     id: 7,
@@ -63,8 +63,8 @@ export default Songs = [
     title: 'Play Date',
     artist: 'Jeni Loz',
     url: 'https://paglasongs.com/files/download/id/2162',
-    fav: false,
-    // duration: 230,
+    rating: false,
+    duration: 180,
   },
   {
     id: 8,
@@ -72,8 +72,8 @@ export default Songs = [
     title: 'Peaches',
     artist: 'Justin Bieber',
     url: 'https://pagalworld.com.se/files/download/id/1505',
-    fav: false,
-    // duration: 160,
+    rating: false,
+    duration: 197,
   },
   {
     id: 9,
@@ -82,7 +82,7 @@ export default Songs = [
     artist: 'Alec Benjamin',
     url:
       'https://songszilla.net/files/download/id/2153&volume=75&showstop=1&showvolume=1',
-    fav: false,
-    // duration: 180,
+    rating: false,
+    duration: 169,
   },
 ];

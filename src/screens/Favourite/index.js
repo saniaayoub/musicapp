@@ -1,57 +1,131 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
-  Image,
   TouchableOpacity,
-  FlatList,
   ActivityIndicator,
-  BackHandler,
+  ScrollView,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import {Box} from 'native-base';
 import s from './style';
-import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Input, Button, ScrollView} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Slider from 'react-native-slider';
-import healing1 from '../../assets/images/healing1.png';
-import play from '../../assets/images/play.png';
-import Playbutton from '../../assets/images/playbutton.svg';
-import backarrow from '../../assets/images/backarrow.png';
-import AppContext from '../../Providers/AppContext';
 import TrackPlayer, {
-  Capability,
-  Event,
-  RepeatMode,
   State,
   usePlaybackState,
   useProgress,
-  useTrackPlayerEvents,
 } from 'react-native-track-player';
-import Backarrowsvg from '../../assets/images/backarrow.svg';
-import Songs from '../../Components/songs';
+import {useDispatch, useSelector} from 'react-redux';
+import {setPlayObject, setFavorite} from '../../Redux/actions';
+import axiosconfig from '../../Providers/axios';
+import {useIsFocused} from '@react-navigation/native';
 
 const Favorite = ({navigation}) => {
-  const context = useContext(AppContext);
-
-  const [favList, setFavList] = useState(Songs);
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch();
+  const token = useSelector(state => state.reducer.userToken);
+  const favorite = useSelector(state => state.reducer.favorite);
+  const progress = useProgress();
+  const playerState = usePlaybackState();
+  const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
+  const [loadingSong, setLoadingSong] = useState(false);
+  const [queue, setQueue] = useState([]);
+  const playObject = useSelector(state => state.reducer.play_object);
 
-  const setPlayButton = item => {
-    let tempArray;
-    tempArray = favList.map((elem, i) => {
-      if (elem.id == item.id) {
-        return {...elem, play: !elem.play};
+  useEffect(() => {
+    getQueue();
+    getFavList();
+    console.log(favorite.length);
+  }, [isFocused]);
+
+  const play = async (song, i) => {
+    if (i == index) {
+      if (playerState === State.Paused) {
+        await TrackPlayer.play();
       } else {
-        return {...elem, play: false};
+        await TrackPlayer.pause();
       }
-    });
-    setFavList(tempArray);
+    } else {
+      getIndexFromQueue(song);
+      setIndex(i);
+    }
+  };
+
+  const getIndexFromQueue = async song => {
+    setLoader(true);
+    for (let i = 0; i < queue.length; i++) {
+      if (queue[i].id == song.id) {
+        console.log(index);
+        await TrackPlayer.skip(i).then(async () => {
+          await TrackPlayer.play()
+            .then(() => {
+              dispatch(setPlayObject(queue[i]));
+            })
+            .finally(() => {
+              setLoader(false);
+            });
+        });
+        break;
+      }
+    }
+  };
+
+  const getQueue = async () => {
+    let queue = await TrackPlayer.getQueue();
+    setQueue(queue);
+  };
+
+  const updateFavList = async item => {
+    const data = {
+      rating: true,
+      music_id: item.id,
+    };
+    await axiosconfig
+      .post('user_rating', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        if (res.data) {
+          console.log(res?.data);
+          // dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log('data', err.response);
+      });
+  };
+
+  const removeFromList = item => {
+    updateFavList(item);
+    let temp = [];
+    temp = favorite.filter(elem => item.id !== elem.id);
+    console.log(temp);
+    dispatch(setFavorite(temp));
+  };
+
+  const getFavList = async () => {
+    await axiosconfig
+      .get('favorate_list', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        if (res.data) {
+          dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
   };
 
   return (
@@ -68,26 +142,6 @@ const Favorite = ({navigation}) => {
       >
         <View style={s.container}>
           <View style={s.fixed}>
-            {/* <View style={s.backbutton}>
-              <Button
-                size="sm"
-                onPress={() =>
-                  navigation.navigate('Home', {screen: 'UserHome'})
-                }
-                variant={'link'}
-                backgroundColor={'#fff'}
-                borderRadius={moderateScale(14, 0.1)}
-                padding={moderateScale(7, 0.1)}
-                zIndex={1000}
-              >
-                <Backarrowsvg
-                  width={moderateScale(14, 0.1)}
-                  height={moderateScale(14, 0.1)}
-                />
-                <Image source={backarrow} resizeMode="contain" />
-                <Icon name={'arrow-circle-left'} color={'#fff'} size={25} />
-              </Button>
-            </View> */}
             {/******** Head *********/}
             <View style={s.header}>
               <View style={s.heading}>
@@ -95,21 +149,20 @@ const Favorite = ({navigation}) => {
               </View>
             </View>
           </View>
-          {loader ? (
-            <ActivityIndicator />
-          ) : favList.length ? (
+
+          {favorite.length ? (
             <ScrollView
-              style={{marginBottom: moderateScale(20, 0.1)}}
+              style={{marginBottom: moderateScale(140, 0.1)}}
               contentContainerStyle={{flexGrow: 1}}
             >
               <View style={s.collection}>
-                {favList.map((item, i) => {
+                {favorite.map((item, i) => {
                   return (
                     <>
                       <View style={s.item} key={i}>
-                        <TouchableOpacity style={s.image}>
+                        <TouchableOpacity style={s.image} key={i}>
                           <ImageBackground
-                            source={item.artwork}
+                            source={{uri: item.artwork}}
                             resizeMode={'cover'}
                             width={undefined}
                             height={undefined}
@@ -126,44 +179,86 @@ const Favorite = ({navigation}) => {
                             <View
                               style={{
                                 flexDirection: 'row',
+                                alignItems: 'center',
                               }}
                             >
-                              <View
+                              <TouchableOpacity
+                                onPress={() => removeFromList(item)}
                                 style={{
-                                  marginRight: moderateScale(10, 0.1),
+                                  marginRight: moderateScale(15, 0.1),
                                   marginTop: moderateScale(23, 0.1),
                                 }}
                               >
                                 <Icon name={'heart'} color={'#fff'} size={25} />
-                              </View>
-                              <TouchableOpacity
-                                style={s.playbutton}
-                                onPress={() => {
-                                  setPlayButton(item);
-                                }}
-                              >
-                                {item.play ? (
-                                  <Icon
-                                    name={'pause-circle'}
-                                    color={'#fff'}
-                                    size={30}
-                                  />
-                                ) : (
-                                  <Icon
-                                    name={'play-circle'}
-                                    color={'#fff'}
-                                    size={30}
-                                  />
-                                )}
                               </TouchableOpacity>
+                              {loadingSong === i && loader ? (
+                                <ActivityIndicator
+                                  size="small"
+                                  color="#fff"
+                                  style={{
+                                    marginTop: moderateScale(20, 0.1),
+                                    marginLeft: moderateScale(1, 0.1),
+                                    marginRight: moderateScale(5, 0.1),
+                                  }}
+                                />
+                              ) : (
+                                <TouchableOpacity
+                                  style={s.playbutton}
+                                  onPress={() => {
+                                    setLoadingSong(i);
+                                    play(item, i);
+                                  }}
+                                >
+                                  {item.id == playObject.id &&
+                                  playerState == State.Playing &&
+                                  !loader ? (
+                                    <Icon
+                                      name={'pause-circle'}
+                                      color={'#fff'}
+                                      size={30}
+                                    />
+                                  ) : (
+                                    <Icon
+                                      name={'play-circle'}
+                                      color={'#fff'}
+                                      size={30}
+                                    />
+                                  )}
+                                </TouchableOpacity>
+                              )}
                             </View>
                           </View>
 
                           <View style={s.slider}>
-                            <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                            <Slider
+                              value={
+                                item.id == playObject.id ? progress.position : 0
+                              }
+                              minimumValue={0}
+                              maximumValue={
+                                item.id == playObject.id ? progress.duration : 0
+                              }
+                              onSlidingComplete={async value => {
+                                await TrackPlayer.seekTo(value);
+                              }}
+                              thumbStyle={s.thumb}
+                              trackStyle={s.track}
+                            />
                             <View style={s.timer}>
-                              <Text style={s.text2}>00:00</Text>
-                              <Text style={s.text2}>00:30</Text>
+                              <Text style={s.text2}>
+                                {item.id == playObject.id
+                                  ? new Date(progress.position * 1000)
+                                      .toString()
+                                      .substring(19, 24)
+                                  : `00:00`}
+                              </Text>
+                              <Text style={s.text2}>
+                                {item.id == playObject.id
+                                  ? new Date(progress.duration * 1000)
+                                      .toString()
+                                      .substring(19, 24)
+                                  : `00:00`}
+                              </Text>
                             </View>
                           </View>
                         </View>
@@ -175,7 +270,7 @@ const Favorite = ({navigation}) => {
             </ScrollView>
           ) : (
             <View>
-              <Text style={s.empty}>No Songs</Text>
+              <Text style={s.empty}>No Songs Added</Text>
             </View>
           )}
         </View>

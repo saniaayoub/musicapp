@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     marginTop: moderateScale(10, 0.1),
+    marginBottom: moderateScale(180, 0.1),
   },
   image: {
     justifyContent: 'center',

@@ -23,6 +23,20 @@ const styles = StyleSheet.create({
     borderTopRightRadius: moderateScale(25, 0.1),
     // marginBottom: moderateScale(15, 0.1),
   },
+  webViewCon: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  wbHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    zIndex: 25,
+    elevation: 2,
+  },
 
   bottomContainer: {
     paddingLeft: moderateScale(80, 0.1),
@@ -57,7 +71,7 @@ const styles = StyleSheet.create({
     // marginTop: moderateScale(0, 0.1),
   },
   headingText: {
-    fontSize: moderateScale(34, 0.1),
+    fontSize: moderateScale(33, 0.1),
     fontFamily: InterBold,
     fontWeight: '900',
   },

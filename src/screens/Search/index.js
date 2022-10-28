@@ -1,62 +1,110 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
-  Image,
   TouchableOpacity,
-  FlatList,
   ActivityIndicator,
-  BackHandler,
 } from 'react-native';
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Box} from 'native-base';
 import s from './style';
-import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
 import {Input, Button, ScrollView} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Slider from 'react-native-slider';
-import healing1 from '../../assets/images/healing1.png';
-import play from '../../assets/images/play.png';
-import Playbutton from '../../assets/images/playbutton.svg';
-import backarrow from '../../assets/images/backarrow.png';
-import AppContext from '../../Providers/AppContext';
 import SearchIcon from '../../assets/images/search1.svg';
-
 import TrackPlayer, {
-  Capability,
-  Event,
-  RepeatMode,
   State,
   usePlaybackState,
   useProgress,
-  useTrackPlayerEvents,
 } from 'react-native-track-player';
-import Backarrowsvg from '../../assets/images/backarrow.svg';
+import {useIsFocused} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {setPlayObject} from '../../Redux/actions';
 
 const Search = ({navigation}) => {
-  const context = useContext(AppContext);
-  const playbackState = usePlaybackState();
+  const isFocused = useIsFocused();
   const progress = useProgress();
-  const [songList, setSongList] = useState(context.songs);
+  const playerState = usePlaybackState();
+  const dispatch = useDispatch();
+  const Songs = useSelector(state => state.reducer.music);
+  let playObject = useSelector(state => state.reducer.play_object);
+  const [searchText, setSearchText] = useState();
+  const [songList, setSongList] = useState([]);
+  const [index, setIndex] = useState();
+  const [queue, setQueue] = useState([]);
   const [loader, setLoader] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState({});
+  const [loadingSong, setLoadingSong] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    clearData();
+    getQueue();
+  }, [isFocused]);
 
-  const setPlayButton = item => {
-    let tempArray;
-    tempArray = songList.map((elem, i) => {
-      if (elem.id == item.id) {
-        return {...elem, play: !elem.play};
+  const clearData = () => {
+    setSongList([]);
+    setSearchText('');
+    setIndex('');
+  };
+
+  const play = async (song, i) => {
+    if (i === index) {
+      console.log(i, index, 'old');
+      if (playerState === State.Paused) {
+        await TrackPlayer.play();
       } else {
-        return {...elem, play: false};
+        await TrackPlayer.pause();
       }
-    });
-    setSongList(tempArray);
+    } else {
+      setLoader(true);
+      getIndexFromQueue(song);
+      setIndex(i);
+    }
+  };
+
+  const getIndexFromQueue = async song => {
+    for (let i = 0; i < queue.length; i++) {
+      if (queue[i].id == song.id) {
+        console.log(index);
+        await TrackPlayer.skip(i).then(async () => {
+          await TrackPlayer.play()
+            .then(() => {
+              dispatch(setPlayObject(queue[i]));
+            })
+            .finally(() => {
+              setLoader(false);
+            });
+        });
+        break;
+      }
+    }
+  };
+
+  const getQueue = async () => {
+    let queue = await TrackPlayer.getQueue();
+    setQueue(queue);
+  };
+
+  const handleCancel = () => {
+    clearData();
+  };
+
+  const handleChange = text => {
+    setSearchText(text);
+    setIndex('');
+    if (!text) {
+      clearData();
+    } else {
+      let searched = Songs.filter(item => {
+        return (
+          item.artist?.toLowerCase().includes(text.toLowerCase()) ||
+          item.title?.toLowerCase().includes(text.toLowerCase())
+        );
+      });
+      setSongList(searched);
+    }
   };
 
   return (
@@ -84,7 +132,10 @@ const Search = ({navigation}) => {
             <View style={s.shadow}>
               <Input
                 placeholder="Search Here"
-                w={moderateScale(350, 0.1)}
+                placeholderTextColor={'grey'}
+                onChangeText={text => handleChange(text)}
+                value={searchText}
+                w={moderateScale(320, 0.1)}
                 h={moderateScale(37, 0.1)}
                 variant="rounded"
                 InputLeftElement={
@@ -95,100 +146,119 @@ const Search = ({navigation}) => {
                     />
                   </View>
                 }
+                InputRightElement={
+                  <TouchableOpacity
+                    onPress={() => handleCancel()}
+                    style={{paddingRight: 10}}
+                  >
+                    {searchText ? (
+                      <Feather
+                        name={'x'}
+                        size={moderateScale(20, 0.1)}
+                        color={'grey'}
+                      />
+                    ) : null}
+                  </TouchableOpacity>
+                }
                 color={'#000'}
                 backgroundColor={'#F6F6F6'}
               />
             </View>
           </View>
-          {loader ? (
-            <ActivityIndicator />
-          ) : songList.length ? (
-            <ScrollView
-              style={{
-                marginBottom: moderateScale(60, 0.1),
-                marginTop: moderateScale(10, 0.1),
-              }}
-              contentContainerStyle={{flexGrow: 1}}
-            >
-              <View style={s.collection}>
-                {songList.map((item, i) => {
-                  return (
-                    <>
-                      <View style={s.item} key={i.toString()}>
-                        <TouchableOpacity
-                          style={s.image}
-                          onPress={() =>
-                            navigation.navigate('Home', {
-                              screen: 'NowPlaying',
-                              params: {data: item},
-                            })
-                          }
-                        >
-                          <ImageBackground
-                            source={item.artwork}
-                            resizeMode={'cover'}
-                            width={undefined}
-                            height={undefined}
-                          >
-                            <View style={s.innerView}></View>
-                          </ImageBackground>
-                        </TouchableOpacity>
-                        <View style={s.centerView}>
-                          <View style={s.row}>
-                            <View style={s.descriptionView}>
-                              <Text style={s.text1}>{item.title}</Text>
-                              <Text style={s.text2}>{item.artist}</Text>
-                            </View>
-                            <TouchableOpacity
-                              style={s.playbutton}
-                              onPress={() => {
-                                setPlayButton(item);
-                              }}
-                            >
-                              {item.play ? (
-                                <Icon
-                                  name={'pause-circle'}
-                                  color={'#fff'}
-                                  size={30}
-                                />
-                              ) : (
-                                <Icon
-                                  name={'play-circle'}
-                                  color={'#fff'}
-                                  size={30}
-                                />
-                              )}
-                            </TouchableOpacity>
-                          </View>
 
-                          <View style={s.slider}>
-                            <Slider
-                              // value={progress.position}
-                              // minimumValue={0}
-                              // maximumValue={progress.duration}
-                              // onSlidingComplete={async value => {
-                              //   await TrackPlayer.seekTo(value);
-                              // }}
-                              thumbStyle={s.thumb}
-                              trackStyle={s.track}
-                            />
-                            <View style={s.timer}>
-                              <Text style={s.text2}>00:00</Text>
-                              <Text style={s.text2}>03:00</Text>
-                            </View>
+          <ScrollView
+            style={{
+              marginTop: moderateScale(10, 0.1),
+            }}
+            contentContainerStyle={{flexGrow: 1}}
+          >
+            <View style={s.collection}>
+              {songList.map((item, i) => {
+                return (
+                  <>
+                    <View style={s.item} key={i.toString()}>
+                      <TouchableOpacity style={s.image}>
+                        <ImageBackground
+                          source={{uri: item.artwork}}
+                          resizeMode={'cover'}
+                          width={undefined}
+                          height={undefined}
+                        >
+                          <View style={s.innerView}></View>
+                        </ImageBackground>
+                      </TouchableOpacity>
+                      <View style={s.centerView}>
+                        <View style={s.row}>
+                          <View style={s.descriptionView}>
+                            <Text style={s.text1}>{item.title}</Text>
+                            <Text style={s.text2}>{item.artist}</Text>
+                          </View>
+                          <TouchableOpacity
+                            style={s.playbutton}
+                            onPress={() => {
+                              play(item, i);
+                              setLoadingSong(i);
+                            }}
+                          >
+                            {loadingSong === i && loader ? (
+                              <ActivityIndicator size="large" color="#fff" />
+                            ) : item.id == playObject.id &&
+                              playerState == State.Playing &&
+                              !loader ? (
+                              <Icon
+                                name={'pause-circle'}
+                                color={'#fff'}
+                                size={30}
+                              />
+                            ) : (
+                              <Icon
+                                name={'play-circle'}
+                                color={'#fff'}
+                                size={30}
+                              />
+                            )}
+                          </TouchableOpacity>
+                        </View>
+
+                        <View style={s.slider}>
+                          <Slider
+                            value={
+                              item.id == playObject.id ? progress.position : 0
+                            }
+                            minimumValue={0}
+                            maximumValue={
+                              item.id == playObject.id ? progress.duration : 0
+                            }
+                            onSlidingComplete={async value => {
+                              await TrackPlayer.seekTo(value);
+                            }}
+                            thumbStyle={s.thumb}
+                            trackStyle={s.track}
+                          />
+                          <View style={s.timer}>
+                            <Text style={s.text2}>
+                              {item.id == playObject.id
+                                ? new Date(progress.position * 1000)
+                                    .toString()
+                                    .substring(19, 24)
+                                : `00:00`}
+                            </Text>
+                            <Text style={s.text2}>
+                              {item.id == playObject.id
+                                ? new Date(progress.duration * 1000)
+                                    .toString()
+                                    .substring(19, 24)
+                                : `00:00`}
+                            </Text>
                           </View>
                         </View>
                       </View>
-                    </>
-                  );
-                })}
-              </View>
-            </ScrollView>
-          ) : (
-            <View>
-              <Text style={s.empty}>No Songs</Text>
+                    </View>
+                  </>
+                );
+              })}
             </View>
-          )}
+          </ScrollView>
         </View>
       </Box>
     </SafeAreaView>

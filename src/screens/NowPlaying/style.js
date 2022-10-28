@@ -173,7 +173,8 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(-10, 0.1),
   },
   descriptionView: {
-    marginTop: moderateScale(10, 0.1),
+    marginTop: moderateScale(15, 0.1),
+    marginBottom: moderateScale(15, 0.1),
   },
   text1: {
     color: '#fff',

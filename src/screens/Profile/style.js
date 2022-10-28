@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   profileimg: {
     borderRadius: moderateScale(10, 0.1),
     overflow: 'hidden',
-    // backgroundColor: 'red',
+
     width: moderateScale(96, 0.1),
     height: moderateScale(84, 0.1),
     justifyContent: 'center',
@@ -64,6 +64,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     padding: moderateScale(5, 0.1),
     borderRadius: moderateScale(50, 0.1),
+  },
+  imageStyle: {
+    width: '100%',
+    height: '100%',
   },
   round: {
     borderWidth: moderateScale(1, 0.1),

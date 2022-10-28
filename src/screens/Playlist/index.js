@@ -1,58 +1,186 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
   Image,
   ScrollView,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import s from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import playlistback from '../../assets/images/playlistback.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-import AppContext from '../../Providers/AppContext';
 import Slider from 'react-native-slider';
-import healing1 from '../../assets/images/healing1.png';
-import play from '../../assets/images/play.png';
-import Playbutton from '../../assets/images/playbutton.svg';
+import {useDispatch, useSelector} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
+import {setPlayObject, setFavorite} from '../../Redux/actions';
 import backarrow from '../../assets/images/backarrow.png';
-import trackback from '../../assets/images/trackback.png';
-import SoundPlayer from 'react-native-sound-player';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 import TrackPlayer, {
-  Capability,
-  Event,
-  RepeatMode,
   State,
   usePlaybackState,
   useProgress,
-  useTrackPlayerEvents,
 } from 'react-native-track-player';
-import Backarrowsvg from '../../assets/images/backarrow.svg';
-import Songs from '../../Components/songs';
+import axiosconfig from '../../Providers/axios';
+const Playlist = ({navigation, route}) => {
+  const isFocused = useIsFocused();
+  const token = useSelector(state => state.reducer.userToken);
+  let playObject = useSelector(state => state.reducer.play_object);
+  const favorite = useSelector(state => state.reducer.favorite);
+  const progress = useProgress();
+  const playerState = usePlaybackState();
+  const dispatch = useDispatch();
+  const {data} = route.params;
+  const [playList, setPlayList] = useState(data?.musics);
+  const [index, setIndex] = useState();
+  const [loader, setLoader] = useState(false);
+  const [loadingSong, setLoadingSong] = useState(false);
+  const [favLoader, setFavLoader] = useState(false);
 
-const Playlist = ({navigation}) => {
-  const context = useContext(AppContext);
-  const [playList, setPlayList] = useState(Songs);
+  const [queue, setQueue] = useState([]);
+  const [isFav, setIsFav] = useState();
 
-  const setPlayButton = item => {
-    let tempArray;
-    tempArray = playList.map((elem, i) => {
-      if (elem.id == item.id) {
-        return {...elem, play: !elem.play};
+  useEffect(() => {
+    getQueue();
+    getFavList();
+  }, [isFocused]);
+
+  const showToast = msg => {
+    ToastAndroid.show(msg, ToastAndroid.SHORT);
+  };
+
+  const play = async (song, i) => {
+    if (i == index) {
+      if (playerState === State.Paused) {
+        console.log('play');
+        await TrackPlayer.play();
       } else {
-        return {...elem, play: false};
+        console.log('pause');
+        await TrackPlayer.pause();
       }
+    } else {
+      setLoader(true);
+      console.log('new');
+      getIndexFromQueue(song);
+      setIndex(i);
+    }
+  };
+
+  const getIndexFromQueue = async song => {
+    for (let i = 0; i < queue.length; i++) {
+      if (queue[i].id == song.id) {
+        await TrackPlayer.skip(i).then(async () => {
+          await TrackPlayer.play()
+            .then(() => {
+              dispatch(setPlayObject(queue[i]));
+            })
+            .finally(() => {
+              console.log(progress.position, 'position');
+              // if(progress.position==1)
+              setLoader(false);
+            });
+        });
+        console.log(queue[i]);
+        break;
+      }
+    }
+  };
+
+  const getQueue = async () => {
+    let queue = await TrackPlayer.getQueue();
+    setQueue(queue);
+  };
+
+  const updateFav = (item, text) => {
+    setFavLoader(true);
+    const data = {
+      rating: true,
+      music_id: item.id,
+    };
+    axiosconfig
+      .post('user_rating', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        if (res.data) {
+          console.log(res?.data);
+          getFavList();
+          showToast(text);
+        }
+        setFavLoader(false);
+      })
+      .catch(err => {
+        console.log(err.response);
+        setFavLoader(false);
+      });
+  };
+
+  const addToList = item => {
+    updateFav(item, 'Added to favourites');
+  };
+
+  const removeFromList = item => {
+    updateFav(item, 'Removed from favourites');
+  };
+
+  const updateFavStatus = item => {
+    let isFound = favorite.some(element => {
+      if (element.id === item.id) {
+        return true;
+      }
+      return false;
     });
-    setPlayList(tempArray);
+
+    if (!isFound) {
+      addToList(item);
+    } else {
+      removeFromList(item);
+    }
+  };
+
+  const getFavList = async () => {
+    await axiosconfig
+      .get('favorate_list', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('fav list', res.data);
+        if (res.data) {
+          dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  };
+
+  const IsSongFav = ({id}) => {
+    const isFound = favorite.some(element => {
+      if (element.id === id) {
+        return true;
+      }
+      return false;
+    });
+
+    if (isFound) {
+      return (
+        <Icon name={'heart'} color={'#fff'} size={moderateScale(26, 0.1)} />
+      );
+    } else {
+      return (
+        <Icon name={'heart-o'} color={'#fff'} size={moderateScale(26, 0.1)} />
+      );
+    }
   };
 
   return (
@@ -61,6 +189,7 @@ const Playlist = ({navigation}) => {
         source={playlistback}
         blurRadius={5}
         resizeMode={'cover'}
+        style={{height: '100%'}}
       >
         <LinearGradient
           start={{x: 0, y: 0}}
@@ -75,25 +204,24 @@ const Playlist = ({navigation}) => {
               </View>
             </View>
             <ScrollView
-              style={{
-                marginBottom:
-                  Platform.OS == 'ios'
-                    ? moderateScale(330, 0.1)
-                    : moderateScale(80, 0.1),
-              }}
+            // style={{
+            //   marginBottom:
+            //     Platform.OS == 'ios'
+            //       ? moderateScale(330, 0.1)
+            //       : moderateScale(80, 0.1),
+            // }}
             >
               <View style={s.section}>
                 <View style={s.imageTop}>
                   <Image
-                    source={trackback}
-                    width={undefined}
-                    height={undefined}
+                    source={{uri: data.image}}
                     resizeMode={'cover'}
+                    style={{width: '100%', height: '100%'}}
                   />
                 </View>
                 <View style={s.descriptionViewTop}>
-                  <Text style={s.text1Top}>Wait for a minute</Text>
-                  <Text style={s.text2Top}>Julie Watson And John Smith</Text>
+                  <Text style={s.text1Top}>{data.name}</Text>
+                  {/* <Text style={s.text2Top}>Julie Watson And John Smith</Text> */}
                 </View>
               </View>
 
@@ -104,7 +232,7 @@ const Playlist = ({navigation}) => {
                       <View style={s.item} key={i.toString()}>
                         <TouchableOpacity style={s.image}>
                           <ImageBackground
-                            source={item.artwork}
+                            source={{uri: item.artwork}}
                             resizeMode={'cover'}
                             width={undefined}
                             height={undefined}
@@ -126,31 +254,84 @@ const Playlist = ({navigation}) => {
                               <Text style={s.text2}>{item.artist}</Text>
                             </View>
                             <TouchableOpacity
-                              style={s.playbutton}
                               onPress={() => {
-                                setPlayButton(item);
+                                updateFavStatus(item);
+                                setLoadingSong(i);
+                              }}
+                              style={{
+                                position: 'absolute',
+                                right: 40,
+                                top: 23,
                               }}
                             >
-                              {item.play ? (
+                              {favLoader && loadingSong == i ? (
+                                <ActivityIndicator
+                                  size={'small'}
+                                  color={'#fff'}
+                                  style={{marginRight: 5, marginTop: 5}}
+                                />
+                              ) : (
+                                <IsSongFav id={item.id} />
+                              )}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              style={s.playbutton}
+                              onPress={() => {
+                                setLoadingSong(i);
+                                play(item, i);
+                              }}
+                            >
+                              {loadingSong === i && loader ? (
+                                <ActivityIndicator size="small" color="#fff" />
+                              ) : item.id == playObject.id &&
+                                playerState == State.Playing &&
+                                !loader ? (
                                 <Icon
                                   name={'pause-circle'}
                                   color={'#fff'}
-                                  size={28}
+                                  size={moderateScale(30, 0.1)}
                                 />
                               ) : (
                                 <Icon
                                   name={'play-circle'}
                                   color={'#fff'}
-                                  size={28}
+                                  size={moderateScale(30, 0.1)}
                                 />
                               )}
                             </TouchableOpacity>
                           </View>
                           <View style={s.slider}>
-                            <Slider thumbStyle={s.thumb} trackStyle={s.track} />
+                            <Slider
+                              value={
+                                item.id == playObject.id ? progress.position : 0
+                              }
+                              minimumValue={0}
+                              maximumValue={
+                                item.id == playObject.id ? progress.duration : 0
+                              }
+                              onSlidingComplete={async value => {
+                                await TrackPlayer.seekTo(value);
+                              }}
+                              thumbStyle={s.thumb}
+                              trackStyle={s.track}
+                            />
                             <View style={s.timer}>
-                              <Text style={s.text2}>00.00</Text>
-                              <Text style={s.text2}>03.20</Text>
+                              <Text style={s.text2}>
+                                {' '}
+                                {item.id == playObject.id
+                                  ? new Date(progress.position * 1000)
+                                      .toString()
+                                      .substring(19, 24)
+                                  : `00:00`}
+                              </Text>
+                              <Text style={s.text2}>
+                                {' '}
+                                {item.id == playObject.id
+                                  ? new Date(progress.duration * 1000)
+                                      .toString()
+                                      .substring(19, 24)
+                                  : `00:00`}
+                              </Text>
                             </View>
                           </View>
                         </View>

@@ -1,26 +1,218 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
-  Image,
+  TouchableOpacity,
+  Alert,
+  ToastAndroid,
+  ActivityIndicator,
+  Linking,
 } from 'react-native';
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
 import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-import Lock from '../../assets/images/lock.svg';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+import PhoneInput from 'react-native-phone-input';
+import axiosconfig from '../../Providers/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {setUserToken, setMusic} from '../../Redux/actions';
+
+const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const passRegex = new RegExp(
+  '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
+);
+
 const SignUp = ({navigation}) => {
+  const dispatch = useDispatch();
+  const phonenum = useRef();
+  const [fname, setFname] = useState('');
+  const [email, setEmail] = useState('');
+  const [disable, setDisable] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPass, setshowPass] = useState(true);
+  const [showPasso, setshowPasso] = useState(true);
+  const [fnameErr, setFnameErr] = useState('');
+  const [emailErr, setEmailErr] = useState('');
+  const [passErr, setPassErr] = useState('');
+  const [conPassErr, setConPassErr] = useState('');
+  const [phNumErr, setPhNumErr] = useState('');
+  const [loader, setLoader] = useState(false);
+
+  const showToast = msg => {
+    ToastAndroid.show(msg, ToastAndroid.LONG);
+  };
+
+  const validate = () => {
+    setDisable(true);
+    setLoader(true);
+    if (
+      !fname ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !phonenum.current.getValue()
+    ) {
+      setLoader(false);
+      if (!fname) {
+        setFnameErr('*');
+      } else if (!fnameErr) {
+        setFnameErr('');
+      }
+      if (!password) {
+        setPassErr('*');
+      } else if (!passErr) {
+        setPassErr('');
+      }
+      if (!confirmPassword) {
+        setConPassErr('*');
+      } else if (!conPassErr) {
+        setConPassErr('');
+      }
+      if (!email) {
+        setEmailErr('*');
+      } else if (!emailErr) {
+        setEmailErr('');
+      }
+      if (!phonenum.current.isValidNumber()) {
+        setPhNumErr('*');
+      }
+      setDisable(false);
+      showToast('Please enter details');
+      return;
+    }
+    if (conPassErr) {
+      setLoader(false);
+      setPassErr('');
+      showToast('Confirm password mismatch');
+      setDisable(false);
+      return;
+    }
+    let t = {
+      valid: phonenum.current.isValidNumber(),
+      type: phonenum.current.getNumberType(),
+      value: phonenum.current.getValue(),
+    };
+    if (t.valid) {
+      signUp();
+    } else {
+      setLoader(false);
+      setPhNumErr('*');
+      setDisable(false);
+      showToast('Phone Number Invalid!');
+      // Alert.alert('Phone Number Invalid!');
+    }
+  };
+
+  const subscribe = async () => {
+    const data = {
+      name: fname,
+      email: email,
+      password: password,
+      phone_number: phonenum.current.getValue(),
+    };
+    navigation.navigate('Subscribe', {formData: data});
+  };
+
+  const OpenUrl = async () => {
+    setLoader(true);
+    await axiosconfig
+      .post('url', data)
+      .then(res => {
+        const data = res?.data;
+        openLink(data);
+      })
+      .then(() => {
+        signUp();
+      })
+      .catch(err => {
+        setLoader(false);
+        setDisable(false);
+        showToast(err.response.message);
+        console.log(err.response.message);
+      });
+  };
+
+  const signUp = async () => {
+    const data = {
+      name: fname,
+      email: email,
+      password: password,
+      phone_number: phonenum.current.getValue(),
+    };
+    await axiosconfig
+      .post('store', data)
+      .then(res => {
+        const data = res?.data;
+        if (data.access_token) {
+          setPhNumErr('');
+          setFname('');
+          setEmail('');
+          setPassword('');
+          setConfirmPassword('');
+
+          console.log(data, 'tokenn');
+          if (data.user_status === 'New User') {
+            // showToast(data.messsage);
+            showToast('Please Subscribe to activate your account');
+            getAllMusic(data.access_token, data.stripe_link);
+            // setUrl();
+          } else {
+            showToast('Please Subscribe to reactivate your account');
+            getAllMusic(data.access_token, data.stripe_link);
+          }
+        }
+        if (data.error === 404) {
+          showToast(data.messsage);
+          setLoader(false);
+          setDisable(false);
+        }
+      })
+      .catch(err => {
+        setLoader(false);
+        setDisable(false);
+        showToast(err);
+        console.log(err, 'error');
+      });
+  };
+
+  const getAllMusic = async (token, url) => {
+    await axiosconfig
+      .get('music_all', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('All Music', JSON.stringify(res.data));
+        if (res.data) {
+          const data = {
+            name: fname,
+            email: email,
+            password: password,
+            phone_number: phonenum.current.getValue(),
+            url: url,
+            token: token,
+          };
+          setLoader(false);
+          setDisable(false);
+          AsyncStorage.setItem('music', JSON.stringify(res.data));
+          navigation.navigate('Subscribe', {formData: data});
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
-        <View style={[s.container, {width: width, height: height}]}>
+        <View style={[s.container]}>
           <View style={s.heading}>
             <Text style={s.headingText}>Create Your Account</Text>
           </View>
@@ -35,7 +227,14 @@ const SignUp = ({navigation}) => {
               placeholderTextColor={'#fff'}
               color={'#fff'}
               fontSize={moderateScale(14, 0.1)}
+              value={fname}
+              isReadOnly={disable}
+              onChangeText={text => {
+                setFname(text);
+                setFnameErr('');
+              }}
             />
+            {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
           </View>
           <View style={s.input}>
             <Input
@@ -46,23 +245,45 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Email"
               placeholderTextColor={'#fff'}
+              isReadOnly={disable}
               color={'#fff'}
               fontSize={moderateScale(14, 0.1)}
-            />
-          </View>
-          <View style={s.input}>
-            <Input
-              w={{
-                base: '75%',
-                md: '25%',
+              value={email}
+              onChangeText={text => {
+                setEmail(text);
+                let valid = emailReg.test(text);
+                if (text && !valid) {
+                  setEmailErr('Invalid Email');
+                } else {
+                  setEmailErr('');
+                }
               }}
-              variant="underlined"
-              placeholder="Contact No."
-              placeholderTextColor={'#fff'}
-              color={'#fff'}
-              fontSize={moderateScale(14, 0.1)}
             />
+            {emailErr ? <Text style={s.error}>{emailErr}</Text> : <></>}
           </View>
+          <View style={[s.input, s.inputContainerStyle]}>
+            <PhoneInput
+              initialCountry={'gb'}
+              textProps={{
+                placeholder: 'Enter Phone Number',
+                placeholderTextColor: '#fff',
+              }}
+              isReadOnly={disable}
+              autoFormat={true}
+              textStyle={s.inputStyle}
+              isValidNumber={e => console.log(e, 'here')}
+              ref={phonenum}
+              onChangePhoneNumber={phNumber => {
+                if (phonenum.current.isValidNumber()) {
+                  setPhNumErr('');
+                } else {
+                  setPhNumErr('*');
+                }
+              }}
+            />
+            {phNumErr ? <Text style={[s.error]}>{phNumErr}</Text> : null}
+          </View>
+
           <View style={s.input}>
             <Input
               w={{
@@ -72,10 +293,39 @@ const SignUp = ({navigation}) => {
               variant="underlined"
               placeholder="Create Password"
               placeholderTextColor={'#fff'}
+              isReadOnly={disable}
+              value={password}
+              onChangeText={text => {
+                setPassword(text);
+
+                let valid = passRegex.test(text);
+                if (text && !valid) {
+                  setPassErr('Weak Password');
+                } else {
+                  setPassErr('');
+                }
+              }}
+              InputRightElement={
+                password ? (
+                  <View style={s.eye}>
+                    <TouchableOpacity onPress={() => setshowPass(!showPass)}>
+                      <Icon
+                        name={showPass ? 'eye' : 'eye-off'}
+                        color="#fff"
+                        size={20}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <></>
+                )
+              }
               color={'#fff'}
               fontSize={moderateScale(14, 0.1)}
-              secureTextEntry={true}
+              secureTextEntry={showPass}
             />
+
+            {passErr ? <Text style={s.error}>{passErr}</Text> : <></>}
           </View>
           <View style={s.input}>
             <Input
@@ -84,17 +334,46 @@ const SignUp = ({navigation}) => {
                 md: '25%',
               }}
               variant="underlined"
+              isReadOnly={disable}
               placeholder="Confirm Password"
               placeholderTextColor={'#fff'}
               color={'#fff'}
               fontSize={moderateScale(14, 0.1)}
-              secureTextEntry={true}
+              secureTextEntry={showPasso}
+              InputRightElement={
+                confirmPassword ? (
+                  <View style={s.eye}>
+                    <TouchableOpacity onPress={() => setshowPasso(!showPasso)}>
+                      <Icon
+                        name={showPasso ? 'eye' : 'eye-off'}
+                        color="#fff"
+                        size={20}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <></>
+                )
+              }
+              value={confirmPassword}
+              onChangeText={text => {
+                setConfirmPassword(text);
+                setConPassErr('');
+                if (text.length > 3) {
+                  if (text !== password) {
+                    setConPassErr('Password Mismatch');
+                  } else {
+                    setConPassErr('');
+                  }
+                }
+              }}
             />
+            {conPassErr ? <Text style={s.error}>{conPassErr}</Text> : <></>}
           </View>
           <View style={s.button}>
             <Button
               size="sm"
-              onPress={() => navigation.navigate('Subscribe')}
+              onPress={() => validate()}
               variant={'solid'}
               _text={{
                 color: '#6627EC',
@@ -106,7 +385,9 @@ const SignUp = ({navigation}) => {
               alignItems={'center'}
               style={s.shadow}
             >
-              <Text style={s.btnText}>Register</Text>
+              <Text style={s.btnText}>
+                {loader ? <ActivityIndicator /> : `Register`}
+              </Text>
             </Button>
           </View>
 
@@ -120,9 +401,9 @@ const SignUp = ({navigation}) => {
               }}
             >
               <View style={{flexDirection: 'row'}}>
-                <Text style={s.forgetPass}>Already Have An Account?</Text>
+                <Text style={s.signInNow}>Already Have An Account?</Text>
                 <Text
-                  style={[s.forgetPass, {fontWeight: '700', color: '#4B79F1'}]}
+                  style={[s.signInNow, {fontWeight: '700', color: '#4B79F1'}]}
                 >
                   {' '}
                   Sign in Now!

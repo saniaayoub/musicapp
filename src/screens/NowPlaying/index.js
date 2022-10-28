@@ -1,34 +1,27 @@
 import {
   ImageBackground,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
-  Dimensions,
   Image,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   ToastAndroid,
-  Platform,
+  ActivityIndicator,
 } from 'react-native';
-
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import s from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Input, Button, Box} from 'native-base';
+import {Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-import AppContext from '../../Providers/AppContext';
 import Slider from 'react-native-slider';
 import backarrow from '../../assets/images/backarrow.png';
 import nowplay from '../../assets/images/nowplay.png';
-import Songs from '../../Components/songs';
-import moment from 'moment';
-
+import axiosconfig from '../../Providers/axios';
+import {useDispatch, useSelector} from 'react-redux';
 import TrackPlayer, {
-  Capability,
   Event,
   RepeatMode,
   State,
@@ -36,27 +29,35 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from 'react-native-track-player';
-import styles from './style';
-import Backarrowsvg from '../../assets/images/backarrow.svg';
+import {
+  playPause,
+  setPlayObject,
+  setShuffle,
+  setRepeat,
+  setFavorite,
+} from '../../Redux/actions';
+import {useIsFocused} from '@react-navigation/native';
 
-const NowPlaying = ({navigation, route}) => {
-  const context = useContext(AppContext);
+const NowPlaying = ({navigation}) => {
+  const dispatch = useDispatch();
   const progress = useProgress();
-  const state = TrackPlayer.getState();
-  const [playPause, setPlayPause] = useState('pause');
-  const [playObject, setPlayObject] = useState();
-  const [repeat, setRepeat] = useState('off');
-  const [shuffle, setShuffle] = useState(false);
-  const [shuffleArr, setShuffleArr] = useState();
+  const isFocused = useIsFocused();
+  const playerState = usePlaybackState();
+  const isPlaying = playerState === State.Playing;
+  const token = useSelector(state => state.reducer.userToken);
+  const playObject = useSelector(state => state.reducer.play_object);
+  const Songs = useSelector(state => state.reducer.music);
+  const [isFav, setIsFav] = useState();
+  const shuffle = useSelector(state => state.reducer.shuffle);
+  const repeat = useSelector(state => state.reducer.repeat);
+  const [oldShuffle, setOldShuffle] = useState(0);
+  const [newShuffle, setNewShuffle] = useState(0);
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
-    TrackPlayer.setRepeatMode(RepeatMode.Off);
-    console.log(route.params.data);
-    if (route.params.index) {
-      TrackPlayer.skip(route.params.index);
-      play('play');
-    }
-  }, []);
+    console.log(playObject, 'here');
+    setFav(playObject);
+  }, [isFocused]);
 
   const showToast = msg => {
     if(Platform.OS == 'ios'){
@@ -73,10 +74,12 @@ const NowPlaying = ({navigation, route}) => {
         event.type === Event.PlaybackTrackChanged &&
         event.nextTrack != null
       ) {
+        removeExtraTrack();
         const track = await TrackPlayer.getTrack(event.nextTrack);
         trackObject();
         const {title} = track || {};
         console.log(track, 'track');
+        setFav(track);
       } else if (event.type === Event.PlaybackQueueEnded) {
         TrackPlayer.seekTo(0);
         play('pause');
@@ -84,32 +87,54 @@ const NowPlaying = ({navigation, route}) => {
     },
   );
 
-  const next = async () => {
+  const removeExtraTrack = async () => {
+    if (oldShuffle < newShuffle) {
+      TrackPlayer.remove(0);
+      setOldShuffle(newShuffle);
+      let queue = await TrackPlayer.getQueue();
+      console.log(queue, 'queue');
+    }
+  };
+
+  const randomSong = async () => {
+    let randomIndex = Math.abs(Math.floor(Math.random() * Songs.length - 1));
+    console.log(randomIndex);
     await TrackPlayer.pause().then(res => {
-      TrackPlayer.skipToNext()
-        .then(() => {
-          TrackPlayer.play();
-          setPlayPause('play');
-          trackObject();
-        })
-        .catch(err => {
-          showToast(err.toString().substring(6, 40));
-        });
+      TrackPlayer.skip(randomIndex).then(() => {
+        TrackPlayer.play();
+        dispatch(playPause('play'));
+      });
     });
   };
 
-  const previous = async () => {
-    await TrackPlayer.pause().then(res => {
-      TrackPlayer.skipToPrevious()
+  const next = async () => {
+    if (!shuffle) {
+      await TrackPlayer.skipToNext()
         .then(() => {
-          TrackPlayer.play();
-          setPlayPause('play');
-          trackObject();
+          play('play');
         })
         .catch(err => {
           showToast(err.toString().substring(6, 40));
+          dispatch(playPause('pause'));
         });
-    });
+    } else {
+      randomSong();
+    }
+  };
+
+  const previous = async () => {
+    if (!shuffle) {
+      await TrackPlayer.skipToPrevious()
+        .then(() => {
+          play('play');
+        })
+        .catch(err => {
+          showToast(err.toString().substring(6, 40));
+          dispatch(playPause('pause'));
+        });
+    } else {
+      randomSong();
+    }
   };
 
   const play = async c => {
@@ -118,66 +143,60 @@ const NowPlaying = ({navigation, route}) => {
     } else {
       await TrackPlayer.pause();
     }
+    dispatch(playPause(c));
     trackObject();
-    setPlayPause(c);
-    // await TrackPlayer.setRepeatMode(RepeatMode.Queue);
   };
 
   const trackObject = async () => {
     let trackIndex = await TrackPlayer.getCurrentTrack();
     let trackObject = await TrackPlayer.getTrack(trackIndex);
     console.log(trackObject);
-    setPlayObject(trackObject);
+    dispatch(setPlayObject(trackObject));
+    setFav(trackObject);
   };
 
   const changeRepeatMode = () => {
     if (repeat == 'off') {
       TrackPlayer.setRepeatMode(RepeatMode.Track);
-      setRepeat('track');
+      dispatch(setRepeat('track'));
+      showToast('Repeat track mode on');
     }
     if (repeat == 'track') {
       TrackPlayer.setRepeatMode(RepeatMode.Queue);
-      setRepeat('repeat');
+      dispatch(setRepeat('repeat'));
+      showToast('Repeat mode on');
     }
     if (repeat == 'repeat') {
       TrackPlayer.setRepeatMode(RepeatMode.Off);
-      setRepeat('off');
+      dispatch(setRepeat('off'));
+      showToast('Repeat mode off');
     }
   };
 
   const shuffleSings = async () => {
     if (shuffle) {
-      setShuffle(false);
-      let trackIndex = await TrackPlayer.getCurrentTrack();
-
-      let indexArray = [];
-      let queue = await TrackPlayer.getQueue();
-      queue.forEach((item, i) => indexArray.push(i));
-      indexArray.push(trackIndex);
-      console.log(indexArray);
-      await TrackPlayer.remove(indexArray).then(async () => {
-        TrackPlayer.add(Songs);
-        let queue = await TrackPlayer.getQueue();
-        console.log(queue, 'queue');
-      });
+      showToast('Shuffle mode off');
+      dispatch(setShuffle(false));
+      setNewShuffle(oldShuffle + 1);
+      updateQueue(Songs);
     } else {
-      setShuffle(true);
-      let trackIndex = await TrackPlayer.getCurrentTrack();
-      let trackObject = await TrackPlayer.getTrack(trackIndex);
-      let filtered,
-        indexArray = [],
-        shuffled;
-      let queue = await TrackPlayer.getQueue();
-      queue.forEach((item, i) => indexArray.push(i));
-      shuffled = shuffleArray(Songs);
-      indexArray.push(trackIndex);
-      console.log(indexArray);
-      await TrackPlayer.remove(indexArray).then(async () => {
-        TrackPlayer.add(shuffled);
-        let queue = await TrackPlayer.getQueue();
-        console.log(queue, 'queue');
-      });
+      dispatch(setShuffle(true));
+      showToast('Shuffle mode on');
+
+      let temp = [...Songs];
+      let shuffled = shuffleArray(temp);
+      setNewShuffle(oldShuffle + 1);
+      updateQueue(shuffled);
     }
+  };
+
+  const updateQueue = async list => {
+    let indexArray = [];
+    let queue = await TrackPlayer.getQueue();
+    queue.forEach((item, i) => indexArray.push(i));
+    await TrackPlayer.remove(indexArray).then(async () => {
+      TrackPlayer.add(list);
+    });
   };
 
   const shuffleArray = array => {
@@ -194,6 +213,94 @@ const NowPlaying = ({navigation, route}) => {
       currentIndex -= 1;
     }
     return array;
+  };
+
+  const updateFav = item => {
+    setLoader(true);
+    const data = {
+      rating: true,
+      music_id: item.id,
+    };
+    axiosconfig
+      .post('user_rating', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        if (res.data) {
+          console.log(res?.data);
+          if (isFav) {
+            showToast('Removed From Favorites');
+          } else {
+            showToast('Added To Favorites');
+          }
+          getFavList();
+          setIsFav(!isFav);
+          setLoader(false);
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+        setLoader(false);
+      });
+  };
+
+  const addToList = item => {
+    updateFav(item);
+  };
+
+  const removeFromList = item => {
+    updateFav(item);
+  };
+
+  const setFav = async track => {
+    setLoader(true);
+    let id = track?.id;
+    console.log(id, 'fav object id');
+    await axiosconfig
+      .get(`feature_music_show/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('this', res.data);
+        if (res?.data?.favorate?.length) {
+          let data = res?.data?.favorate[0]?.rating;
+          console.log('data fav', data);
+          if (data == 'true') {
+            setIsFav(true);
+          } else {
+            setIsFav(false);
+          }
+        } else {
+          setIsFav(false);
+        }
+        setLoader(false);
+      })
+      .catch(err => {
+        console.log('error', err);
+        setLoader(false);
+      });
+  };
+
+  const getFavList = async () => {
+    await axiosconfig
+      .get('favorate_list', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('fav list', res.data);
+        if (res.data) {
+          dispatch(setFavorite(res?.data));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
   };
 
   return (
@@ -215,7 +322,7 @@ const NowPlaying = ({navigation, route}) => {
               <View style={s.section}>
                 <View style={s.imageTop}>
                   <Image
-                    source={playObject?.artwork}
+                    source={{uri: playObject?.artwork}}
                     width={'100%'}
                     height={'100%'}
                     resizeMode={'cover'}
@@ -240,13 +347,33 @@ const NowPlaying = ({navigation, route}) => {
                     <Text style={s.text1}>{playObject?.title}</Text>
                   </View>
                   <View style={s.heart}>
-                    <Button size="sm" variant={'link'} zIndex={1000}>
-                      <Icon
-                        name={'heart-o'}
+                    {loader ? (
+                      <ActivityIndicator
+                        size={'small'}
                         color={'#fff'}
-                        size={moderateScale(20, 0.1)}
+                        style={{
+                          position: 'absolute',
+                          right: 15,
+                        }}
                       />
-                    </Button>
+                    ) : (
+                      <Button
+                        onPress={() => {
+                          isFav
+                            ? removeFromList(playObject)
+                            : addToList(playObject);
+                        }}
+                        size="sm"
+                        variant={'link'}
+                        zIndex={1000}
+                      >
+                        <Icon
+                          name={isFav ? 'heart' : 'heart-o'}
+                          color={'#fff'}
+                          size={moderateScale(26, 0.1)}
+                        />
+                      </Button>
+                    )}
                   </View>
                 </View>
 
@@ -296,10 +423,12 @@ const NowPlaying = ({navigation, route}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => play(playPause == 'play' ? 'pause' : 'play')}
+                  onPress={() => {
+                    play(isPlaying ? 'pause' : 'play');
+                  }}
                 >
                   <Icon
-                    name={playPause == 'play' ? 'pause-circle' : 'play-circle'}
+                    name={isPlaying ? 'pause-circle' : 'play-circle'}
                     color={'#fff'}
                     size={moderateScale(59, 0.1)}
                   />

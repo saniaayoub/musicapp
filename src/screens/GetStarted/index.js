@@ -18,6 +18,7 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 import Title from '../../assets/images/title.svg';
 import title from '../../assets/images/title.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -35,14 +36,7 @@ const GetStarted = ({navigation}) => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 2000,
-    }).start();
-  };
-
-  const fadeOut = () => {
-    // Will change fadeAnim value to 0 in 3 seconds
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 3000,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -50,6 +44,7 @@ const GetStarted = ({navigation}) => {
     Animated.timing(transAnim, {
       toValue: 0,
       duration: 2000,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -74,7 +69,7 @@ const GetStarted = ({navigation}) => {
                 },
               ]}
             >
-              <Text style={s.topHeading}>E N E R G Y{'  '} H E A L E R</Text>
+              <Text style={s.topHeading}>ENERGY HEALER</Text>
             </Animated.View>
 
             <View style={s.heading}>
@@ -102,7 +97,11 @@ const GetStarted = ({navigation}) => {
       <View style={s.button}>
         <Button
           size="sm"
-          onPress={() => navigation.navigate('SignIn')}
+          onPress={async () => {
+            let user = 'existing';
+            await AsyncStorage.setItem('user_text', 'user');
+            navigation.navigate('SignIn');
+          }}
           variant={'solid'}
           _text={{
             color: '#6627EC',

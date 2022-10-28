@@ -8,7 +8,10 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+
     backgroundColor: 'rgba(110, 46, 149, 0.375)',
+    height: '100%',
+    // flex: 1,
   },
   heading: {
     marginTop: moderateScale(-80, 0.1),
@@ -50,7 +53,12 @@ const styles = StyleSheet.create({
   },
   bottomLink: {
     position: 'absolute',
-    bottom: Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(50, 0.1),
+    bottom:
+      Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),
+  },
+  error: {
+    color: 'red',
+    fontSize: moderateScale(12, 0.1),
   },
 });
 

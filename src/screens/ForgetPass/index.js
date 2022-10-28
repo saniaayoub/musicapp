@@ -6,8 +6,11 @@ import {
   View,
   Dimensions,
   Image,
+  Modal,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -16,15 +19,89 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 import backarrow from '../../assets/images/backarrow.png';
 import Backarrowsvg from '../../assets/images/backarrow.svg';
+import OTPModal from '../../Components/otpModal';
+import axiosconfig from '../../Providers/axios';
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 const ForgetPassword = ({navigation}) => {
+  const [email, setEmail] = useState(email);
+  const [emailValid, setEmailValid] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [otp, setOtp] = useState();
+  const [loader, setLoader] = useState(false);
+
+  const showToast = msg => {
+    ToastAndroid.show(msg, ToastAndroid.LONG);
+  };
+  const send = async () => {
+    setLoader(true);
+    if (!emailValid || !email) {
+      showToast('Please enter a valid email');
+      setLoader(false);
+      return;
+    }
+    console.log(email);
+    const data = {
+      email: email,
+    };
+    await axiosconfig
+      .post('forget', data)
+      .then(res => {
+        const data = res?.data;
+        console.log('data', data);
+        if (res) {
+          setLoader(false);
+          showToast(data.message);
+          setModalVisible(true);
+        } else {
+          console.log('here');
+          setLoader(false);
+          showToast(data.message);
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+        let error = err?.response?.data;
+        setLoader(false);
+        showToast(error.message);
+      });
+  };
+
+  const submit = async () => {
+    setLoader(true);
+    console.log(otp, email, 'email');
+    const data = {
+      token: otp,
+      email: email,
+    };
+    await axiosconfig
+      .post('otp_password', data)
+      .then(res => {
+        if (res) {
+          console.log(res.data);
+          setLoader(false);
+          setModalVisible(false);
+          navigation.navigate('PassReset', {email: email});
+        } else {
+          setLoader(false);
+          showToast(data.message);
+          console.log(data);
+        }
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        let error = err?.response?.data;
+        setLoader(false);
+        showToast(error.message);
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
-        <View style={[s.container, {width: width, height: height}]}>
+        <View style={[s.container]}>
           <View style={s.backbutton}>
             <Button
               size="sm"
@@ -39,8 +116,6 @@ const ForgetPassword = ({navigation}) => {
                 width={moderateScale(14, 0.1)}
                 height={moderateScale(14, 0.1)}
               />
-              {/* <Image source={backarrow} resizeMode="contain" /> */}
-              {/* <Icon name={'arrow-circle-left'} color={'#fff'} size={25} /> */}
             </Button>
           </View>
           <View style={s.heading}>
@@ -62,25 +137,29 @@ const ForgetPassword = ({navigation}) => {
               }
               placeholder="Email"
               placeholderTextColor={'#fff'}
+              value={email}
+              onChangeText={email => {
+                setEmail(email);
+                let valid = emailReg.test(email);
+                setEmailValid(valid);
+              }}
             />
           </View>
 
           <View style={s.button}>
             <Button
               size="sm"
-              onPress={() => navigation.goBack()}
-              variant={'solid'}
-              _text={{
-                color: '#6627EC',
-              }}
+              onPress={() => send()}
+              variant={'link'}
               backgroundColor={'white'}
               borderRadius={50}
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              style={s.shadow}
             >
-              <Text style={s.btnText}>Send</Text>
+              <Text style={s.btnText}>
+                {loader ? <ActivityIndicator /> : `Send`}
+              </Text>
             </Button>
           </View>
 
@@ -104,6 +183,18 @@ const ForgetPassword = ({navigation}) => {
               </View>
             </Button>
           </View>
+          {modalVisible ? (
+            <OTPModal
+              navigation={navigation}
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+              submit={submit}
+              setOtp={setOtp}
+              loader={loader}
+            />
+          ) : (
+            <></>
+          )}
         </View>
       </ImageBackground>
     </SafeAreaView>

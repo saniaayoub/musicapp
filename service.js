@@ -1,5 +1,5 @@
 // service.js
-import TrackPlayer, { Event, State } from 'react-native-track-player';
+import TrackPlayer, {Event, State} from 'react-native-track-player';
 
 let wasPausedByDuck = false;
 // service.js
@@ -18,6 +18,10 @@ module.exports = async function () {
 
   TrackPlayer.addEventListener(Event.RemotePrevious, () => {
     TrackPlayer.skipToPrevious();
+  });
+
+  TrackPlayer.addEventListener(Event.RemoteStop, () => {
+    TrackPlayer.stop();
   });
 
   TrackPlayer.addEventListener(
