@@ -179,55 +179,53 @@ const Favorite = ({navigation}) => {
                             <View
                               style={{
                                 flexDirection: 'row',
+                                alignItems: 'center',
                               }}
                             >
                               <TouchableOpacity
                                 onPress={() => removeFromList(item)}
                                 style={{
-                                  marginRight: moderateScale(10, 0.1),
+                                  marginRight: moderateScale(15, 0.1),
                                   marginTop: moderateScale(23, 0.1),
                                 }}
                               >
                                 <Icon name={'heart'} color={'#fff'} size={25} />
                               </TouchableOpacity>
-                              <TouchableOpacity
-                                style={s.playbutton}
-                                onPress={() => {
-                                  setLoadingSong(i);
-                                  play(item, i);
-                                }}
-                              >
-                                {loadingSong === i && loader ? (
-                                  <ActivityIndicator
-                                    size="large"
-                                    color="#fff"
-                                    style={{
-                                      position: 'absolute',
-                                      zIndex: 1000,
-                                      bottom: 1,
-                                      right: 1,
-                                      left: 1,
-                                      top: 1,
-                                      // color: 'red',
-                                    }}
-                                  />
-                                ) : null}
-                                {item.id == playObject.id &&
-                                playerState == State.Playing &&
-                                !loader ? (
-                                  <Icon
-                                    name={'pause-circle'}
-                                    color={'#fff'}
-                                    size={30}
-                                  />
-                                ) : (
-                                  <Icon
-                                    name={'play-circle'}
-                                    color={'#fff'}
-                                    size={30}
-                                  />
-                                )}
-                              </TouchableOpacity>
+                              {loadingSong === i && loader ? (
+                                <ActivityIndicator
+                                  size="small"
+                                  color="#fff"
+                                  style={{
+                                    marginTop: moderateScale(20, 0.1),
+                                    marginLeft: moderateScale(1, 0.1),
+                                    marginRight: moderateScale(5, 0.1),
+                                  }}
+                                />
+                              ) : (
+                                <TouchableOpacity
+                                  style={s.playbutton}
+                                  onPress={() => {
+                                    setLoadingSong(i);
+                                    play(item, i);
+                                  }}
+                                >
+                                  {item.id == playObject.id &&
+                                  playerState == State.Playing &&
+                                  !loader ? (
+                                    <Icon
+                                      name={'pause-circle'}
+                                      color={'#fff'}
+                                      size={30}
+                                    />
+                                  ) : (
+                                    <Icon
+                                      name={'play-circle'}
+                                      color={'#fff'}
+                                      size={30}
+                                    />
+                                  )}
+                                </TouchableOpacity>
+                              )}
                             </View>
                           </View>
 

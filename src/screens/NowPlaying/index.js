@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import s from './style';
@@ -51,6 +52,7 @@ const NowPlaying = ({navigation}) => {
   const repeat = useSelector(state => state.reducer.repeat);
   const [oldShuffle, setOldShuffle] = useState(0);
   const [newShuffle, setNewShuffle] = useState(0);
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     console.log(playObject, 'here');
@@ -212,6 +214,7 @@ const NowPlaying = ({navigation}) => {
   };
 
   const updateFav = item => {
+    setLoader(true);
     const data = {
       rating: true,
       music_id: item.id,
@@ -232,10 +235,12 @@ const NowPlaying = ({navigation}) => {
           }
           getFavList();
           setIsFav(!isFav);
+          setLoader(false);
         }
       })
       .catch(err => {
         console.log(err.response);
+        setLoader(false);
       });
   };
 
@@ -248,6 +253,7 @@ const NowPlaying = ({navigation}) => {
   };
 
   const setFav = async track => {
+    setLoader(true);
     let id = track?.id;
     console.log(id, 'fav object id');
     await axiosconfig
@@ -269,9 +275,11 @@ const NowPlaying = ({navigation}) => {
         } else {
           setIsFav(false);
         }
+        setLoader(false);
       })
       .catch(err => {
         console.log('error', err);
+        setLoader(false);
       });
   };
 
@@ -337,22 +345,33 @@ const NowPlaying = ({navigation}) => {
                     <Text style={s.text1}>{playObject?.title}</Text>
                   </View>
                   <View style={s.heart}>
-                    <Button
-                      onPress={() => {
-                        isFav
-                          ? removeFromList(playObject)
-                          : addToList(playObject);
-                      }}
-                      size="sm"
-                      variant={'link'}
-                      zIndex={1000}
-                    >
-                      <Icon
-                        name={isFav ? 'heart' : 'heart-o'}
+                    {loader ? (
+                      <ActivityIndicator
+                        size={'small'}
                         color={'#fff'}
-                        size={moderateScale(24, 0.1)}
+                        style={{
+                          position: 'absolute',
+                          right: 15,
+                        }}
                       />
-                    </Button>
+                    ) : (
+                      <Button
+                        onPress={() => {
+                          isFav
+                            ? removeFromList(playObject)
+                            : addToList(playObject);
+                        }}
+                        size="sm"
+                        variant={'link'}
+                        zIndex={1000}
+                      >
+                        <Icon
+                          name={isFav ? 'heart' : 'heart-o'}
+                          color={'#fff'}
+                          size={moderateScale(26, 0.1)}
+                        />
+                      </Button>
+                    )}
                   </View>
                 </View>
 

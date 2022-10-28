@@ -41,6 +41,7 @@ const Playlist = ({navigation, route}) => {
   const [index, setIndex] = useState();
   const [loader, setLoader] = useState(false);
   const [loadingSong, setLoadingSong] = useState(false);
+  const [favLoader, setFavLoader] = useState(false);
 
   const [queue, setQueue] = useState([]);
   const [isFav, setIsFav] = useState();
@@ -80,9 +81,12 @@ const Playlist = ({navigation, route}) => {
               dispatch(setPlayObject(queue[i]));
             })
             .finally(() => {
+              console.log(progress.position, 'position');
+              // if(progress.position==1)
               setLoader(false);
             });
         });
+        console.log(queue[i]);
         break;
       }
     }
@@ -94,6 +98,7 @@ const Playlist = ({navigation, route}) => {
   };
 
   const updateFav = (item, text) => {
+    setFavLoader(true);
     const data = {
       rating: true,
       music_id: item.id,
@@ -110,9 +115,11 @@ const Playlist = ({navigation, route}) => {
           getFavList();
           showToast(text);
         }
+        setFavLoader(false);
       })
       .catch(err => {
         console.log(err.response);
+        setFavLoader(false);
       });
   };
 
@@ -249,6 +256,7 @@ const Playlist = ({navigation, route}) => {
                             <TouchableOpacity
                               onPress={() => {
                                 updateFavStatus(item);
+                                setLoadingSong(i);
                               }}
                               style={{
                                 position: 'absolute',
@@ -256,7 +264,15 @@ const Playlist = ({navigation, route}) => {
                                 top: 23,
                               }}
                             >
-                              <IsSongFav id={item.id} />
+                              {favLoader && loadingSong == i ? (
+                                <ActivityIndicator
+                                  size={'small'}
+                                  color={'#fff'}
+                                  style={{marginRight: 5, marginTop: 5}}
+                                />
+                              ) : (
+                                <IsSongFav id={item.id} />
+                              )}
                             </TouchableOpacity>
                             <TouchableOpacity
                               style={s.playbutton}
@@ -266,23 +282,10 @@ const Playlist = ({navigation, route}) => {
                               }}
                             >
                               {loadingSong === i && loader ? (
-                                <ActivityIndicator
-                                  size="large"
-                                  color="#fff"
-                                  style={{
-                                    position: 'absolute',
-                                    zIndex: 1000,
-                                    bottom: 1,
-                                    right: 1,
-                                    left: 1,
-                                    top: 1,
-                                    // color: 'red',
-                                  }}
-                                />
-                              ) : null}
-                              {item.id == playObject.id &&
-                              playerState == State.Playing &&
-                              !loader ? (
+                                <ActivityIndicator size="small" color="#fff" />
+                              ) : item.id == playObject.id &&
+                                playerState == State.Playing &&
+                                !loader ? (
                                 <Icon
                                   name={'pause-circle'}
                                   color={'#fff'}

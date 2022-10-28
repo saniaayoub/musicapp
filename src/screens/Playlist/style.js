@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
   },
   descriptionView: {
     marginTop: moderateScale(10, 0.1),
+    marginBottom: moderateScale(5, 0.1),
   },
   text1: {
     color: '#fff',

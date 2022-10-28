@@ -80,19 +80,6 @@ const Search = ({navigation}) => {
         break;
       }
     }
-    // queue.every(async (item, i) => {
-    //   if (song.id == item.id) {
-    //     await TrackPlayer.skip(i).then(async () => {
-    //       await TrackPlayer.play().then(() => {
-    //         dispatch(setPlayObject(item));
-    //         setLoader(false);
-    //       });
-    //     });
-
-    //     return false;
-    //   }
-    //   return true;
-    // });
   };
 
   const getQueue = async () => {
@@ -214,23 +201,10 @@ const Search = ({navigation}) => {
                             }}
                           >
                             {loadingSong === i && loader ? (
-                              <ActivityIndicator
-                                size="large"
-                                color="#fff"
-                                style={{
-                                  position: 'absolute',
-                                  zIndex: 1000,
-                                  bottom: 1,
-                                  right: 1,
-                                  left: 1,
-                                  top: 1,
-                                  // color: 'red',
-                                }}
-                              />
-                            ) : null}
-                            {item.id == playObject.id &&
-                            playerState == State.Playing &&
-                            !loader ? (
+                              <ActivityIndicator size="large" color="#fff" />
+                            ) : item.id == playObject.id &&
+                              playerState == State.Playing &&
+                              !loader ? (
                               <Icon
                                 name={'pause-circle'}
                                 color={'#fff'}
