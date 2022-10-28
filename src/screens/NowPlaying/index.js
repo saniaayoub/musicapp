@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 
 import React, {useContext, useEffect, useState} from 'react';
@@ -58,7 +59,11 @@ const NowPlaying = ({navigation, route}) => {
   }, []);
 
   const showToast = msg => {
-    ToastAndroid.show(msg, ToastAndroid.SHORT);
+    if(Platform.OS == 'ios'){
+      alert(msg)
+    }else{
+      ToastAndroid.show(msg, ToastAndroid.SHORT);
+    }
   };
 
   useTrackPlayerEvents(
@@ -121,9 +126,6 @@ const NowPlaying = ({navigation, route}) => {
   const trackObject = async () => {
     let trackIndex = await TrackPlayer.getCurrentTrack();
     let trackObject = await TrackPlayer.getTrack(trackIndex);
-    // if (!trackObject) {
-    //   showToast('hi');
-    // }
     console.log(trackObject);
     setPlayObject(trackObject);
   };
@@ -182,12 +184,10 @@ const NowPlaying = ({navigation, route}) => {
     let currentIndex = array.length - 1,
       temporaryValue,
       randomIndex;
-
-    // While there remain elements to shuffle...
     while (0 !== currentIndex) {
-      // Pick a remaining element...
+     
       randomIndex = Math.floor(Math.random() * currentIndex);
-      // And swap it with the current element.
+     
       temporaryValue = array[currentIndex];
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
@@ -198,14 +198,14 @@ const NowPlaying = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ImageBackground source={nowplay} resizeMode={'cover'}>
+      {/* <ImageBackground source={nowplay} resizeMode={'cover'}>
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
           colors={['rgba(0,0,0,0)', 'rgba(194, 106, 248, 0.5)']}
         >
           <View style={[s.container]}>
-            {/******** Head *********/}
+            
             <View style={s.header}>
               <View style={s.heading}>
                 <Text style={s.headingText}>Now Playing</Text>
@@ -342,7 +342,7 @@ const NowPlaying = ({navigation, route}) => {
             <Image source={backarrow} resizeMode="contain" />
           </Button>
         </TouchableOpacity>
-      </ImageBackground>
+      </ImageBackground> */}
     </SafeAreaView>
   );
 };

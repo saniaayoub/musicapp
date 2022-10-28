@@ -26,7 +26,7 @@ const Stack = createStackNavigator();
 const HomeStack = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="UserHome" component={UserHome} />
+      {/* <Stack.Screen name="UserHome" component={UserHome} /> */}
       <Stack.Screen name="Playlist" component={Playlist} />
       <Stack.Screen name="NowPlaying" component={NowPlaying} />
     </Stack.Navigator>
@@ -84,11 +84,8 @@ const bottomTabs = () => {
           tabBarIcon: ({focused}) => (
             <View
               style={focused ? styles.focused : null}
-              // onPress={() => {
-              //   navigation.navigate('Home');
-              // }}
             >
-              {/* <Image source={heart} /> */}
+      
               <Heart
                 width={moderateScale(25, 0.1)}
                 height={moderateScale(25, 0.1)}
@@ -103,7 +100,7 @@ const bottomTabs = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>
-              {/* <Image source={search} /> */}
+             
               <SearchIcon
                 width={moderateScale(25, 0.1)}
                 height={moderateScale(25, 0.1)}
@@ -118,7 +115,6 @@ const bottomTabs = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View style={focused ? styles.focused : null}>
-              {/* <Image source={setting} /> */}
               <Setting
                 width={moderateScale(25, 0.1)}
                 height={moderateScale(25, 0.1)}
