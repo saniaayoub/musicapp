@@ -56,6 +56,7 @@ const Playlist = ({navigation, route}) => {
   };
 
   const play = async (song, i) => {
+    console.log('playy');
     if (i == index) {
       if (playerState === State.Paused) {
         console.log('play');
@@ -83,7 +84,9 @@ const Playlist = ({navigation, route}) => {
             .finally(() => {
               console.log(progress.position, 'position');
               // if(progress.position==1)
-              setLoader(false);
+              setTimeout(() => {
+                setLoader(false);
+              }, 2000);
             });
         });
         console.log(queue[i]);

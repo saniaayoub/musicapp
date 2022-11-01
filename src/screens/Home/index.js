@@ -7,18 +7,18 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {Box} from 'native-base';
+import React, { useState, useEffect } from 'react';
+import { Box } from 'native-base';
 import s from './style';
 import homeback from '../../assets/images/homeback.png';
-import TrackPlayer, {Capability, RepeatMode} from 'react-native-track-player';
+import TrackPlayer, { Capability, RepeatMode } from 'react-native-track-player';
 import axiosconfig from '../../Providers/axios';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Player from '../../Components/player';
-import {setPlayObject, setFavorite, setFeatured} from '../../Redux/actions';
-import {moderateScale} from 'react-native-size-matters';
+import { setPlayObject, setFavorite, setFeatured } from '../../Redux/actions';
+import { moderateScale } from 'react-native-size-matters';
 
-const UserHome = ({navigation}) => {
+const UserHome = ({ navigation }) => {
   const dispatch = useDispatch();
   const token = useSelector(state => state.reducer.userToken);
   const featured = useSelector(state => state.reducer.featured);
@@ -27,17 +27,17 @@ const UserHome = ({navigation}) => {
   const [loader, setLoader] = useState();
 
   useEffect(() => {
+    setupPlayer();
     getCategoryList();
     getFeatured();
-    setupPlayer();
     getFavList();
   }, []);
 
-  const setupPlayer = () => {
-    TrackPlayer.setupPlayer();
-    TrackPlayer.add(music);
-    TrackPlayer.setRepeatMode(RepeatMode.Off);
-    TrackPlayer.updateOptions({
+  const setupPlayer = async () => {
+    await TrackPlayer.setupPlayer();
+    await TrackPlayer.add(music);
+    await TrackPlayer.setRepeatMode(RepeatMode.Off);
+    await TrackPlayer.updateOptions({
       stopWithApp: true,
       stoppingAppPausesPlayback: true,
       alwaysPauseOnInterruption: true,
@@ -60,12 +60,17 @@ const UserHome = ({navigation}) => {
   };
 
   const getIndexFromQueue = async song => {
+    console.log('1');
     let queue = await TrackPlayer.getQueue();
     queue.every(async (item, i) => {
       console.log(item);
       if (song.id == item.id) {
+        console.log('2');
+
         await TrackPlayer.skip(i).then(async res => {
-          TrackPlayer.play();
+          console.log('3');
+
+          await TrackPlayer.play();
           dispatch(setPlayObject(song));
           navigation.navigate('NowPlaying');
         });
@@ -138,9 +143,17 @@ const UserHome = ({navigation}) => {
       });
   };
 
+  const getHeader = () => {
+    return null;
+  };
+
+  const getFooter = () => {
+    return null
+  };
+
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ScrollView style={{width: '100%'}}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView style={{ width: '100%' }} keyboardShouldPersistTaps='always'>
         <Box
           bg={{
             linearGradient: {
@@ -170,16 +183,16 @@ const UserHome = ({navigation}) => {
               <FlatList
                 data={categories}
                 numColumns={3}
-                renderItem={({item, index, separators}) => (
+                renderItem={({ item, index, separators }) => (
                   <>
                     <TouchableOpacity
                       style={s.item}
                       onPress={() =>
-                        navigation.navigate('Playlist', {data: item})
+                        navigation.navigate('Playlist', { data: item })
                       }
                     >
                       <ImageBackground
-                        source={{uri: item.image}}
+                        source={{ uri: item.image }}
                         resizeMode="contain"
                         width={undefined}
                         height={undefined}
@@ -191,6 +204,8 @@ const UserHome = ({navigation}) => {
                     </TouchableOpacity>
                   </>
                 )}
+                ListHeaderComponent={getHeader}
+                ListFooterComponent={getFooter}
               />
             </View>
 
@@ -200,7 +215,7 @@ const UserHome = ({navigation}) => {
                 <FlatList
                   data={featured}
                   numColumns={3}
-                  renderItem={({item, index, separators}) => (
+                  renderItem={({ item, index, separators }) => (
                     <>
                       <TouchableOpacity
                         style={s.item}
@@ -209,7 +224,7 @@ const UserHome = ({navigation}) => {
                         }}
                       >
                         <ImageBackground
-                          source={{uri: item.artwork}}
+                          source={{ uri: item.artwork }}
                           resizeMode="cover"
                           width={undefined}
                           height={undefined}
@@ -222,6 +237,8 @@ const UserHome = ({navigation}) => {
                       </TouchableOpacity>
                     </>
                   )}
+                  ListHeaderComponent={getHeader}
+                  ListFooterComponent={getFooter}
                 />
               </View>
             </View>

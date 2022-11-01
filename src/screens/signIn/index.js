@@ -118,7 +118,7 @@ const SignIn = ({navigation}) => {
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
         <View style={[s.container]}>
           <View style={{width: '100%', alignItems: 'center'}}>
-            <View style={s.heading}>
+             <View style={s.heading}>
               <Text style={s.headingText}>Sign In</Text>
             </View>
             <View style={s.input}>
@@ -166,6 +166,11 @@ const SignIn = ({navigation}) => {
                     />
                   </View>
                 }
+                // InputLeftElement={
+                //   <View style={s.iconCircle}>
+                //     <Icon name={'lock'} color="#fff" size={20} />
+                //   </View>
+                // }
                 placeholder="Password"
                 placeholderTextColor={'#fff'}
                 value={password}

@@ -305,7 +305,7 @@ const NowPlaying = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      {/* <ImageBackground source={nowplay} resizeMode={'cover'}>
+      <ImageBackground source={nowplay} resizeMode={'cover'}>
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
@@ -471,7 +471,7 @@ const NowPlaying = ({navigation}) => {
             <Image source={backarrow} resizeMode="contain" />
           </Button>
         </TouchableOpacity>
-      </ImageBackground> */}
+      </ImageBackground>
     </SafeAreaView>
   );
 };
