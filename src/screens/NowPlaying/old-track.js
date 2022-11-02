@@ -91,10 +91,10 @@ import {
   
     const setUpTrackPlayer = async i => {
       await TrackPlayer.setupPlayer()
-        .then(() => {
-          TrackPlayer.add(allSongs);
+        .then(async() => {
+          await TrackPlayer.add(allSongs);
           console.log(playbackState, 'here2');
-          TrackPlayer.setRepeatMode(RepeatMode.Off);
+          await TrackPlayer.setRepeatMode(RepeatMode.Off);
           skipToIndex(i);
         })
         .catch(e => {
@@ -105,9 +105,9 @@ import {
     const skipToIndex = async i => {
       // console.log(allSongs[index]);
       await TrackPlayer.skip(i)
-        .then(() => {
+        .then(async() => {
           console.log(i, 'skip to');
-          TrackPlayer.play();
+          await TrackPlayer.play();
           console.log(playbackState, 'here3');
         })
         .then(() => {})
@@ -184,10 +184,10 @@ import {
       const shuffledQueue = shuffleArray(queue);
       setshuffleArr(shuffledQueue);
       console.log(shuffledQueue);
-      await TrackPlayer.reset().then(() => {
-        TrackPlayer.setupPlayer();
-        TrackPlayer.add(shuffledQueue);
-        TrackPlayer.play();
+      await TrackPlayer.reset().then(async() => {
+        await TrackPlayer.setupPlayer();
+        await TrackPlayer.add(shuffledQueue);
+        await TrackPlayer.play();
         // console.log(context.songs, 'songs2');
       });
     };
@@ -197,14 +197,14 @@ import {
         let randomIndex = Math.floor(Math.random() * allSongs.length - 1);
         console.log(randomIndex);
         if (randomIndex == -1 || randomIndex == allSongs.length) {
-          await TrackPlayer.skip(0).then(() => {
-            TrackPlayer.play();
+          await TrackPlayer.skip(0).then(async() => {
+            await TrackPlayer.play();
             setIndex(0);
             setData(allSongs[0]);
           });
         } else {
-          await TrackPlayer.skip(randomIndex).then(() => {
-            TrackPlayer.play();
+          await TrackPlayer.skip(randomIndex).then(async() => {
+            await TrackPlayer.play();
             setIndex(randomIndex);
             setData(allSongs[randomIndex]);
           });
@@ -217,14 +217,14 @@ import {
           alert('Turn the repeat mode on to play next song');
         } else {
           if (i == allSongs.length) {
-            await TrackPlayer.skip(0).then(() => {
-              TrackPlayer.play();
+            await TrackPlayer.skip(0).then(async() => {
+              await TrackPlayer.play();
               setIndex(0);
               setData(allSongs[0]);
             });
           } else {
-            await TrackPlayer.skipToNext().then(() => {
-              TrackPlayer.play();
+            await TrackPlayer.skipToNext().then(async() => {
+              await TrackPlayer.play();
               setIndex(i);
               setData(allSongs[i]);
             });
@@ -238,14 +238,14 @@ import {
         let randomIndex = Math.floor(Math.random() * allSongs.length - 1);
         console.log(randomIndex);
         if (randomIndex == -1 || randomIndex == allSongs.length) {
-          await TrackPlayer.skip(0).then(() => {
-            TrackPlayer.play();
+          await TrackPlayer.skip(0).then(async() => {
+            await TrackPlayer.play();
             setIndex(0);
             setData(allSongs[0]);
           });
         } else {
-          await TrackPlayer.skip(randomIndex).then(() => {
-            TrackPlayer.play();
+          await TrackPlayer.skip(randomIndex).then(async() => {
+            await TrackPlayer.play();
             setIndex(randomIndex);
             setData(allSongs[randomIndex]);
           });
@@ -258,14 +258,14 @@ import {
           alert('Turn the repeat mode on to play next song');
         } else {
           if (i == -1) {
-            await TrackPlayer.skip(allSongs.length - 1).then(() => {
-              TrackPlayer.play();
+            await TrackPlayer.skip(allSongs.length - 1).then(async() => {
+              await TrackPlayer.play();
               setIndex(allSongs.length - 1);
               setData(allSongs[allSongs.length - 1]);
             });
           } else {
-            await TrackPlayer.skipToPrevious().then(() => {
-              TrackPlayer.play();
+            await TrackPlayer.skipToPrevious().then(async() => {
+              await TrackPlayer.play();
               setIndex(i);
               setData(allSongs[i]);
             });
@@ -285,17 +285,17 @@ import {
       }
     };
   
-    const changeRepeatMode = () => {
+    const changeRepeatMode = async() => {
       if (repeat == 'off') {
-        TrackPlayer.setRepeatMode(RepeatMode.Track);
+        await TrackPlayer.setRepeatMode(RepeatMode.Track);
         setRepeat('track');
       }
       if (repeat == 'track') {
-        TrackPlayer.setRepeatMode(RepeatMode.Queue);
+        await TrackPlayer.setRepeatMode(RepeatMode.Queue);
         setRepeat('repeat');
       }
       if (repeat == 'repeat') {
-        TrackPlayer.setRepeatMode(RepeatMode.Off);
+        await TrackPlayer.setRepeatMode(RepeatMode.Off);
         setRepeat('off');
       }
     };
@@ -417,8 +417,8 @@ import {
                         shuffleFunc();
                       } else {
                         setShuffle(false);
-                        await TrackPlayer.reset().then(() => {
-                          TrackPlayer.add(allSongs);
+                        await TrackPlayer.reset().then(async() => {
+                          await TrackPlayer.add(allSongs);
                           // TrackPlayer.play();
                         });
                       }

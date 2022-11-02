@@ -39,7 +39,7 @@ const Player = ({navigationProp}) => {
         const {title} = track || {};
         console.log(track, 'track');
       } else if (event.type === Event.PlaybackQueueEnded) {
-        TrackPlayer.seekTo(0);
+        await TrackPlayer.seekTo(0);
         play('pause');
       }
     },
@@ -57,9 +57,9 @@ const Player = ({navigationProp}) => {
 
   const next = async () => {
     await TrackPlayer.skipToNext()
-      .then(() => {
+      .then(async() => {
         trackObject();
-        TrackPlayer.play();
+        await TrackPlayer.play();
       })
       .catch(err => {
         showToast(err.toString().substring(6, 40));
@@ -69,9 +69,9 @@ const Player = ({navigationProp}) => {
 
   const previous = async () => {
     await TrackPlayer.skipToPrevious()
-      .then(() => {
+      .then(async() => {
         trackObject();
-        TrackPlayer.play();
+        await TrackPlayer.play();
       })
       .catch(err => {
         showToast(err.toString().substring(6, 40));

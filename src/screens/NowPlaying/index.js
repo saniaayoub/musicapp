@@ -81,7 +81,7 @@ const NowPlaying = ({navigation}) => {
         console.log(track, 'track');
         setFav(track);
       } else if (event.type === Event.PlaybackQueueEnded) {
-        TrackPlayer.seekTo(0);
+        await TrackPlayer.seekTo(0);
         play('pause');
       }
     },
@@ -89,7 +89,7 @@ const NowPlaying = ({navigation}) => {
 
   const removeExtraTrack = async () => {
     if (oldShuffle < newShuffle) {
-      TrackPlayer.remove(0);
+      await TrackPlayer.remove(0);
       setOldShuffle(newShuffle);
       let queue = await TrackPlayer.getQueue();
       console.log(queue, 'queue');
@@ -100,8 +100,8 @@ const NowPlaying = ({navigation}) => {
     let randomIndex = Math.abs(Math.floor(Math.random() * Songs.length - 1));
     console.log(randomIndex);
     await TrackPlayer.pause().then(res => {
-      TrackPlayer.skip(randomIndex).then(() => {
-        TrackPlayer.play();
+      TrackPlayer.skip(randomIndex).then(async() => {
+        await TrackPlayer.play();
         dispatch(playPause('play'));
       });
     });
@@ -156,19 +156,19 @@ const NowPlaying = ({navigation}) => {
     setFav(trackObject);
   };
 
-  const changeRepeatMode = () => {
+  const changeRepeatMode = async() => {
     if (repeat == 'off') {
-      TrackPlayer.setRepeatMode(RepeatMode.Track);
+      await TrackPlayer.setRepeatMode(RepeatMode.Track);
       dispatch(setRepeat('track'));
       showToast('Repeat track mode on');
     }
     if (repeat == 'track') {
-      TrackPlayer.setRepeatMode(RepeatMode.Queue);
+      await TrackPlayer.setRepeatMode(RepeatMode.Queue);
       dispatch(setRepeat('repeat'));
       showToast('Repeat mode on');
     }
     if (repeat == 'repeat') {
-      TrackPlayer.setRepeatMode(RepeatMode.Off);
+      await TrackPlayer.setRepeatMode(RepeatMode.Off);
       dispatch(setRepeat('off'));
       showToast('Repeat mode off');
     }
@@ -196,7 +196,7 @@ const NowPlaying = ({navigation}) => {
     let queue = await TrackPlayer.getQueue();
     queue.forEach((item, i) => indexArray.push(i));
     await TrackPlayer.remove(indexArray).then(async () => {
-      TrackPlayer.add(list);
+      await TrackPlayer.add(list);
     });
   };
 
