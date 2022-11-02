@@ -82,7 +82,6 @@ const Playlist = ({navigation, route}) => {
               dispatch(setPlayObject(queue[i]));
             })
             .finally(() => {
-              console.log(progress.position, 'position');
               // if(progress.position==1)
               setTimeout(() => {
                 setLoader(false);
@@ -123,6 +122,7 @@ const Playlist = ({navigation, route}) => {
       .catch(err => {
         console.log(err.response);
         setFavLoader(false);
+        showToast('Error');
       });
   };
 

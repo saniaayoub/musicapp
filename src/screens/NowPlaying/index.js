@@ -60,9 +60,9 @@ const NowPlaying = ({navigation}) => {
   }, [isFocused]);
 
   const showToast = msg => {
-    if(Platform.OS == 'ios'){
-      alert(msg)
-    }else{
+    if (Platform.OS == 'ios') {
+      alert(msg);
+    } else {
       ToastAndroid.show(msg, ToastAndroid.SHORT);
     }
   };
@@ -123,6 +123,7 @@ const NowPlaying = ({navigation}) => {
   };
 
   const previous = async () => {
+    console.log(shuffle);
     if (!shuffle) {
       await TrackPlayer.skipToPrevious()
         .then(() => {
@@ -204,9 +205,8 @@ const NowPlaying = ({navigation}) => {
       temporaryValue,
       randomIndex;
     while (0 !== currentIndex) {
-     
       randomIndex = Math.floor(Math.random() * currentIndex);
-     
+
       temporaryValue = array[currentIndex];
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
@@ -312,7 +312,6 @@ const NowPlaying = ({navigation}) => {
           colors={['rgba(0,0,0,0)', 'rgba(194, 106, 248, 0.5)']}
         >
           <View style={[s.container]}>
-            
             <View style={s.header}>
               <View style={s.heading}>
                 <Text style={s.headingText}>Now Playing</Text>

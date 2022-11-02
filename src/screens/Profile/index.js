@@ -13,6 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesion from 'react-native-vector-icons/AntDesign';
 
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
@@ -35,6 +36,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {setMusic, setUserToken} from '../../Redux/actions';
 import {useDispatch} from 'react-redux';
 import SubsModal from '../../Components/subsModal';
+import AccDeleteModal from '../../Components/accDeleteModal';
 
 const Profile = ({navigation}) => {
   const dispatch = useDispatch();
@@ -52,8 +54,11 @@ const Profile = ({navigation}) => {
   const [subsStatus, setSubsStatus] = useState();
   const [openSheet, setOpenSheet] = useState(false);
   const [subModal, setSubModal] = useState(false);
+  const [accDelModal, setAccDelModal] = useState(false);
   const [loader, setLoader] = useState(false);
   const [loader2, setLoader2] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(true);
 
   useEffect(() => {
     getData();
@@ -205,6 +210,35 @@ const Profile = ({navigation}) => {
       });
   };
 
+  const deleteAccount = async () => {
+    setLoader2(true);
+    console.log(password);
+    const body = {
+      password: password,
+    };
+    await axiosconfig
+      .post('user_delete', body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('response', res.data?.messsage);
+        const message = res?.data?.messsage;
+        // setSubsStatus('0');
+        showToast(message);
+        setPassword('');
+        logout();
+        setAccDelModal(false);
+        setLoader2(false);
+      })
+      .catch(err => {
+        setLoader2(false);
+        console.log(err.response);
+        setAccDelModal(false);
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={[s.container]}>
@@ -232,6 +266,23 @@ const Profile = ({navigation}) => {
           colors={['rgba(0, 0, 0, 1)', 'rgba(194, 106, 248, 1)']}
           style={s.header}
         >
+          <View style={s.logout}>
+            <Button
+              size="md"
+              onPress={() => setAccDelModal(true)}
+              variant={'link'}
+              zIndex={1000}
+              position={'absolute'}
+              right={moderateScale(85, 0.1)}
+              top={moderateScale(5, 0.1)}
+            >
+              <AntDesion
+                name={'deleteuser'}
+                size={moderateScale(25, 0.1)}
+                color={'#fff'}
+              />
+            </Button>
+          </View>
           {subsStatus !== '0' ? (
             <View style={s.logout}>
               <Button
@@ -493,9 +544,19 @@ const Profile = ({navigation}) => {
             setSubModal={setSubModal}
             cancelSubs={cancelSubs}
           />
-        ) : (
-          <></>
-        )}
+        ) : null}
+        {accDelModal ? (
+          <AccDeleteModal
+            loader={loader2}
+            delModal={accDelModal}
+            setDelModal={setAccDelModal}
+            deleteAccount={deleteAccount}
+            password={password}
+            setPassword={setPassword}
+            showPass={showPass}
+            setShowPass={setShowPass}
+          />
+        ) : null}
       </View>
     </SafeAreaView>
   );

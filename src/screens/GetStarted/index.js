@@ -115,7 +115,7 @@ const GetStarted = ({navigation}) => {
           alignItems={'center'}
           style={s.shadow}
         >
-          <Text style={s.btnText}>Get Start Now</Text>
+          <Text style={s.btnText}>Get Started Now</Text>
         </Button>
       </View>
     </SafeAreaView>

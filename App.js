@@ -26,7 +26,7 @@ import ForgetPassword from './src/screens/ForgetPass';
 import PassReset from './src/screens/PassReset';
 import GetStarted from './src/screens/GetStarted';
 import Subscribe from './src/screens/Subscribe';
-
+import RNBootSplash from 'react-native-bootsplash';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -35,7 +35,16 @@ const App = () => {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    getData();
+    const init = async () => {
+      // …do multiple sync or async tasks
+      getData();
+    };
+
+    init().finally(async () => {
+      setTimeout(() => {
+        RNBootSplash.hide({fade: true});
+      }, 1000);
+    });
   }, []);
 
   const config = {

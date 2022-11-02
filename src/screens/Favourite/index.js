@@ -66,7 +66,9 @@ const Favorite = ({navigation}) => {
               dispatch(setPlayObject(queue[i]));
             })
             .finally(() => {
-              setLoader(false);
+              setTimeout(() => {
+                setLoader(false);
+              }, 2000);
             });
         });
         break;

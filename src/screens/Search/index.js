@@ -74,7 +74,9 @@ const Search = ({navigation}) => {
               dispatch(setPlayObject(queue[i]));
             })
             .finally(() => {
-              setLoader(false);
+              setTimeout(() => {
+                setLoader(false);
+              }, 2000);
             });
         });
         break;
@@ -200,23 +202,25 @@ const Search = ({navigation}) => {
                               setLoadingSong(i);
                             }}
                           >
-                            {loadingSong === i && loader ? (
-                              <ActivityIndicator size="large" color="#fff" />
-                            ) : item.id == playObject.id &&
-                              playerState == State.Playing &&
-                              !loader ? (
-                              <Icon
-                                name={'pause-circle'}
-                                color={'#fff'}
-                                size={30}
-                              />
-                            ) : (
-                              <Icon
-                                name={'play-circle'}
-                                color={'#fff'}
-                                size={30}
-                              />
-                            )}
+                            <View style={{height: moderateScale(35, 0.1)}}>
+                              {loadingSong === i && loader ? (
+                                <ActivityIndicator size="small" color="#fff" />
+                              ) : item.id == playObject.id &&
+                                playerState == State.Playing &&
+                                !loader ? (
+                                <Icon
+                                  name={'pause-circle'}
+                                  color={'#fff'}
+                                  size={30}
+                                />
+                              ) : (
+                                <Icon
+                                  name={'play-circle'}
+                                  color={'#fff'}
+                                  size={30}
+                                />
+                              )}
+                            </View>
                           </TouchableOpacity>
                         </View>
 
