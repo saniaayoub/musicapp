@@ -15,7 +15,12 @@ import TrackPlayer, {Capability, RepeatMode} from 'react-native-track-player';
 import axiosconfig from '../../Providers/axios';
 import {useDispatch, useSelector} from 'react-redux';
 import Player from '../../Components/player';
-import {setPlayObject, setFavorite, setFeatured} from '../../Redux/actions';
+import {
+  setPlayObject,
+  playPause,
+  setFavorite,
+  setFeatured,
+} from '../../Redux/actions';
 import {moderateScale} from 'react-native-size-matters';
 
 const UserHome = ({navigation}) => {
@@ -53,6 +58,8 @@ const UserHome = ({navigation}) => {
         Capability.Play,
         Capability.Pause,
         Capability.SkipToNext,
+        Capability.SkipToPrevious,
+        Capability.Stop,
         Capability.SeekTo,
       ],
       progressUpdateEventInterval: 2,
@@ -61,18 +68,18 @@ const UserHome = ({navigation}) => {
 
   const getIndexFromQueue = async song => {
     let queue = await TrackPlayer.getQueue();
-    queue.every(async (item, i) => {
-      console.log(item);
-      if (song.id == item.id) {
-        await TrackPlayer.skip(i).then(async res => {
-          await TrackPlayer.play();
-          dispatch(setPlayObject(song));
-          navigation.navigate('NowPlaying');
+    for (let i = 0; i < queue.length; i++) {
+      if (queue[i].id == song.id) {
+        await TrackPlayer.skip(i).then(async () => {
+          await TrackPlayer.play().then(() => {
+            dispatch(setPlayObject(queue[i]));
+            navigation.navigate('NowPlaying');
+            dispatch(playPause('play'));
+          });
         });
-        return false;
+        break;
       }
-      return true;
-    });
+    }
   };
 
   const getCategoryList = async () => {

@@ -5,15 +5,18 @@ import {
   View,
   ActivityIndicator,
   ToastAndroid,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import s from './style';
 import background from '../../assets/images/background.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
 import {Input, FormControl, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../assets/images/lock.svg';
 import axiosconfig from '../../Providers/axios';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector, useDispatch} from 'react-redux';
 import {setUserToken, setMusic} from '../../Redux/actions';
@@ -31,6 +34,7 @@ const SignIn = ({navigation}) => {
   const [validEmail, setValidEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showPass, setshowPass] = useState(true);
   const [loader, setLoader] = useState(false);
 
   const showToast = msg => {
@@ -118,7 +122,7 @@ const SignIn = ({navigation}) => {
       <ImageBackground source={background} blurRadius={5} resizeMode={'cover'}>
         <View style={[s.container]}>
           <View style={{width: '100%', alignItems: 'center'}}>
-             <View style={s.heading}>
+            <View style={s.heading}>
               <Text style={s.headingText}>Sign In</Text>
             </View>
             <View style={s.input}>
@@ -166,11 +170,6 @@ const SignIn = ({navigation}) => {
                     />
                   </View>
                 }
-                // InputLeftElement={
-                //   <View style={s.iconCircle}>
-                //     <Icon name={'lock'} color="#fff" size={20} />
-                //   </View>
-                // }
                 placeholder="Password"
                 placeholderTextColor={'#fff'}
                 value={password}
@@ -178,10 +177,25 @@ const SignIn = ({navigation}) => {
                   setPassword(password);
                   setPasswordError('');
                 }}
+                InputRightElement={
+                  password ? (
+                    <View style={s.eye}>
+                      <TouchableOpacity onPress={() => setshowPass(!showPass)}>
+                        <Feather
+                          name={showPass ? 'eye' : 'eye-off'}
+                          color="#fff"
+                          size={20}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <></>
+                  )
+                }
                 errorMessage={passwordError}
                 color={'#fff'}
                 fontSize={moderateScale(14, 0.1)}
-                secureTextEntry={true}
+                secureTextEntry={showPass}
               />
               {passwordError ? (
                 <Text style={s.error}>{passwordError}</Text>

@@ -35,6 +35,7 @@ const Playlist = ({navigation, route}) => {
   const favorite = useSelector(state => state.reducer.favorite);
   const progress = useProgress();
   const playerState = usePlaybackState();
+
   const dispatch = useDispatch();
   const {data} = route.params;
   const [playList, setPlayList] = useState(data?.musics);
@@ -88,7 +89,6 @@ const Playlist = ({navigation, route}) => {
               }, 2000);
             });
         });
-        console.log(queue[i]);
         break;
       }
     }
@@ -112,17 +112,17 @@ const Playlist = ({navigation, route}) => {
         },
       })
       .then(res => {
-        if (res.data) {
-          console.log(res?.data);
-          getFavList();
-          showToast(text);
-        }
-        setFavLoader(false);
+        // console.log(res?.data);
+        getFavList();
       })
       .catch(err => {
         console.log(err.response);
         setFavLoader(false);
         showToast('Error');
+      })
+      .finally(() => {
+        setFavLoader(false);
+        showToast(text);
       });
   };
 
@@ -168,6 +168,7 @@ const Playlist = ({navigation, route}) => {
   };
 
   const IsSongFav = ({id}) => {
+    console.log('herrreeeee');
     const isFound = favorite.some(element => {
       if (element.id === id) {
         return true;
@@ -232,7 +233,7 @@ const Playlist = ({navigation, route}) => {
                 {playList.map((item, i) => {
                   return (
                     <>
-                      <View style={s.item} key={i.toString()}>
+                      <View style={s.item} key={i}>
                         <TouchableOpacity style={s.image}>
                           <ImageBackground
                             source={{uri: item.artwork}}

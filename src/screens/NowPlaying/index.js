@@ -56,6 +56,7 @@ const NowPlaying = ({navigation}) => {
 
   useEffect(() => {
     console.log(playObject, 'here');
+
     setFav(playObject);
   }, [isFocused]);
 
@@ -100,9 +101,9 @@ const NowPlaying = ({navigation}) => {
     let randomIndex = Math.abs(Math.floor(Math.random() * Songs.length - 1));
     console.log(randomIndex);
     await TrackPlayer.pause().then(res => {
-      TrackPlayer.skip(randomIndex).then(async() => {
+      TrackPlayer.skip(randomIndex).then(async () => {
         await TrackPlayer.play();
-        dispatch(playPause('play'));
+        // dispatch(playPause('play'));
       });
     });
   };
@@ -110,12 +111,12 @@ const NowPlaying = ({navigation}) => {
   const next = async () => {
     if (!shuffle) {
       await TrackPlayer.skipToNext()
-        .then(() => {
+        .then(async () => {
           play('play');
         })
         .catch(err => {
           showToast(err.toString().substring(6, 40));
-          dispatch(playPause('pause'));
+          // dispatch(playPause('pause'));
         });
     } else {
       randomSong();
@@ -126,12 +127,12 @@ const NowPlaying = ({navigation}) => {
     console.log(shuffle);
     if (!shuffle) {
       await TrackPlayer.skipToPrevious()
-        .then(() => {
+        .then(async () => {
           play('play');
         })
         .catch(err => {
           showToast(err.toString().substring(6, 40));
-          dispatch(playPause('pause'));
+          // dispatch(playPause('pause'));
         });
     } else {
       randomSong();
@@ -144,7 +145,7 @@ const NowPlaying = ({navigation}) => {
     } else {
       await TrackPlayer.pause();
     }
-    dispatch(playPause(c));
+    // dispatch(playPause(c));
     trackObject();
   };
 
@@ -153,10 +154,9 @@ const NowPlaying = ({navigation}) => {
     let trackObject = await TrackPlayer.getTrack(trackIndex);
     console.log(trackObject);
     dispatch(setPlayObject(trackObject));
-    setFav(trackObject);
   };
 
-  const changeRepeatMode = async() => {
+  const changeRepeatMode = async () => {
     if (repeat == 'off') {
       await TrackPlayer.setRepeatMode(RepeatMode.Track);
       dispatch(setRepeat('track'));
@@ -174,7 +174,7 @@ const NowPlaying = ({navigation}) => {
     }
   };
 
-  const shuffleSings = async () => {
+  const shuffleSongs = async () => {
     if (shuffle) {
       showToast('Shuffle mode off');
       dispatch(setShuffle(false));
@@ -183,7 +183,6 @@ const NowPlaying = ({navigation}) => {
     } else {
       dispatch(setShuffle(true));
       showToast('Shuffle mode on');
-
       let temp = [...Songs];
       let shuffled = shuffleArray(temp);
       setNewShuffle(oldShuffle + 1);
@@ -199,6 +198,21 @@ const NowPlaying = ({navigation}) => {
       await TrackPlayer.add(list);
     });
   };
+  //   const updateQueue = async list => {
+  //   console.log(list, 'shuffffled');
+  //   let indexArray = [];
+  //   let queue = await TrackPlayer.getQueue();
+  //   console.log(queue, 'peaches');
+  //   let track = await TrackPlayer.getCurrentTrack();
+  //   console.log(track, '122');
+  //   queue.forEach((item, i) => indexArray.push({id: item.id, url: item.url}));
+  //   let temp = indexArray.filter((item, i) => i !== track);
+  //   console.log(temp, 'indexes');
+  //   await TrackPlayer.remove(temp);
+  // await TrackPlayer.remove(indexArray).then(async () => {
+  //   await TrackPlayer.add(list);
+  // });
+  // };
 
   const shuffleArray = array => {
     let currentIndex = array.length - 1,
@@ -403,7 +417,7 @@ const NowPlaying = ({navigation}) => {
               <View style={[s.centerView1, s.row]}>
                 <TouchableOpacity
                   onPress={() => {
-                    shuffleSings();
+                    shuffleSongs();
                   }}
                 >
                   <MaterialIcon
@@ -420,18 +434,30 @@ const NowPlaying = ({navigation}) => {
                     size={moderateScale(30, 0.1)}
                   />
                 </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    play(isPlaying ? 'pause' : 'play');
+                <View
+                  style={{
+                    height: moderateScale(70, 0.1),
+                    width: moderateScale(70, 0.1),
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-                  <Icon
-                    name={isPlaying ? 'pause-circle' : 'play-circle'}
-                    color={'#fff'}
-                    size={moderateScale(59, 0.1)}
-                  />
-                </TouchableOpacity>
+                  {!isPlaying && playerState != State.Paused ? (
+                    <ActivityIndicator size={'large'} color={'#fff'} />
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => {
+                        play(isPlaying ? 'pause' : 'play');
+                      }}
+                    >
+                      <Icon
+                        name={isPlaying ? 'pause-circle' : 'play-circle'}
+                        color={'#fff'}
+                        size={moderateScale(60, 0.1)}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
 
                 <TouchableOpacity onPress={() => next()}>
                   <Icon
