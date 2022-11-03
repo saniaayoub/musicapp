@@ -30,8 +30,9 @@ const Favorite = ({navigation}) => {
   const favorite = useSelector(state => state.reducer.favorite);
   const progress = useProgress();
   const playerState = usePlaybackState();
+  const isPlaying = playerState === State.Playing;
   const [index, setIndex] = useState();
-  const [loader, setLoader] = useState(false);
+  // const [loader, setLoader] = useState(false);
   const [loadingSong, setLoadingSong] = useState(false);
   const [queue, setQueue] = useState([]);
   const playObject = useSelector(state => state.reducer.play_object);
@@ -56,7 +57,7 @@ const Favorite = ({navigation}) => {
   };
 
   const getIndexFromQueue = async song => {
-    setLoader(true);
+    // setLoader(true);
     for (let i = 0; i < queue.length; i++) {
       if (queue[i].id == song.id) {
         console.log(index);
@@ -65,11 +66,14 @@ const Favorite = ({navigation}) => {
             .then(() => {
               dispatch(setPlayObject(queue[i]));
             })
-            .finally(() => {
-              setTimeout(() => {
-                setLoader(false);
-              }, 2000);
+            .catch(err => {
+              console.log(err);
             });
+          // .finally(() => {
+          //   setTimeout(() => {
+          //     setLoader(false);
+          //   }, 2000);
+          // });
         });
         break;
       }
@@ -182,18 +186,44 @@ const Favorite = ({navigation}) => {
                               style={{
                                 flexDirection: 'row',
                                 alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: moderateScale(65, 0.1),
                               }}
                             >
                               <TouchableOpacity
                                 onPress={() => removeFromList(item)}
-                                style={{
-                                  marginRight: moderateScale(15, 0.1),
-                                  marginTop: moderateScale(23, 0.1),
-                                }}
                               >
                                 <Icon name={'heart'} color={'#fff'} size={25} />
                               </TouchableOpacity>
-                              {loadingSong === i && loader ? (
+
+                              {loadingSong === i &&
+                              !isPlaying &&
+                              playerState !== State.Paused ? (
+                                <View style={{}}>
+                                  <ActivityIndicator
+                                    size="small"
+                                    color="#fff"
+                                  />
+                                </View>
+                              ) : (
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    setLoadingSong(i);
+                                    play(item, i);
+                                  }}
+                                >
+                                  <Icon
+                                    name={
+                                      item.id == playObject.id && isPlaying
+                                        ? 'pause-circle'
+                                        : 'play-circle'
+                                    }
+                                    color={'#fff'}
+                                    size={moderateScale(30, 0.1)}
+                                  />
+                                </TouchableOpacity>
+                              )}
+                              {/* {loadingSong === i && loader ? (
                                 <ActivityIndicator
                                   size="small"
                                   color="#fff"
@@ -227,7 +257,7 @@ const Favorite = ({navigation}) => {
                                     />
                                   )}
                                 </TouchableOpacity>
-                              )}
+                              )} */}
                             </View>
                           </View>
 

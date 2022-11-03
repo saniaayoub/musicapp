@@ -30,17 +30,18 @@ import TrackPlayer, {
 import axiosconfig from '../../Providers/axios';
 const Playlist = ({navigation, route}) => {
   const isFocused = useIsFocused();
+  const playerState = usePlaybackState();
+  const isPlaying = playerState === State.Playing;
   const token = useSelector(state => state.reducer.userToken);
   let playObject = useSelector(state => state.reducer.play_object);
   const favorite = useSelector(state => state.reducer.favorite);
   const progress = useProgress();
-  const playerState = usePlaybackState();
 
   const dispatch = useDispatch();
   const {data} = route.params;
   const [playList, setPlayList] = useState(data?.musics);
   const [index, setIndex] = useState();
-  const [loader, setLoader] = useState(false);
+  // const [loader, setLoader] = useState(false);
   const [loadingSong, setLoadingSong] = useState(false);
   const [favLoader, setFavLoader] = useState(false);
 
@@ -67,7 +68,7 @@ const Playlist = ({navigation, route}) => {
         await TrackPlayer.pause();
       }
     } else {
-      setLoader(true);
+      // setLoader(true);
       console.log('new');
       getIndexFromQueue(song);
       setIndex(i);
@@ -82,12 +83,14 @@ const Playlist = ({navigation, route}) => {
             .then(() => {
               dispatch(setPlayObject(queue[i]));
             })
-            .finally(() => {
-              // if(progress.position==1)
-              setTimeout(() => {
-                setLoader(false);
-              }, 2000);
+            .catch(err => {
+              console.log(err);
             });
+          // .finally(() => {
+          //   setTimeout(() => {
+          //     setLoader(false);
+          //   }, 2000);
+          // });
         });
         break;
       }
@@ -277,14 +280,46 @@ const Playlist = ({navigation, route}) => {
                                 <IsSongFav id={item.id} />
                               )}
                             </TouchableOpacity>
-                            <TouchableOpacity
+
+                            {loadingSong === i &&
+                            !isPlaying &&
+                            playerState !== State.Paused ? (
+                              <View
+                                style={{
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  marginTop: moderateScale(20, 0.1),
+                                }}
+                              >
+                                <ActivityIndicator size="small" color="#fff" />
+                              </View>
+                            ) : (
+                              <TouchableOpacity
+                                style={s.playbutton}
+                                onPress={() => {
+                                  setLoadingSong(i);
+                                  play(item, i);
+                                }}
+                              >
+                                <Icon
+                                  name={
+                                    item.id == playObject.id && isPlaying
+                                      ? 'pause-circle'
+                                      : 'play-circle'
+                                  }
+                                  color={'#fff'}
+                                  size={moderateScale(30, 0.1)}
+                                />
+                              </TouchableOpacity>
+                            )}
+                            {/* <TouchableOpacity
                               style={s.playbutton}
                               onPress={() => {
                                 setLoadingSong(i);
                                 play(item, i);
                               }}
                             >
-                              {loadingSong === i && loader ? (
+                            {loadingSong === i && loader ? (
                                 <ActivityIndicator size="small" color="#fff" />
                               ) : item.id == playObject.id &&
                                 playerState == State.Playing &&
@@ -301,7 +336,7 @@ const Playlist = ({navigation, route}) => {
                                   size={moderateScale(30, 0.1)}
                                 />
                               )}
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                           </View>
                           <View style={s.slider}>
                             <Slider

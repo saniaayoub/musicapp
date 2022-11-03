@@ -28,6 +28,7 @@ const Search = ({navigation}) => {
   const isFocused = useIsFocused();
   const progress = useProgress();
   const playerState = usePlaybackState();
+  const isPlaying = playerState === State.Playing;
   const dispatch = useDispatch();
   const Songs = useSelector(state => state.reducer.music);
   let playObject = useSelector(state => state.reducer.play_object);
@@ -35,7 +36,7 @@ const Search = ({navigation}) => {
   const [songList, setSongList] = useState([]);
   const [index, setIndex] = useState();
   const [queue, setQueue] = useState([]);
-  const [loader, setLoader] = useState(false);
+  // const [loader, setLoader] = useState(false);
   const [loadingSong, setLoadingSong] = useState(false);
 
   useEffect(() => {
@@ -73,11 +74,14 @@ const Search = ({navigation}) => {
             .then(() => {
               dispatch(setPlayObject(queue[i]));
             })
-            .finally(() => {
-              setTimeout(() => {
-                setLoader(false);
-              }, 2000);
+            .catch(err => {
+              console.log(err);
             });
+          // .finally(() => {
+          //   setTimeout(() => {
+          //     setLoader(false);
+          //   }, 2000);
+          // });
         });
         break;
       }
@@ -203,6 +207,30 @@ const Search = ({navigation}) => {
                             }}
                           >
                             <View style={{height: moderateScale(35, 0.1)}}>
+                              {loadingSong === i &&
+                              !isPlaying &&
+                              playerState !== State.Paused ? (
+                                <ActivityIndicator size="small" color="#fff" />
+                              ) : (
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    setLoadingSong(i);
+                                    play(item, i);
+                                  }}
+                                >
+                                  <Icon
+                                    name={
+                                      item.id == playObject.id && isPlaying
+                                        ? 'pause-circle'
+                                        : 'play-circle'
+                                    }
+                                    color={'#fff'}
+                                    size={moderateScale(30, 0.1)}
+                                  />
+                                </TouchableOpacity>
+                              )}
+                            </View>
+                            {/* <View style={{height: moderateScale(35, 0.1)}}>
                               {loadingSong === i && loader ? (
                                 <ActivityIndicator size="small" color="#fff" />
                               ) : item.id == playObject.id &&
@@ -220,7 +248,7 @@ const Search = ({navigation}) => {
                                   size={30}
                                 />
                               )}
-                            </View>
+                            </View> */}
                           </TouchableOpacity>
                         </View>
 

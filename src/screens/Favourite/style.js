@@ -60,7 +60,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   playbutton: {
-    marginTop: moderateScale(20, 0.1),
+    // marginTop: moderateScale(20, 0.1),
+    // marginLeft: moderateScale(20, 0.1),
   },
   track: {
     backgroundColor: '#fff',
