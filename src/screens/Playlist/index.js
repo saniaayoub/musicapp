@@ -168,7 +168,6 @@ const Playlist = ({navigation, route}) => {
   };
 
   const IsSongFav = ({id}) => {
-    console.log('herrreeeee');
     const isFound = favorite.some(element => {
       if (element.id === id) {
         return true;
