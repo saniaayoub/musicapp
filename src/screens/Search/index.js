@@ -59,7 +59,6 @@ const Search = ({navigation}) => {
         await TrackPlayer.pause();
       }
     } else {
-      setLoader(true);
       getIndexFromQueue(song);
       setIndex(i);
     }

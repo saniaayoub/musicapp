@@ -236,6 +236,8 @@ const Profile = ({navigation}) => {
         setLoader2(false);
         console.log(err.response);
         setAccDelModal(false);
+        setPassword('');
+        showToast(err.response?.data?.messsage);
       });
   };
 
