@@ -8,6 +8,7 @@ import {
   ToastAndroid,
   ActivityIndicator,
   Linking,
+  ScrollView,
 } from 'react-native';
 import React, {useRef, useState} from 'react';
 import s from './style';
@@ -216,181 +217,193 @@ const SignUp = ({navigation}) => {
           <View style={s.heading}>
             <Text style={s.headingText}>Create Your Account</Text>
           </View>
-          <View style={s.input}>
-            <Input
-              w={{
-                base: '75%',
-                md: '25%',
-              }}
-              variant="underlined"
-              placeholder="Full Name"
-              placeholderTextColor={'#fff'}
-              color={'#fff'}
-              fontSize={moderateScale(14, 0.1)}
-              value={fname}
-              isReadOnly={disable}
-              onChangeText={text => {
-                setFname(text);
-                setFnameErr('');
-              }}
-            />
-            {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
-          </View>
-          <View style={s.input}>
-            <Input
-              w={{
-                base: '75%',
-                md: '25%',
-              }}
-              variant="underlined"
-              placeholder="Email"
-              placeholderTextColor={'#fff'}
-              isReadOnly={disable}
-              color={'#fff'}
-              fontSize={moderateScale(14, 0.1)}
-              value={email}
-              onChangeText={text => {
-                setEmail(text);
-                let valid = emailReg.test(text);
-                if (text && !valid) {
-                  setEmailErr('Invalid Email');
-                } else {
-                  setEmailErr('');
-                }
-              }}
-            />
-            {emailErr ? <Text style={s.error}>{emailErr}</Text> : <></>}
-          </View>
-          <View style={[s.input, s.inputContainerStyle]}>
-            <PhoneInput
-              initialCountry={'gb'}
-              textProps={{
-                placeholder: 'Enter Phone Number',
-                placeholderTextColor: '#fff',
-              }}
-              isReadOnly={disable}
-              autoFormat={true}
-              textStyle={s.inputStyle}
-              isValidNumber={e => console.log(e, 'here')}
-              ref={phonenum}
-              onChangePhoneNumber={phNumber => {
-                if (phonenum.current.isValidNumber()) {
-                  setPhNumErr('');
-                } else {
-                  setPhNumErr('*');
-                }
-              }}
-            />
-            {phNumErr ? <Text style={[s.error]}>{phNumErr}</Text> : null}
-          </View>
-
-          <View style={s.input}>
-            <Input
-              w={{
-                base: '75%',
-                md: '25%',
-              }}
-              variant="underlined"
-              placeholder="Create Password"
-              placeholderTextColor={'#fff'}
-              isReadOnly={disable}
-              value={password}
-              onChangeText={text => {
-                setPassword(text);
-
-                let valid = passRegex.test(text);
-                if (text && !valid) {
-                  setPassErr('Weak Password');
-                } else {
-                  setPassErr('');
-                }
-              }}
-              InputRightElement={
-                password ? (
-                  <View style={s.eye}>
-                    <TouchableOpacity onPress={() => setshowPass(!showPass)}>
-                      <Icon
-                        name={showPass ? 'eye' : 'eye-off'}
-                        color="#fff"
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <></>
-                )
-              }
-              color={'#fff'}
-              fontSize={moderateScale(14, 0.1)}
-              secureTextEntry={showPass}
-            />
-
-            {passErr ? <Text style={s.error}>{passErr}</Text> : <></>}
-          </View>
-          <View style={s.input}>
-            <Input
-              w={{
-                base: '75%',
-                md: '25%',
-              }}
-              variant="underlined"
-              isReadOnly={disable}
-              placeholder="Confirm Password"
-              placeholderTextColor={'#fff'}
-              color={'#fff'}
-              fontSize={moderateScale(14, 0.1)}
-              secureTextEntry={showPasso}
-              InputRightElement={
-                confirmPassword ? (
-                  <View style={s.eye}>
-                    <TouchableOpacity onPress={() => setshowPasso(!showPasso)}>
-                      <Icon
-                        name={showPasso ? 'eye' : 'eye-off'}
-                        color="#fff"
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <></>
-                )
-              }
-              value={confirmPassword}
-              onChangeText={text => {
-                setConfirmPassword(text);
-                setConPassErr('');
-                if (text.length > 3) {
-                  if (text !== password) {
-                    setConPassErr('Password Mismatch');
+          <ScrollView
+            style={{
+              width: '100%',
+            }}
+            contentContainerStyle={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingBottom: moderateScale(20, 0.1),
+            }}
+          >
+            <View style={s.input}>
+              <Input
+                w={{
+                  base: '75%',
+                  md: '25%',
+                }}
+                variant="underlined"
+                placeholder="Full Name"
+                placeholderTextColor={'#fff'}
+                color={'#fff'}
+                fontSize={moderateScale(14, 0.1)}
+                value={fname}
+                isReadOnly={disable}
+                onChangeText={text => {
+                  setFname(text);
+                  setFnameErr('');
+                }}
+              />
+              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
+            </View>
+            <View style={s.input}>
+              <Input
+                w={{
+                  base: '75%',
+                  md: '25%',
+                }}
+                variant="underlined"
+                placeholder="Email"
+                placeholderTextColor={'#fff'}
+                isReadOnly={disable}
+                color={'#fff'}
+                fontSize={moderateScale(14, 0.1)}
+                value={email}
+                onChangeText={text => {
+                  setEmail(text);
+                  let valid = emailReg.test(text);
+                  if (text && !valid) {
+                    setEmailErr('Invalid Email');
                   } else {
-                    setConPassErr('');
+                    setEmailErr('');
                   }
-                }
-              }}
-            />
-            {conPassErr ? <Text style={s.error}>{conPassErr}</Text> : <></>}
-          </View>
-          <View style={s.button}>
-            <Button
-              size="sm"
-              onPress={() => validate()}
-              variant={'solid'}
-              _text={{
-                color: '#6627EC',
-              }}
-              backgroundColor={'white'}
-              borderRadius={50}
-              w={moderateScale(140, 0.1)}
-              h={moderateScale(35, 0.1)}
-              alignItems={'center'}
-              style={s.shadow}
-            >
-              <Text style={s.btnText}>
-                {loader ? <ActivityIndicator /> : `Register`}
-              </Text>
-            </Button>
-          </View>
+                }}
+              />
+              {emailErr ? <Text style={s.error}>{emailErr}</Text> : <></>}
+            </View>
+            <View style={[s.input, s.inputContainerStyle]}>
+              <PhoneInput
+                initialCountry={'gb'}
+                textProps={{
+                  placeholder: 'Enter Phone Number',
+                  placeholderTextColor: '#fff',
+                }}
+                isReadOnly={disable}
+                autoFormat={true}
+                textStyle={s.inputStyle}
+                isValidNumber={e => console.log(e, 'here')}
+                ref={phonenum}
+                onChangePhoneNumber={phNumber => {
+                  if (phonenum.current.isValidNumber()) {
+                    setPhNumErr('');
+                  } else {
+                    setPhNumErr('*');
+                  }
+                }}
+              />
+              {phNumErr ? <Text style={[s.error]}>{phNumErr}</Text> : null}
+            </View>
 
+            <View style={s.input}>
+              <Input
+                w={{
+                  base: '75%',
+                  md: '25%',
+                }}
+                variant="underlined"
+                placeholder="Create Password"
+                placeholderTextColor={'#fff'}
+                isReadOnly={disable}
+                value={password}
+                onChangeText={text => {
+                  setPassword(text);
+
+                  let valid = passRegex.test(text);
+                  if (text && !valid) {
+                    setPassErr('Weak Password');
+                  } else {
+                    setPassErr('');
+                  }
+                }}
+                InputRightElement={
+                  password ? (
+                    <View style={s.eye}>
+                      <TouchableOpacity onPress={() => setshowPass(!showPass)}>
+                        <Icon
+                          name={showPass ? 'eye' : 'eye-off'}
+                          color="#fff"
+                          size={20}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <></>
+                  )
+                }
+                color={'#fff'}
+                fontSize={moderateScale(14, 0.1)}
+                secureTextEntry={showPass}
+              />
+
+              {passErr ? <Text style={s.error}>{passErr}</Text> : <></>}
+            </View>
+            <View style={s.input}>
+              <Input
+                w={{
+                  base: '75%',
+                  md: '25%',
+                }}
+                variant="underlined"
+                isReadOnly={disable}
+                placeholder="Confirm Password"
+                placeholderTextColor={'#fff'}
+                color={'#fff'}
+                fontSize={moderateScale(14, 0.1)}
+                secureTextEntry={showPasso}
+                InputRightElement={
+                  confirmPassword ? (
+                    <View style={s.eye}>
+                      <TouchableOpacity
+                        onPress={() => setshowPasso(!showPasso)}
+                      >
+                        <Icon
+                          name={showPasso ? 'eye' : 'eye-off'}
+                          color="#fff"
+                          size={20}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <></>
+                  )
+                }
+                value={confirmPassword}
+                onChangeText={text => {
+                  setConfirmPassword(text);
+                  setConPassErr('');
+                  if (text.length > 3) {
+                    if (text !== password) {
+                      setConPassErr('Password Mismatch');
+                    } else {
+                      setConPassErr('');
+                    }
+                  }
+                }}
+              />
+              {conPassErr ? <Text style={s.error}>{conPassErr}</Text> : <></>}
+            </View>
+            <View style={s.button}>
+              <Button
+                size="sm"
+                onPress={() => validate()}
+                variant={'solid'}
+                _text={{
+                  color: '#6627EC',
+                }}
+                backgroundColor={'white'}
+                borderRadius={50}
+                w={moderateScale(140, 0.1)}
+                h={moderateScale(35, 0.1)}
+                alignItems={'center'}
+                style={s.shadow}
+              >
+                <Text style={s.btnText}>
+                  {loader ? <ActivityIndicator /> : `Register`}
+                </Text>
+              </Button>
+            </View>
+          </ScrollView>
           <View style={s.bottomLink}>
             <Button
               size="sm"

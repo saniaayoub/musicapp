@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   playbutton: {
-    marginTop: moderateScale(20, 0.1),
+    // marginTop: moderateScale(20, 0.1),
   },
   track: {
     backgroundColor: '#fff',
@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
   descriptionView: {
     marginTop: moderateScale(10, 0.1),
     marginBottom: moderateScale(5, 0.1),
+    width: moderateScale(130, 0.1),
   },
   text1: {
     color: '#fff',

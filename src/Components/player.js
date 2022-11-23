@@ -57,7 +57,7 @@ const Player = ({navigationProp}) => {
 
   const next = async () => {
     await TrackPlayer.skipToNext()
-      .then(async() => {
+      .then(async () => {
         trackObject();
         await TrackPlayer.play();
       })
@@ -69,7 +69,7 @@ const Player = ({navigationProp}) => {
 
   const previous = async () => {
     await TrackPlayer.skipToPrevious()
-      .then(async() => {
+      .then(async () => {
         trackObject();
         await TrackPlayer.play();
       })
@@ -104,7 +104,12 @@ const Player = ({navigationProp}) => {
         <View style={[styles.music, styles.center, styles.row]}>
           <Icon name={'music'} color={'#fff'} size={moderateScale(35, 0.1)} />
 
-          <View style={[styles.description]}>
+          <View
+            style={[
+              styles.description,
+              {width: moderateScale(180, 0.1), height: moderateScale(50, 0.1)},
+            ]}
+          >
             <Text style={[styles.text, styles.title]}>{playObject?.title}</Text>
             <Text style={[styles.text, styles.artist]}>
               {playObject?.artist}
@@ -112,9 +117,7 @@ const Player = ({navigationProp}) => {
           </View>
         </View>
 
-        <View
-          style={[styles.row, styles.center, styles.buttons, styles.marginR]}
-        >
+        <View style={[styles.row, styles.center, styles.buttons]}>
           <TouchableOpacity onPress={() => previous()}>
             <Icon
               name="backward"
@@ -168,12 +171,14 @@ const styles = StyleSheet.create({
   },
   music: {
     paddingVertical: moderateScale(10, 0.1),
-    paddingHorizontal: moderateScale(15, 0.1),
+    paddingHorizontal: moderateScale(10, 0.1),
   },
   row: {
     flexDirection: 'row',
   },
   description: {
+    alignItems: 'flex-start',
+    justifyContent: 'center',
     paddingLeft: moderateScale(15, 0.1),
   },
   text: {
@@ -181,7 +186,7 @@ const styles = StyleSheet.create({
     fontFamily: Poppins,
   },
   title: {
-    fontSize: moderateScale(14, 0.1),
+    fontSize: moderateScale(12, 0.1),
   },
   artist: {
     fontSize: moderateScale(11, 0.1),

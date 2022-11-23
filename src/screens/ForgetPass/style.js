@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   heading: {
-    marginTop: moderateScale(-90, 0.1),
+    marginTop: moderateScale(150, 0.1),
     marginBottom: moderateScale(60, 0.1),
   },
   backbutton: {
@@ -77,11 +77,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bottomLink: {
-    position: 'absolute',
-    bottom:
-      Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 36,
+    // position: 'absolute',
+    // bottom:
+    //   Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),
   },
- 
 });
 
 export default styles;

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import s from './style';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import playlistback from '../../assets/images/playlistback.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -58,7 +59,7 @@ const Playlist = ({navigation, route}) => {
   };
 
   const play = async (song, i) => {
-    console.log('playy');
+    console.log(i, index);
     if (i == index) {
       if (playerState === State.Paused) {
         console.log('play');
@@ -209,110 +210,271 @@ const Playlist = ({navigation, route}) => {
                 <Text style={s.headingText}>Playlist</Text>
               </View>
             </View>
-            <ScrollView
-            // style={{
-            //   marginBottom:
-            //     Platform.OS == 'ios'
-            //       ? moderateScale(330, 0.1)
-            //       : moderateScale(80, 0.1),
-            // }}
-            >
-              <View style={s.section}>
-                <View style={s.imageTop}>
-                  <Image
-                    source={{uri: data.image}}
-                    resizeMode={'cover'}
-                    style={{width: '100%', height: '100%'}}
-                  />
-                </View>
-                <View style={s.descriptionViewTop}>
-                  <Text style={s.text1Top}>{data.name}</Text>
-                  {/* <Text style={s.text2Top}>Julie Watson And John Smith</Text> */}
-                </View>
-              </View>
 
-              <View style={s.collection}>
-                {playList.map((item, i) => {
-                  return (
-                    <>
-                      <View style={s.item} key={i}>
-                        <TouchableOpacity style={s.image}>
-                          <ImageBackground
-                            source={{uri: item.artwork}}
-                            resizeMode={'cover'}
-                            width={undefined}
-                            height={undefined}
+            <View style={s.section}>
+              <View style={s.imageTop}>
+                <Image
+                  source={{uri: data.image}}
+                  resizeMode={'cover'}
+                  style={{width: '100%', height: '100%'}}
+                />
+              </View>
+              <View style={s.descriptionViewTop}>
+                <Text style={s.text1Top}>{data.name}</Text>
+                {/* <Text style={s.text2Top}>Julie Watson And John Smith</Text> */}
+              </View>
+            </View>
+
+            <View style={s.collection}>
+              {/* Latest On Top 'Last in Array' */}
+              {playList.length !== 0 ? (
+                <View style={s.item}>
+                  <TouchableOpacity style={s.image}>
+                    <ImageBackground
+                      source={{uri: playList[playList.length - 1].artwork}}
+                      resizeMode={'cover'}
+                      width={undefined}
+                      height={undefined}
+                    >
+                      <View style={s.innerView}>
+                        <View
+                          style={{
+                            position: 'absolute',
+                            left: 5,
+                            top: 5,
+                          }}
+                        >
+                          <AntDesign
+                            name={'pushpin'}
+                            color={'#fff'}
+                            size={moderateScale(15, 0.1)}
+                          />
+                        </View>
+                      </View>
+                    </ImageBackground>
+                  </TouchableOpacity>
+                  <View style={s.centerView}>
+                    <View style={s.row}>
+                      <View style={s.descriptionView}>
+                        <Text style={s.text1}>
+                          {playList[playList.length - 1].title}
+                        </Text>
+                        <Text style={s.text2}>
+                          {playList[playList.length - 1].artist}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          width: moderateScale(65, 0.1),
+                        }}
+                      >
+                        {favLoader && loadingSong == playList.length - 1 ? (
+                          <ActivityIndicator
+                            size={'small'}
+                            color={'#fff'}
+
+                            // style={{marginRight: 5, marginTop: 5}}
+                          />
+                        ) : (
+                          <TouchableOpacity
+                            onPress={() => {
+                              updateFavStatus(playList[playList.length - 1]);
+                              setLoadingSong(playList.length - 1);
+                            }}
+                            // style={{
+                            //   position: 'absolute',
+                            //   right: 40,
+                            //   top: 30,
+                            // }}
                           >
-                            <View style={s.innerView}>
-                              {/* <Image
+                            <IsSongFav id={playList[playList.length - 1].id} />
+                          </TouchableOpacity>
+                        )}
+                        {loadingSong == playList.length - 1 &&
+                        !isPlaying &&
+                        playerState !== State.Paused ? (
+                          <View
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              // marginTop: moderateScale(20, 0.1),
+                            }}
+                          >
+                            <ActivityIndicator size="small" color="#fff" />
+                          </View>
+                        ) : (
+                          <TouchableOpacity
+                            style={s.playbutton}
+                            onPress={() => {
+                              let i = playList.length - 1;
+                              let item = playList[playList.length - 1];
+                              console.log(i, 'ui', item);
+                              setLoadingSong(i);
+                              play(item, i);
+                            }}
+                          >
+                            <Icon
+                              name={
+                                playList[playList.length - 1].id ==
+                                  playObject.id && isPlaying
+                                  ? 'pause-circle'
+                                  : 'play-circle'
+                              }
+                              color={'#fff'}
+                              size={moderateScale(30, 0.1)}
+                            />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    </View>
+                    <View style={s.slider}>
+                      <Slider
+                        value={
+                          playList[playList.length - 1].id == playObject.id
+                            ? progress.position
+                            : 0
+                        }
+                        minimumValue={0}
+                        maximumValue={
+                          playList[playList.length - 1].id == playObject.id
+                            ? progress.duration
+                            : 0
+                        }
+                        onSlidingComplete={async value => {
+                          await TrackPlayer.seekTo(value);
+                        }}
+                        thumbStyle={s.thumb}
+                        trackStyle={s.track}
+                      />
+                      <View style={s.timer}>
+                        <Text style={s.text2}>
+                          {' '}
+                          {playList[playList.length - 1].id == playObject.id
+                            ? new Date(progress.position * 1000)
+                                .toString()
+                                .substring(19, 24)
+                            : `00:00`}
+                        </Text>
+                        <Text style={s.text2}>
+                          {' '}
+                          {playList[playList.length - 1].id == playObject.id
+                            ? new Date(progress.duration * 1000)
+                                .toString()
+                                .substring(19, 24)
+                            : `00:00`}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              ) : null}
+              <ScrollView
+                style={{marginBottom: moderateScale(150, 0.1)}}
+                contentContainerStyle={{flexGrow: 1}}
+              >
+                {playList.map((item, i) => {
+                  if (i !== playList.length - 1) {
+                    return (
+                      <>
+                        <View style={s.item} key={i}>
+                          <TouchableOpacity style={s.image}>
+                            <ImageBackground
+                              source={{uri: item.artwork}}
+                              resizeMode={'cover'}
+                              width={undefined}
+                              height={undefined}
+                            >
+                              <View style={s.innerView}>
+                                {/* <Image
                                 source={play}
                                 width={undefined}
                                 height={undefined}
                                 resizeMode={'cover'}
                               /> */}
-                            </View>
-                          </ImageBackground>
-                        </TouchableOpacity>
-                        <View style={s.centerView}>
-                          <View style={s.row}>
-                            <View style={s.descriptionView}>
-                              <Text style={s.text1}>{item.title}</Text>
-                              <Text style={s.text2}>{item.artist}</Text>
-                            </View>
-                            <TouchableOpacity
-                              onPress={() => {
-                                updateFavStatus(item);
-                                setLoadingSong(i);
-                              }}
-                              style={{
-                                position: 'absolute',
-                                right: 40,
-                                top: 23,
-                              }}
-                            >
-                              {favLoader && loadingSong == i ? (
-                                <ActivityIndicator
-                                  size={'small'}
-                                  color={'#fff'}
-                                  style={{marginRight: 5, marginTop: 5}}
-                                />
-                              ) : (
-                                <IsSongFav id={item.id} />
-                              )}
-                            </TouchableOpacity>
-
-                            {loadingSong === i &&
-                            !isPlaying &&
-                            playerState !== State.Paused ? (
+                              </View>
+                            </ImageBackground>
+                          </TouchableOpacity>
+                          <View style={s.centerView}>
+                            <View style={s.row}>
+                              <View style={s.descriptionView}>
+                                <Text style={s.text1}>{item.title}</Text>
+                                <Text style={s.text2}>{item.artist}</Text>
+                              </View>
                               <View
                                 style={{
-                                  justifyContent: 'center',
+                                  flexDirection: 'row',
+                                  justifyContent: 'space-between',
                                   alignItems: 'center',
-                                  marginTop: moderateScale(20, 0.1),
+                                  width: moderateScale(65, 0.1),
                                 }}
                               >
-                                <ActivityIndicator size="small" color="#fff" />
+                                {favLoader && loadingSong == i ? (
+                                  <ActivityIndicator
+                                    size={'small'}
+                                    color={'#fff'}
+                                    // style={{
+                                    //   position: 'absolute',
+                                    //   right: 40,
+                                    //   top: 23,
+                                    // }}
+                                    // style={{marginRight: 5, marginTop: 5}}
+                                  />
+                                ) : (
+                                  <TouchableOpacity
+                                    onPress={() => {
+                                      updateFavStatus(item);
+                                      setLoadingSong(i);
+                                    }}
+                                    // style={{
+                                    //   position: 'absolute',
+                                    //   right: 40,
+                                    //   top: 23,
+                                    // }}
+                                  >
+                                    <IsSongFav id={item.id} />
+                                  </TouchableOpacity>
+                                )}
+
+                                {loadingSong === i &&
+                                !isPlaying &&
+                                playerState !== State.Paused ? (
+                                  <View
+                                    style={{
+                                      justifyContent: 'center',
+                                      alignItems: 'center',
+                                      // marginTop: moderateScale(20, 0.1),
+                                    }}
+                                  >
+                                    <ActivityIndicator
+                                      size="small"
+                                      color="#fff"
+                                    />
+                                  </View>
+                                ) : (
+                                  <TouchableOpacity
+                                    style={s.playbutton}
+                                    onPress={() => {
+                                      setLoadingSong(i);
+                                      play(item, i);
+                                    }}
+                                  >
+                                    <Icon
+                                      name={
+                                        item.id == playObject.id && isPlaying
+                                          ? 'pause-circle'
+                                          : 'play-circle'
+                                      }
+                                      color={'#fff'}
+                                      size={moderateScale(30, 0.1)}
+                                    />
+                                  </TouchableOpacity>
+                                )}
                               </View>
-                            ) : (
-                              <TouchableOpacity
-                                style={s.playbutton}
-                                onPress={() => {
-                                  setLoadingSong(i);
-                                  play(item, i);
-                                }}
-                              >
-                                <Icon
-                                  name={
-                                    item.id == playObject.id && isPlaying
-                                      ? 'pause-circle'
-                                      : 'play-circle'
-                                  }
-                                  color={'#fff'}
-                                  size={moderateScale(30, 0.1)}
-                                />
-                              </TouchableOpacity>
-                            )}
-                            {/* <TouchableOpacity
+                              {/* <TouchableOpacity
                               style={s.playbutton}
                               onPress={() => {
                                 setLoadingSong(i);
@@ -337,48 +499,53 @@ const Playlist = ({navigation, route}) => {
                                 />
                               )}
                             </TouchableOpacity> */}
-                          </View>
-                          <View style={s.slider}>
-                            <Slider
-                              value={
-                                item.id == playObject.id ? progress.position : 0
-                              }
-                              minimumValue={0}
-                              maximumValue={
-                                item.id == playObject.id ? progress.duration : 0
-                              }
-                              onSlidingComplete={async value => {
-                                await TrackPlayer.seekTo(value);
-                              }}
-                              thumbStyle={s.thumb}
-                              trackStyle={s.track}
-                            />
-                            <View style={s.timer}>
-                              <Text style={s.text2}>
-                                {' '}
-                                {item.id == playObject.id
-                                  ? new Date(progress.position * 1000)
-                                      .toString()
-                                      .substring(19, 24)
-                                  : `00:00`}
-                              </Text>
-                              <Text style={s.text2}>
-                                {' '}
-                                {item.id == playObject.id
-                                  ? new Date(progress.duration * 1000)
-                                      .toString()
-                                      .substring(19, 24)
-                                  : `00:00`}
-                              </Text>
+                            </View>
+                            <View style={s.slider}>
+                              <Slider
+                                value={
+                                  item.id == playObject.id
+                                    ? progress.position
+                                    : 0
+                                }
+                                minimumValue={0}
+                                maximumValue={
+                                  item.id == playObject.id
+                                    ? progress.duration
+                                    : 0
+                                }
+                                onSlidingComplete={async value => {
+                                  await TrackPlayer.seekTo(value);
+                                }}
+                                thumbStyle={s.thumb}
+                                trackStyle={s.track}
+                              />
+                              <View style={s.timer}>
+                                <Text style={s.text2}>
+                                  {' '}
+                                  {item.id == playObject.id
+                                    ? new Date(progress.position * 1000)
+                                        .toString()
+                                        .substring(19, 24)
+                                    : `00:00`}
+                                </Text>
+                                <Text style={s.text2}>
+                                  {' '}
+                                  {item.id == playObject.id
+                                    ? new Date(progress.duration * 1000)
+                                        .toString()
+                                        .substring(19, 24)
+                                    : `00:00`}
+                                </Text>
+                              </View>
                             </View>
                           </View>
                         </View>
-                      </View>
-                    </>
-                  );
+                      </>
+                    );
+                  }
                 })}
-              </View>
-            </ScrollView>
+              </ScrollView>
+            </View>
           </View>
         </LinearGradient>
         <TouchableOpacity style={s.backbutton}>

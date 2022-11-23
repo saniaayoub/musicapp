@@ -178,7 +178,15 @@ const Favorite = ({navigation}) => {
                         </TouchableOpacity>
                         <View style={s.centerView}>
                           <View style={s.row}>
-                            <View style={s.descriptionView}>
+                            <View
+                              style={[
+                                s.descriptionView,
+                                {
+                                  width: moderateScale(140, 0.1),
+                                  height: moderateScale(50, 0.1),
+                                },
+                              ]}
+                            >
                               <Text style={s.text1}>{item.title}</Text>
                               <Text style={s.text2}>{item.artist}</Text>
                             </View>

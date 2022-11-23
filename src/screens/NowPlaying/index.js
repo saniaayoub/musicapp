@@ -56,7 +56,6 @@ const NowPlaying = ({navigation}) => {
 
   useEffect(() => {
     console.log(playObject, 'here');
-
     setFav(playObject);
   }, [isFocused]);
 
@@ -355,7 +354,7 @@ const NowPlaying = ({navigation}) => {
               </View>
 
               <View style={s.centerView}>
-                <View style={s.row}>
+                <View style={[s.row, {height: moderateScale(70, 0.1)}]}>
                   <View style={s.descriptionView}>
                     <Text style={s.text1}>{playObject?.title}</Text>
                   </View>

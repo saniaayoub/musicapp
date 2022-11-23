@@ -34,7 +34,7 @@ const UserHome = ({navigation}) => {
   useEffect(() => {
     setupPlayer();
     getCategoryList();
-    getFeatured();
+    // getFeatured();
     getFavList();
   }, []);
 
@@ -104,27 +104,27 @@ const UserHome = ({navigation}) => {
       });
   };
 
-  const getFeatured = async () => {
-    setLoader(true);
-    await axiosconfig
-      .get('feature_music', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(res => {
-        console.log('featured', JSON.stringify(res.data));
-        setLoader(false);
-        if (res.data) {
-          console.log(res?.data);
-          dispatch(setFeatured(res?.data));
-        }
-      })
-      .catch(err => {
-        setLoader(false);
-        console.log(err.response);
-      });
-  };
+  // const getFeatured = async () => {
+  //   setLoader(true);
+  //   await axiosconfig
+  //     .get('feature_music', {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then(res => {
+  //       console.log('featured', JSON.stringify(res.data));
+  //       setLoader(false);
+  //       if (res.data) {
+  //         console.log(res?.data);
+  //         dispatch(setFeatured(res?.data));
+  //       }
+  //     })
+  //     .catch(err => {
+  //       setLoader(false);
+  //       console.log(err.response);
+  //     });
+  // };
 
   const getFavList = async () => {
     await axiosconfig
@@ -164,7 +164,7 @@ const UserHome = ({navigation}) => {
               end: [0, 1],
             },
           }}
-          minH={moderateScale(1000, 0.1)}
+          minH={780}
         >
           <View style={s.container}>
             {/******** Head *********/}
@@ -211,7 +211,7 @@ const UserHome = ({navigation}) => {
               />
             </View>
 
-            <View style={s.FeaturedSection}>
+            {/* <View style={s.FeaturedSection}>
               <Text style={s.headingText2}>Featured Music</Text>
               <View style={s.collection2}>
                 <FlatList
@@ -243,7 +243,7 @@ const UserHome = ({navigation}) => {
                   ListFooterComponent={getFooter}
                 />
               </View>
-            </View>
+            </View> */}
           </View>
         </Box>
       </ScrollView>

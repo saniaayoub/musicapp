@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     // flex: 1,
   },
   heading: {
-    marginTop: moderateScale(-80, 0.1),
+    marginTop: moderateScale(80, 0.1),
     marginBottom: moderateScale(60, 0.1),
   },
   headingText: {
@@ -52,9 +52,12 @@ const styles = StyleSheet.create({
     fontFamily: Poppins,
   },
   bottomLink: {
-    position: 'absolute',
-    bottom:
-      Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 36,
+    // position: 'absolute',
+    // bottom:
+    //   Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),
   },
   error: {
     color: 'red',

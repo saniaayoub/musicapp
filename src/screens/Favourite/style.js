@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   text1: {
     color: '#fff',
-    fontSize: moderateScale(12, 0.1),
+    fontSize: moderateScale(11, 0.1),
     fontFamily: InterMedium,
     paddingVertical: moderateScale(5, 0.1),
     // fontWeight: '700',

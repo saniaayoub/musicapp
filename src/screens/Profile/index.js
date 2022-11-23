@@ -14,7 +14,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesion from 'react-native-vector-icons/AntDesign';
-
 import {Input, Button, Box} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import s from './style';
@@ -155,7 +154,6 @@ const Profile = ({navigation}) => {
       .catch(err => {
         console.log(err);
         setLoader(false);
-        console.log(err);
         showToast(err.message);
       });
   };

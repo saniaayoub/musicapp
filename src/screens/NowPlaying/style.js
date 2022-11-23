@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(15, 0.1),
   },
   text1: {
+    width: moderateScale(250, 0.1),
     color: '#fff',
     fontSize: moderateScale(14, 0.1),
     fontFamily: InterMedium,
