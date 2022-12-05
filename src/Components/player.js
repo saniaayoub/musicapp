@@ -4,13 +4,16 @@ import {
   View,
   TouchableOpacity,
   ToastAndroid,
+  Image,
 } from 'react-native';
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import {moderateScale} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {playPause, setPlayObject} from '../Redux/actions';
+
 import TrackPlayer, {
   Event,
   RepeatMode,
@@ -102,7 +105,20 @@ const Player = ({navigationProp}) => {
         style={[styles.gradient, styles.row]}
       >
         <View style={[styles.music, styles.center, styles.row]}>
-          <Icon name={'music'} color={'#fff'} size={moderateScale(35, 0.1)} />
+          {/* <MaterialCommunityIcons
+            name={'yin-yang'}
+            color={'#fff'}
+            solid
+            size={moderateScale(40, 0.1)}
+          /> */}
+
+          <Image
+            source={require('../assets/images/yying.png')}
+            resizeMode={'cover'}
+            height={40}
+            width={40}
+            style={{width: 35, height: 35}}
+          />
 
           <View
             style={[
@@ -171,7 +187,7 @@ const styles = StyleSheet.create({
   },
   music: {
     paddingVertical: moderateScale(10, 0.1),
-    paddingHorizontal: moderateScale(10, 0.1),
+    paddingLeft: moderateScale(10, 0.1),
   },
   row: {
     flexDirection: 'row',
@@ -179,7 +195,7 @@ const styles = StyleSheet.create({
   description: {
     alignItems: 'flex-start',
     justifyContent: 'center',
-    paddingLeft: moderateScale(15, 0.1),
+    paddingLeft: moderateScale(10, 0.1),
   },
   text: {
     color: '#fff',

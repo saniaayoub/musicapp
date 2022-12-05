@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   heading: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: moderateScale(40, 0.1),
+    // marginTop: moderateScale(40, 0.1),
     marginBottom: moderateScale(20, 0.1),
   },
   headingText: {
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   profileSection: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: moderateScale(5, 0.1),
+    // marginTop: moderateScale(5, 0.1),
     // backgroundColor: 'red',
   },
   profileimg: {

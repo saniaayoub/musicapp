@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   descriptionViewTop: {
     marginTop: moderateScale(10, 0.1),
-    // justifyContent: 'flex-start',
+
     marginLeft: moderateScale(40, 0.1),
   },
   text1Top: {
@@ -53,13 +53,11 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(16, 0.1),
     fontFamily: InterMedium,
     paddingVertical: moderateScale(5, 0.1),
-    // fontWeight: '700',
   },
   text2Top: {
     color: '#fff',
     fontSize: moderateScale(10, 0.1),
     fontFamily: InterRegular,
-    // fontWeight: '700',
   },
   btnText: {
     fontFamily: Poppins,
@@ -67,7 +65,6 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(12, 0.1),
     color: '#C26AF8',
   },
-
   collection: {
     width: '100%',
     minHeight: moderateScale(500, 0.1),

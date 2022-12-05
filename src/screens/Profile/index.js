@@ -266,59 +266,66 @@ const Profile = ({navigation}) => {
           colors={['rgba(0, 0, 0, 1)', 'rgba(194, 106, 248, 1)']}
           style={s.header}
         >
-          <View style={s.logout}>
-            <Button
-              size="md"
-              onPress={() => setAccDelModal(true)}
-              variant={'link'}
-              zIndex={1000}
-              position={'absolute'}
-              right={moderateScale(85, 0.1)}
-              top={moderateScale(5, 0.1)}
-            >
-              <AntDesion
-                name={'deleteuser'}
-                size={moderateScale(25, 0.1)}
-                color={'#fff'}
-              />
-            </Button>
-          </View>
-          {subsStatus !== '0' ? (
+          <View
+            style={{
+              marginTop: moderateScale(5, 0.1),
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+            }}
+          >
             <View style={s.logout}>
               <Button
                 size="md"
-                onPress={() => setSubModal(true)}
+                onPress={() => setAccDelModal(true)}
                 variant={'link'}
                 zIndex={1000}
-                position={'absolute'}
-                right={moderateScale(45, 0.1)}
-                top={moderateScale(5, 0.1)}
+                // position={'absolute'}
+                // right={moderateScale(85, 0.1)}
+                // top={moderateScale(5, 0.1)}
               >
-                <MaterialCommunityIcons
-                  name={'tag-remove-outline'}
+                <AntDesion
+                  name={'deleteuser'}
                   size={moderateScale(25, 0.1)}
                   color={'#fff'}
                 />
               </Button>
             </View>
-          ) : null}
-
-          <View style={s.logout}>
-            <Button
-              size="md"
-              onPress={() => logout()}
-              variant={'link'}
-              zIndex={1000}
-              position={'absolute'}
-              right={moderateScale(5, 0.1)}
-              top={moderateScale(5, 0.1)}
-            >
-              <MaterialIcon
-                name={'logout'}
-                size={moderateScale(25, 0.1)}
-                color={'#fff'}
-              />
-            </Button>
+            {subsStatus !== '0' ? (
+              <View style={s.logout}>
+                <Button
+                  size="md"
+                  onPress={() => setSubModal(true)}
+                  variant={'link'}
+                  zIndex={1000}
+                  // position={'absolute'}
+                  // right={moderateScale(45, 0.1)}
+                  // top={moderateScale(5, 0.1)}
+                >
+                  <MaterialCommunityIcons
+                    name={'tag-remove-outline'}
+                    size={moderateScale(25, 0.1)}
+                    color={'#fff'}
+                  />
+                </Button>
+              </View>
+            ) : null}
+            <View style={s.logout}>
+              <Button
+                size="md"
+                onPress={() => logout()}
+                variant={'link'}
+                zIndex={1000}
+                // position={'absolute'}
+                // right={moderateScale(5, 0.1)}
+                // top={moderateScale(5, 0.1)}
+              >
+                <MaterialIcon
+                  name={'logout'}
+                  size={moderateScale(25, 0.1)}
+                  color={'#fff'}
+                />
+              </Button>
+            </View>
           </View>
           <View style={s.heading}>
             <Text style={s.headingText}>Profile</Text>
@@ -403,6 +410,7 @@ const Profile = ({navigation}) => {
                 InputRightElement={
                   <TouchableOpacity
                     style={s.icon}
+                    disabled
                     onPress={() => {
                       setTitle('Email');
                       setField(email);

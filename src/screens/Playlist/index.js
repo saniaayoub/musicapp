@@ -371,7 +371,19 @@ const Playlist = ({navigation, route}) => {
                     </View>
                   </View>
                 </View>
-              ) : null}
+              ) : (
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: moderateScale(20, 0.1),
+                  }}
+                >
+                  <Text style={s.text1Top}>
+                    This Playlist is currently empty{' '}
+                  </Text>
+                </View>
+              )}
               <ScrollView
                 style={{marginBottom: moderateScale(150, 0.1)}}
                 contentContainerStyle={{flexGrow: 1}}

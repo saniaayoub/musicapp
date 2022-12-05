@@ -19,6 +19,7 @@ import Songs from './src/Components/songs';
 import {useSelector, useDispatch} from 'react-redux';
 import {setUserToken, setMusic} from './src/Redux/actions';
 import axiosconfig from './src/Providers/axios';
+
 // Auth Screens
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
@@ -27,6 +28,7 @@ import PassReset from './src/screens/PassReset';
 import GetStarted from './src/screens/GetStarted';
 import Subscribe from './src/screens/Subscribe';
 import RNBootSplash from 'react-native-bootsplash';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -53,19 +55,33 @@ const App = () => {
     },
   };
 
+  const getAllMusic = async token => {
+    await axiosconfig
+      .get('music_all', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('All Music', JSON.stringify(res.data));
+        if (res.data) {
+          dispatch(setMusic(res?.data));
+          dispatch(setUserToken(token));
+        }
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  };
+
   const getData = async () => {
     let user = await AsyncStorage.getItem('user_text');
     setUser(user);
     console.log(user, 'existing');
     const value = await AsyncStorage.getItem('@auth_token');
-    const music = await AsyncStorage.getItem('music');
-    const json = JSON.parse(music);
-    console.log(json, 'all music');
     console.log(value, 'token');
     {
-      value
-        ? (dispatch(setMusic(json)), dispatch(setUserToken(value)))
-        : dispatch(setUserToken(null));
+      value ? getAllMusic(value) : dispatch(setUserToken(null));
     }
   };
 
