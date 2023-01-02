@@ -1754,7 +1754,7 @@
     "@react-types/combobox" "^3.5.4"
     "@react-types/shared" "^3.15.0"
 
-"@react-aria/focus@^3.2.3", "@react-aria/focus@3.2.3":
+"@react-aria/focus@^3.2.3":
   "integrity" "sha512-+OWmJMivrq3f8ApWihH1KJYqYj3rZV34YJORacBohcAsF1Qd1V1/P+w3dMkf24kV0wqAiWePCF1FwgnrL/rYzQ=="
   "resolved" "https://registry.npmjs.org/@react-aria/focus/-/focus-3.2.3.tgz"
   "version" "3.2.3"
@@ -2988,18 +2988,6 @@
   "resolved" "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.11.tgz"
   "version" "7.0.11"
 
-"@types/lodash.has@^4.5.6":
-  "integrity" "sha512-nfbAzRbsZBdzSAkL9iiLy4SQk89uuFcXBFwZ7pf6oZhBgPvNys8BY5Twp/w8XvZKGt1o6cAa85wX4QhqO3uQ7A=="
-  "resolved" "https://registry.npmjs.org/@types/lodash.has/-/lodash.has-4.5.7.tgz"
-  "version" "4.5.7"
-  dependencies:
-    "@types/lodash" "*"
-
-"@types/lodash@*":
-  "integrity" "sha512-eHcVlLXP0c2FlMPm56ITode2AgLMSa6aJ05JTTbYbI+7EMkCEE5qk2E41d5g2lCVTqRe0GnnRFurmlCsDODrPw=="
-  "resolved" "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.186.tgz"
-  "version" "4.14.186"
-
 "@types/node@*":
   "integrity" "sha512-uGwPWlE0Hj972KkHtCDVwZ8O39GmyjfMane1Z3GUBGGnkZ2USDq7SxLpVIiIHpweY9DS0QTDH0Nw7RNBsAAZ5A=="
   "resolved" "https://registry.npmjs.org/@types/node/-/node-18.11.8.tgz"
@@ -3055,11 +3043,6 @@
   "integrity" "sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw=="
   "resolved" "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.1.tgz"
   "version" "2.0.1"
-
-"@types/use-subscription@^1.0.0":
-  "integrity" "sha512-0WWZ5GUDKMXUY/1zy4Ur5/zsC0s/B+JjXfHdkvx6JgDNZzZV5eW+KKhDqsTGyqX56uh99gwGwbsKbVwkcVIKQA=="
-  "resolved" "https://registry.npmjs.org/@types/use-subscription/-/use-subscription-1.0.0.tgz"
-  "version" "1.0.0"
 
 "@types/use-sync-external-store@^0.0.3":
   "integrity" "sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA=="
@@ -7119,13 +7102,11 @@
     "snapdragon" "^0.8.1"
     "to-regex" "^3.0.1"
 
-"native-base@^3.4.9":
-  "integrity" "sha512-0KP509NVGQTGWte9IFMs5vi3IPDG5O+oJsun/51wJeQMVYWVqmTFPcuB1vOd70yalWlPXb+HM4muoJbFYQlS6A=="
-  "resolved" "https://registry.npmjs.org/native-base/-/native-base-3.4.20.tgz"
-  "version" "3.4.20"
+"native-base@^3.4.25":
+  "integrity" "sha512-MOeqNji6eAXge9uWsKgfyna8kakdoQuynxoDlVgzTrXXT0o/UrmIUAz+xNPM7rjYHd0MM+UdohPilV1/Z5pB9Q=="
+  "resolved" "https://registry.npmjs.org/native-base/-/native-base-3.4.25.tgz"
+  "version" "3.4.25"
   dependencies:
-    "@react-aria/focus" "3.2.3"
-    "@react-aria/utils" "^3.6.0"
     "@react-aria/visually-hidden" "^3.2.1"
     "@react-native-aria/button" "^0.2.4"
     "@react-native-aria/checkbox" "^0.2.2"
@@ -7145,8 +7126,6 @@
     "@react-stately/slider" "3.0.1"
     "@react-stately/tabs" "3.0.0-alpha.1"
     "@react-stately/toggle" "3.2.1"
-    "@types/lodash.has" "^4.5.6"
-    "@types/use-subscription" "^1.0.0"
     "inline-style-prefixer" "^6.0.1"
     "lodash.clonedeep" "^4.5.0"
     "lodash.get" "^4.4.2"
@@ -7159,7 +7138,6 @@
     "lodash.omit" "^4.5.0"
     "lodash.omitby" "^4.6.0"
     "lodash.pick" "^4.4.0"
-    "react-native-keyboard-aware-scroll-view" "^0.9.5"
     "stable-hash" "^0.0.2"
     "tinycolor2" "^1.4.2"
     "use-subscription" "^1.8.0"
