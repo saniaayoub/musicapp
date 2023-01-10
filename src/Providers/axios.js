@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'https://designprosusa.com/energy_healer/api/',
+  baseURL: 'https://energy4living.com.au/admin/api/',
 });
 
 export default instance;
