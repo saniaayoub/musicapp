@@ -75,8 +75,8 @@ const GetStarted = ({navigation}) => {
             <View style={s.heading}>
               <Image
                 source={title}
-                width={undefined}
-                height={undefined}
+                width={moderateScale(55, 0.1)}
+                height={moderateScale(60, 0.1)}
                 resizeMode={'contain'}
               />
               {/* <Title

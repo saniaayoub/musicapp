@@ -159,7 +159,7 @@ const SignUp = ({navigation}) => {
           console.log(data, 'tokenn');
           if (data.user_status === 'New User') {
             // showToast(data.messsage);
-            showToast('Please Subscribe to activate your account');
+            showToast('Please Subscribe to register your account');
             getAllMusic(data.access_token, data.stripe_link);
             // setUrl();
           } else {
